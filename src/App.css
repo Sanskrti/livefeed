@@ -1,4 +1,4 @@
-/* Overall App Layout */
+
 .App {
   display: flex;
   height: 100vh;
@@ -6,7 +6,7 @@
   margin: 0;
 }
 
-/* Sidebar Styling */
+
 .sidebar {
   background-color: #333;
   color: #fff;
@@ -52,7 +52,6 @@
   left: 20px;
 }
 
-/* Main Content Layout */
 .main-content {
   flex: 1;
   display: flex;
@@ -70,7 +69,6 @@
   border-bottom: 1px solid #ddd;
 }
 
-/* Content Body Layout */
 .content-body {
   display: flex;
   flex-direction: column;
@@ -80,7 +78,7 @@
   overflow-y: auto;
 }
 
-/* Live Feed Container */
+
 .live-feed-container {
   display: flex;
   flex-direction: row;
@@ -90,14 +88,14 @@
   padding: 20px;
 }
 
-/* Camera and Video Stream Section */
+
 .camera-video-section {
   display: flex;
   flex-direction: row;
   gap: 20px;
 }
 
-/* Video Stream Styling */
+
 .video-stream {
   flex: 2;
   display: flex;
@@ -121,7 +119,7 @@
   height: auto;
   object-fit: cover;
 }
-/* Camera List Styling */
+
 .camera-list {
   flex: 1;
   padding: 20px;
@@ -132,7 +130,7 @@
   flex-direction: column;
 }
 
-/* Camera List Items */
+
 .camera-list ul {
   list-style: none;
   padding: 0;
@@ -158,13 +156,11 @@
   color: #333;
   text-align: center;
 }
-
-/* Event List Styling */
 .event-list {
   display: flex;
   overflow-x: auto;
   white-space: nowrap;
-  padding: 20px; /* Adjusted padding */
+  padding: 20px; 
   background: #f9f9f9;
   margin: 0;
   flex-shrink: 0;
@@ -214,7 +210,7 @@
   background-color: #555;
 }
 
-/* Blank Page Styling */
+
 .blank-page {
   display: flex;
   align-items: center;
@@ -225,7 +221,7 @@
   background-color: #f9f9f9;
 }
 
-/* Navbar Styling */
+
 .navbar {
   position: fixed;
   top: 0;
@@ -262,7 +258,7 @@
   color: #FB9039;
 }
 
-/* Content Container */
+
 .content-container {
   display: flex;
   flex-direction: column;
@@ -270,7 +266,7 @@
   margin-bottom: 20px;
 }
 
-/* Live Feed Section */
+
 .live-feed-section {
   display: flex;
   flex-direction: row;
@@ -278,7 +274,7 @@
   flex: 1;
 }
 
-/* Camera List Section */
+
 .camera-list-section {
   display: flex;
   flex-direction: column;

@@ -1,4 +1,4 @@
-// src/components/EventCard.js
+
 import React from 'react';
 
 

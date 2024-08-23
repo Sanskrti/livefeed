@@ -3,9 +3,12 @@ import React, { useState } from "react";
 const CameraList = () => {
   const [selectedCamera, setSelectedCamera] = useState(null);
 
-  // Define your camera images and names here
+
   const cameras = {
-    1: { name: "Camera 1", image: "../cam1.jpg" },
+    1: { 
+      name: "Camera 1", 
+      image: "/assets/cam1.jpg" 
+    },
     2: {
       name: "Camera 2",
       image: "C:UsersLENOVOlive-feed-dashboardsrccam2.jpg",

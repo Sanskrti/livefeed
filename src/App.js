@@ -40,7 +40,7 @@ function App() {
   ];
 
   const handleCameraClick = (camera) => {
-    setLiveStreamUrl(camera.thumbnail); // You might want to replace this with the actual stream URL
+    setLiveStreamUrl(camera.thumbnail); 
     setCurrentCameraName(camera.name);
   };
 

@@ -10,7 +10,7 @@ const LiveFeedPage = ({
   currentCameraName,
 }) => (
   <div className="live-feed-page">
-    <Header /> {/* Add the Navbar above the live feed */}
+    <Header />
     <div className="content-container">
       <div className="live-feed-section">
         <h2 className="section-title">Live Feed</h2>
@@ -38,7 +38,7 @@ const LiveFeedPage = ({
             {cameras.map((camera) => (
               <li key={camera.id} onClick={() => handleCameraClick(camera)}>
                 <h4>{camera.name}</h4>
-                {/* <img src={camera.thumbnail} height={100} /> */}
+                <img src={camera.thumbnail} height={100} /> 
               </li>
             ))}
           </ul>

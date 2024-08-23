@@ -1,4 +1,4 @@
-// src/components/BlankPage.js
+
 import React from 'react';
 
 
