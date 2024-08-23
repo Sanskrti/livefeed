@@ -1,17 +1,14 @@
-import React, { useState } from "react";
+ import React, { useState } from "react";
 
 const CameraList = () => {
   const [selectedCamera, setSelectedCamera] = useState(null);
 
-
+  
   const cameras = {
-    1: { 
-      name: "Camera 1", 
-      image: "/assets/cam1.jpg" 
-    },
+    1: { name: "Camera 1", image: "/assets/cam1.jpg" },
     2: {
       name: "Camera 2",
-      image: "C:UsersLENOVOlive-feed-dashboardsrccam2.jpg",
+      image: "/ assets/cam2.jpg",
     },
     3: {
       name: "Camera 3",

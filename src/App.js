@@ -22,12 +22,12 @@ function App() {
     {
       id: 4,
       name: "Camera 4",
-      thumbnail: "C:\\Users\\LENOVO\\live-feed-dashboard\\src\\cam4.jpg",
+      thumbnail: "cam4.jpg",
     },
     {
       id: 5,
       name: "Camera 5",
-      thumbnail: "C:\\Users\\LENOVO\\live-feed-dashboard\\src\\cam5.jpg",
+      thumbnail: "cam5.jpg",
     },
   ];
 
