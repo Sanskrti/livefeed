@@ -1,46 +1,64 @@
-import React from 'react';
+import React from "react";
+import EventCard from "./eventlist";
+import Header from "./header";
 
-const LiveFeedPage = ({ liveStreamUrl, handleCameraClick, cameras, events, currentCameraName }) => {
-  return (
-    <div className="live-feed-container">
-      <div className="camera-video-section">
+const LiveFeedPage = ({
+  liveStreamUrl,
+  handleCameraClick,
+  cameras,
+  events,
+  currentCameraName,
+}) => (
+  <div className="live-feed-page">
+    <Header /> {/* Add the Navbar above the live feed */}
+    <div className="content-container">
+      <div className="live-feed-section">
+        <h2 className="section-title">Live Feed</h2>
         <div className="video-stream">
-          <div className="video-content">
+          <div
+            className="video-content"
+            style={{ width: "100px", height: "100px", overflow: "hidden" }}
+          >
             {liveStreamUrl ? (
-              <div className="video-wrapper">
-                <img src={liveStreamUrl} alt={currentCameraName} className="video-image" />
-                {currentCameraName && (
-                  <div className="camera-name">{currentCameraName}</div>
-                )}
-              </div>
+              <img src={liveStreamUrl} />
             ) : (
-              <p>Select a camera to view its feed</p>
+              <p>Select a camera to view the live feed.</p>
             )}
           </div>
+          {currentCameraName && (
+            <div className="camera-name">{currentCameraName}</div>
+          )}
         </div>
+      </div>
+
+      <div className="camera-list-section">
+        <h2 className="section-title">Camera List</h2>
         <div className="camera-list">
           <ul>
-            {cameras.map(camera => (
+            {cameras.map((camera) => (
               <li key={camera.id} onClick={() => handleCameraClick(camera)}>
                 <h4>{camera.name}</h4>
-                <img src={camera.thumbnail} alt={camera.name} className="camera-thumbnail" />
+                {/* <img src={camera.thumbnail} height={100} /> */}
               </li>
             ))}
           </ul>
         </div>
       </div>
-      <div className="event-list-section">
-        <div className="event-list">
-          {events.map(event => (
-            <div key={event.id} className="event-item">
-              <h4>{event.title}</h4>
-              <p>{event.details}</p>
-            </div>
-          ))}
-        </div>
+    </div>
+    <div className="event-list-section">
+      <h2 className="section-title">Event List</h2>
+      <div className="event-list">
+        {events.map((event) => (
+          <EventCard
+            key={event.id}
+            title={event.title}
+            details={event.details}
+          />
+        ))}
       </div>
     </div>
-  );
-};
+  </div>
+);
 
 export default LiveFeedPage;
+ 
