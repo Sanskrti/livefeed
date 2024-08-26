@@ -8,7 +8,7 @@ function App() {
   const [currentCameraName, setCurrentCameraName] = useState("");
 
   const cameraList = [
-    { id: 1, name: "Camera 1", thumbnail: "cam1.jpg" },
+     { id: 1, name: "Camera 1", thumbnail: "cam1.jpg" },
     {
       id: 2,
       name: "Camera 2",

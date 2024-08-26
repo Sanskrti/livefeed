@@ -1,47 +1,36 @@
- import React, { useState } from "react";
+import React, { useState } from "react";
 
 const CameraList = () => {
   const [selectedCamera, setSelectedCamera] = useState(null);
 
-  
-  const cameras = {
-    1: { name: "Camera 1", image: "/assets/cam1.jpg" },
-    2: {
-      name: "Camera 2",
-      image: "/ assets/cam2.jpg",
-    },
-    3: {
-      name: "Camera 3",
-      image: "C:UsersLENOVOlive-feed-dashboardsrccam3.jpg",
-    },
-    4: {
-      name: "Camera 4",
-      image: "C:UsersLENOVOlive-feed-dashboardsrccam4.jpg",
-    },
-    5: {
-      name: "Camera 5",
-      image: "C:UsersLENOVOlive-feed-dashboardsrccam5.jpg",
-    },
-  };
+  const cameras = [
+    { id: 1, name: "Camera 1" },
+    { id: 2, name: "Camera 2" },
+    { id: 3, name: "Camera 3" },
+    { id: 4, name: "Camera 4" },
+    { id: 5, name: "Camera 5" },
+  ];
 
-  const handleCameraClick = (cameraId) => {
-    setSelectedCamera(cameras[cameraId]);
+  const handleCameraClick = (camera) => {
+    setSelectedCamera(camera);
   };
 
   return (
-    <div>
+    <div className="camera-list-section">
+      <h2 className="section-title">Camera List</h2>
       <div className="camera-list">
-        {Object.keys(cameras).map((cameraId) => (
-          <div key={cameraId} onClick={() => handleCameraClick(cameraId)}>
-            {cameras[cameraId].name}
-          </div>
-        ))}
+        <ul>
+          {cameras.map((camera) => (
+            <li key={camera.id} onClick={() => handleCameraClick(camera)}>
+              <h4>{camera.name}</h4>
+            </li>
+          ))}
+        </ul>
       </div>
       <div className="live-feed">
         {selectedCamera ? (
           <>
-            <img src="../cam1.jpg" alt={selectedCamera.name} />
-            <p>{selectedCamera.name}hello</p>
+            <p className="camera-name">{selectedCamera.name}</p>
           </>
         ) : (
           <p>Select a camera to view</p>
@@ -52,4 +41,3 @@ const CameraList = () => {
 };
 
 export default CameraList;
- 

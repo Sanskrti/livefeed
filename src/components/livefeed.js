@@ -15,12 +15,9 @@ const LiveFeedPage = ({
       <div className="live-feed-section">
         <h2 className="section-title">Live Feed</h2>
         <div className="video-stream">
-          <div
-            className="video-content"
-            style={{ width: "100px", height: "100px", overflow: "hidden" }}
-          >
+          <div className="video-content">
             {liveStreamUrl ? (
-              <img src={liveStreamUrl} />
+              <img src={liveStreamUrl} alt={currentCameraName} />
             ) : (
               <p>Select a camera to view the live feed.</p>
             )}
@@ -38,7 +35,6 @@ const LiveFeedPage = ({
             {cameras.map((camera) => (
               <li key={camera.id} onClick={() => handleCameraClick(camera)}>
                 <h4>{camera.name}</h4>
-                <img src={camera.thumbnail} height={100} /> 
               </li>
             ))}
           </ul>
@@ -47,18 +43,9 @@ const LiveFeedPage = ({
     </div>
     <div className="event-list-section">
       <h2 className="section-title">Event List</h2>
-      <div className="event-list">
-        {events.map((event) => (
-          <EventCard
-            key={event.id}
-            title={event.title}
-            details={event.details}
-          />
-        ))}
-      </div>
+      <EventCard events={events} />
     </div>
   </div>
 );
 
 export default LiveFeedPage;
- 
