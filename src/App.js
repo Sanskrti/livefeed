@@ -9,6 +9,7 @@ function App() {
 
   const cameraList = [
      { id: 1, name: "Camera 1", thumbnail: "cam1.jpg" },
+
     {
       id: 2,
       name: "Camera 2",
@@ -29,6 +30,7 @@ function App() {
       name: "Camera 5",
       thumbnail: "cam5.jpg",
     },
+    
   ];
 
   const events = [
@@ -37,6 +39,8 @@ function App() {
     { id: 3, title: "Event 3", details: "Details about event 3." },
     { id: 4, title: "Event 4", details: "Details about event 4." },
     { id: 5, title: "Event 5", details: "Details about event 5." },
+    { id: 6, title: "Event 6", details: "Details about event 6." },
+    { id: 7, title: "Event 7", details: "Details about event 7." },
   ];
 
   const handleCameraClick = (camera) => {

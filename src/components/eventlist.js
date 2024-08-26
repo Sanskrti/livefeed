@@ -5,8 +5,10 @@ const EventList = () => {
     { id: 1, title: 'Event 1', className: 'event-card-1' },
     { id: 2, title: 'Event 2', className: 'event-card-2' },
     { id: 3, title: 'Event 3', className: 'event-card-3' },
-    { id: 4, title: 'Event 4',className: 'event-card-4' },
+    { id: 4, title: 'Event 4', className: 'event-card-4' },
     { id: 5, title: 'Event 5', className: 'event-card-5' },
+    { id: 5, title: 'Event 6', className: 'event-card-6' },
+    { id: 5, title: 'Event 7', className: 'event-card-7' },
   ];
 
   return (
