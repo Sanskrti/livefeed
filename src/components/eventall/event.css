@@ -1,0 +1,24 @@
+
+.event-list {
+    display: flex;
+    align-items: flex-start;
+    height: 40px; 
+    flex-wrap: wrap; 
+    gap: 6px; 
+    padding-left: 6px; 
+    overflow-x: auto;
+    margin-top: 8px; 
+  }
+  
+  .event-item {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex: 1 1 90px;
+    height: 90px; 
+    max-width: 160px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1); 
+    background-size: cover;
+    background-position: center;
+  }
+  

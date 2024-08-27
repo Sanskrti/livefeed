@@ -1,14 +1,11 @@
-import React from "react";
-import EventCard from "./eventlist";
-import Header from "./header";
+import React from 'react';
+import EventList from '../eventall/eventlist';
+import Header from '../headerall/header';
+import CameraList from '../cameraall/cameralist';
+import './livefeed.css';
 
-const LiveFeedPage = ({
-  liveStreamUrl,
-  handleCameraClick,
-  cameras,
-  events,
-  currentCameraName,
-}) => (
+
+const LiveFeedPage = ({ liveStreamUrl, handleCameraClick, cameras, events, currentCameraName }) => (
   <div className="live-feed-page">
     <Header />
     <div className="content-container">
@@ -27,24 +24,19 @@ const LiveFeedPage = ({
           )}
         </div>
       </div>
-
       <div className="camera-list-section">
         <h2 className="section-title">Camera List</h2>
-        <div className="camera-list">
-          <ul>
-            {cameras.map((camera) => (
-              <li key={camera.id} onClick={() => handleCameraClick(camera)}>
-                <h4>{camera.name}</h4>
-                <img src={camera.thumbnail} alt={camera.name} height={100} /> 
-              </li>
-            ))}
-          </ul>
+        <CameraList cameras={cameras} onCameraSelect={handleCameraClick} />
+        <div className="buttons-box">
+      <button className="camera-button">Multiple Camera Feeds</button>
+      <button className="camera-button">Batch History</button>
+      <button className="camera-button">My Images</button>
         </div>
       </div>
     </div>
     <div className="event-list-section">
       <h2 className="section-title">Event List</h2>
-      <EventCard events={events} />
+      {/* <EventCard events={events} /> */}
     </div>
   </div>
 );
