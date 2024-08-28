@@ -7,77 +7,15 @@
   box-sizing: border-box;
 }
 
-.sidebar {
-  background-color: #2d3e50;
-  color: #fff;
-  padding: 8px; 
-  width: 9%; 
-  min-width: 100px; 
-  height: 100vh;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.sidebar ul li {
-  margin: 7px 0; 
-  cursor: pointer;
-  padding: 5px; 
-  border-radius: 4px;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.sidebar ul li:hover,
-.sidebar ul li.active {
-  background-color: #ff6f61;
-  color: #fff;
-}
-
-.sidebar ul li a span {
-  margin-left: 5px; 
-}
-
-.sidebar-footer {
-  padding-top: 8px; 
-  border-top: 1px solid #3f4f63;
-}
-
-.sidebar ul li a {
-  display: flex;
-  align-items: center;
-  color: inherit;
-}
-
-.sidebar ul li a .fa-icon {
-  margin-right: 5px; 
-  font-size: 10px; 
-}
-
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
+  height: 100vh;
   background-color: #f5f6fa;
   overflow-y: auto;
   padding: 6px; 
   box-sizing: border-box;
-}
-
-.header {
-  background-color: #fff;
-  color: #333;
-  padding: 2px; 
-  text-align: left;
-  font-size: 12px; 
-  font-weight: bold;
-  border-bottom: 1px solid #ddd;
 }
 
 .content-container {
@@ -85,113 +23,4 @@
   flex: 1;
   gap: 6px; 
   box-sizing: border-box;
-}
-
-.live-feed-section {
-  flex: 2;
-  background-color: #fff;
-  padding: 2px; 
-  border-radius: 5px; 
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1); /* Further reduced shadow */
-  width: 45%; 
-}
-
-.live-feed-section img {
-  width: 100%;
-  height: auto;
-  border-radius: 5px; 
-}
-
-.camera-list-section {
-  flex: 0.6;
-  background-color: #e9ecef;
-  box-sizing: border-box;
-  width: 8%; 
-  min-width: 90px; 
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.camera-list-container {
-  height: auto; 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px; 
-}
-
-.event-list {
-  display: flex;
-  align-items: flex-start;
-  height:40px; 
-  flex-wrap: wrap; 
-  gap: 6px; 
-  padding-left: 6px; 
-  overflow-x: auto;
-  margin-top: 8px; 
-}
-
-.event-item {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  flex: 1 1 90px;
-  height: 90px; 
-  max-width: 160px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1); 
-  background-size: cover;
-  background-position: center;
-}
-
-.buttons-box {
-  background-color: #f5f5f5;
-  border-radius: 5px; 
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1); 
-  padding: 8px;
-  margin-top: 8px; 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.buttons-box .camera-button {
-  padding: 5px 12px; 
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px; 
-  cursor: pointer;
-  margin-bottom: 5px; 
-  
-  transition: background-color 0.3s ease;
-}
-
-.buttons-box .camera-button:hover {
-  background-color: #0056b3;
-}
-
-.buttons-box .camera-button:last-child {
-  margin-bottom: 0;
-}
-
-.event-card-1 {
-  background-image: url('C:\Users\LENOVO\live-feed-dashboard\public\cam1.jpg');
-}
-
-.event-card-2 {
-  background-image: url('C:\Users\LENOVO\live-feed-dashboard\public\cam2.jpg');
-}
-
-.event-card-3 {
-  background-image: url('C:\Users\LENOVO\live-feed-dashboard\public\cam3.jpg');
-}
-
-.event-card-4 {
-  background-image: url('C:\Users\LENOVO\live-feed-dashboard\public\cam4.jpg');
-}
-
-.event-card-5 {
-  background-image: url('C:\Users\LENOVO\live-feed-dashboard\public\cam5.jpg');
 }
