@@ -1,13 +1,13 @@
-/* Container for the event list */
+
 .event-list {
   display: flex;
   align-items: flex-start;
-  flex-wrap: wrap; /* Allow the cards to wrap to the next line if necessary */
-  gap: 10px; /* Space between event cards */
-  padding-left: 10px; /* Padding on the left side */
-  margin-top: 10px; /* Space above the event list */
-  height: 77%; /* Height of the event list container */
-  overflow-x: hidden; /* Hide any horizontal overflow */
+  flex-wrap: wrap; 
+  gap: 10px; 
+  padding-left: 10px;
+  margin-top: 10px; 
+  height: 77%; 
+  overflow-x: hidden;
 }
 .event-item {
   background: #fff; 
@@ -24,28 +24,28 @@
   justify-content: space-between;
 }
 
-/* Image inside the event card */
+
 .event-image {
-  width: 100%; /* Full width of the event card */
-  height: 120px; /* Height of the image section */
-  background-size: cover; /* Ensure the image covers the entire area */
-  background-position: center; /* Center the image within the div */
-  border-bottom: 1px solid #ddd; /* Border between image and title */
+  width: 100%; 
+  height: 120px; 
+  background-size: cover; 
+  background-position: center; 
+  border-bottom: 1px solid #ddd; 
 }
 
-/* Title and details section */
+
 .event-item h3 {
-  margin: 5px 0 0 0; /* Margin above the title */
-  padding: 0 5px; /* Padding around the text */
-  font-size: 14px; /* Font size of the title */
-  text-align: center; /* Center the title text */
-  color: #333; /* Text color */
+  margin: 5px 0 0 0; 
+  padding: 0 5px; 
+  font-size: 12px; 
+  text-align: center; 
+  color: #333; 
 }
 
 .event-item p {
   margin: 0;
-  padding: 0 5px 8px 5px; /* Padding around the details text */
-  font-size: 12px; /* Font size of the details */
-  text-align: center; /* Center the details text */
-  color: #666; /* Text color */
+  padding: 0 5px 8px 5px; 
+  font-size: 12px; 
+  text-align: center; 
+  color: #666; 
 }
