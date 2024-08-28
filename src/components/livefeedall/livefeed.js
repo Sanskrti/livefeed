@@ -4,7 +4,6 @@ import Header from '../headerall/header';
 import CameraList from '../cameraall/cameralist';
 import './livefeed.css';
 
-
 const LiveFeedPage = ({ liveStreamUrl, handleCameraClick, cameras, events, currentCameraName }) => (
   <div className="live-feed-page">
     <Header />
@@ -25,9 +24,13 @@ const LiveFeedPage = ({ liveStreamUrl, handleCameraClick, cameras, events, curre
         </div>
       </div>
       <div className="camera-list-section">
+        <div>
+          
         <h2 className="section-title">Camera List</h2>
         <CameraList cameras={cameras} onCameraSelect={handleCameraClick} />
-        <div className="buttons-box">
+        </div>
+        
+      <div className="buttons-box">
       <button className="camera-button">Multiple Camera Feeds</button>
       <button className="camera-button">Batch History</button>
       <button className="camera-button">My Images</button>
@@ -36,9 +39,12 @@ const LiveFeedPage = ({ liveStreamUrl, handleCameraClick, cameras, events, curre
     </div>
     <div className="event-list-section">
       <h2 className="section-title">Event List</h2>
+         
       {/* <EventCard events={events} /> */}
     </div>
+    <EventList/>
   </div>
+   
 );
 
 export default LiveFeedPage;

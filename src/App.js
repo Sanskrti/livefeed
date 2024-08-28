@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './App.css';
 import LiveFeedPage from './components/livefeedall/livefeed';
 import Sidebar from './components/sidebarall/sidebar';
+// import EventList from './components/eventall/eventlist';
 
 function App() {
   const [liveStreamUrl, setLiveStreamUrl] = useState(null);
@@ -16,7 +17,9 @@ function App() {
     { id: 5, name: 'Camera 5', thumbnail: 'cam5.jpg' },
   ];
 
-  const events = [];
+  const events = [
+    
+  ];
 
   const handleCameraClick = (camera) => {
     setLiveStreamUrl(camera.thumbnail);

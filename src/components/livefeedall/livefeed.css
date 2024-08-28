@@ -9,7 +9,12 @@
   
   .live-feed-section img {
     width: 100%;
-    height: auto;
+    height: 400px;;
     border-radius: 5px; 
   }
-  
+ .camera-list-section{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+ } 
+ 

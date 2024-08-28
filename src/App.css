@@ -24,3 +24,14 @@
   gap: 6px; 
   box-sizing: border-box;
 }
+
+.header {
+  background-color: #fff;
+  color: #333;
+  padding: 2px; 
+  text-align: left;
+  font-size: 12px; 
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+  height: 100%;
+}
