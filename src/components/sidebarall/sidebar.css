@@ -12,7 +12,7 @@
 .sidebar ul {
   padding: 0;
   margin: 0;
-  list-style: none; /* Remove bullets from list items */
+  list-style: none; 
 }
 
 .sidebar ul li {
@@ -30,7 +30,7 @@
 }
 
 .sidebar ul li a:hover {
-  background-color: #ff6f61; 
+  background-color: #ff9900; 
 }
 
 .settings {
@@ -50,5 +50,5 @@
 }
 
 .settings p:hover {
-  background-color: #ff6f61; 
+  background-color:  #ff9900; 
 }

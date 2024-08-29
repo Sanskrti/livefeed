@@ -11,8 +11,10 @@ const EventList = () => {
 
   return (
     <div className="event-list-section">
-      <h3 className="section-title">Events</h3>
+      
       <div className="event-list">
+    <h3 className="section-title">Events</h3>
+
         {events.map((event) => (
           <div key={event.id} className={`event-item ${event.className}`}>
             <img src={event.image} alt={event.title} className="event-image" />

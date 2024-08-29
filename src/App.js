@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './App.css';
+import '@fortawesome/fontawesome-free/js/all.min.js';
 import LiveFeedPage from './components/livefeedall/livefeed';
 import Sidebar from './components/sidebarall/sidebar';
 // import EventList from './components/eventall/eventlist';

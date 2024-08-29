@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faCamera, faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import '@fortawesome/fontawesome-free/css/all.min.css'; 
 import './sidebar.css';
 
 function Sidebar() {
@@ -40,7 +41,5 @@ function Sidebar() {
     </div>
   );
 }
-
-
 
 export default Sidebar;
