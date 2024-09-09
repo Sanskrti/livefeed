@@ -4,7 +4,7 @@ import './App.css';
 import '@fortawesome/fontawesome-free/js/all.min.js';
 import LiveFeedPage from './components/livefeedall/livefeed';
 import Sidebar from './components/sidebarall/sidebar';
-// import EventList from './components/eventall/eventlist';
+
 
 function App() {
   const [liveStreamUrl, setLiveStreamUrl] = useState(null);

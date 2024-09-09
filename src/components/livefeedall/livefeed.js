@@ -4,6 +4,7 @@ import Header from "../headerall/header";
 import CameraList from "../cameraall/cameralist";
 import "./livefeed.css";
 import ButtonBox from "../buttonsall/buttons";
+
 const LiveFeedPage = ({
   liveStreamUrl,
   handleCameraClick,
@@ -31,7 +32,7 @@ const LiveFeedPage = ({
         </div>
         <div className="camera-list-section">
           <div>
-            <h2 className="section-title">Camera List</h2>
+            <h2 className="section-title"></h2>
             <CameraList cameras={cameras} onCameraSelect={handleCameraClick} />
           </div>
         </div>
