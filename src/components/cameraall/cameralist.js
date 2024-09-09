@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const CameraList = ({ cameras, onCameraSelect }) => {
+
+  console.log('Cameras in CameraList:', cameras);
+
   if (!cameras || cameras.length === 0) {
     return <p>No cameras available</p>;
   }
@@ -29,7 +32,7 @@ function Camera() {
   useEffect(() => {
     const fetchTokenAndCameras = async () => {
       try {
-        // Fetch token
+     
         const tokenResponse = await axios.post(
           'http://192.168.0.2:9001/hubapi/v1/user/token',
           new URLSearchParams({
@@ -48,11 +51,11 @@ function Camera() {
           }
         );
         
-        console.log('Token response:', tokenResponse.data); // Debug token response
+        console.log('Token response:', tokenResponse.data); 
 
         const token = tokenResponse.data.access_token;
 
-        // Fetch cameras
+        
         const cameraResponse = await axios.get('http://192.168.0.2:9001/hubapi/v1/camera/get_names', {
           headers: {
             'accept': 'application/json',
@@ -60,9 +63,14 @@ function Camera() {
           },
         });
 
-        console.log('Camera response:', cameraResponse.data); // Debug camera response
+        
+        console.log('Camera response:', cameraResponse.data);
 
-        setCameras(cameraResponse.data.cameras || []);
+       
+        const cameras = cameraResponse.data.cameras || [];
+        console.log('Cameras:', cameras); 
+
+        setCameras(cameras);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching cameras or token:', error);
