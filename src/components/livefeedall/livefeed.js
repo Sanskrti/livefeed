@@ -10,6 +10,7 @@ const LiveFeedPage = ({
   handleCameraClick,
   cameras,
   currentCameraName,
+  selectedCamera,
 }) => (
   <div>
     <Header />
@@ -20,19 +21,23 @@ const LiveFeedPage = ({
           <div className="video-stream">
             <div className="video-content">
               {liveStreamUrl ? (
-                <img src={liveStreamUrl} alt={currentCameraName} />
+                <img src={liveStreamUrl} alt={currentCameraName || 'Live Feed'} />
               ) : (
                 <p>Select a camera to view the live feed.</p>
               )}
             </div>
-            {currentCameraName && (
-              <div className="camera-name">{currentCameraName}</div>
+            {selectedCamera && (
+              <div className="camera-name">
+                <h3>Selected Camera: {selectedCamera.name || 'Camera-1'}</h3>
+                <p>Camera ID: {selectedCamera.id}</p>
+                {/* Display additional details about the selected camera here */}
+              </div>
             )}
           </div>
         </div>
         <div className="camera-list-section">
           <div>
-            <h2 className="section-title"></h2>
+            <h2 className="section-title">Camera List</h2>
             <CameraList cameras={cameras} onCameraSelect={handleCameraClick} />
           </div>
         </div>
@@ -46,4 +51,3 @@ const LiveFeedPage = ({
 );
 
 export default LiveFeedPage;
- 

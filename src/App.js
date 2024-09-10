@@ -4,11 +4,12 @@ import './App.css';
 import '@fortawesome/fontawesome-free/js/all.min.js';
 import LiveFeedPage from './components/livefeedall/livefeed';
 import Sidebar from './components/sidebarall/sidebar';
+import CameraContext from './components/cameraall/cameracontext';
 
-
-function App() {
+const App = () => {
   const [liveStreamUrl, setLiveStreamUrl] = useState(null);
   const [currentCameraName, setCurrentCameraName] = useState('');
+  const [selectedCamera, setSelectedCamera] = useState(null);
 
   const cameraList = [
     { id: 1, name: 'Camera 1', thumbnail: 'cam1.jpg' },
@@ -25,47 +26,50 @@ function App() {
   const handleCameraClick = (camera) => {
     setLiveStreamUrl(camera.thumbnail);
     setCurrentCameraName(camera.name);
+    setSelectedCamera(camera);
   };
 
   return (
-    <Router>
-      <div className="App">
-        <div className="sidebar">
-          <ul>
-            <li><Link to="/">Dashboard</Link></li>
-            <li><Link to="/live-feed">Live Feed</Link></li>
-            <li><Link to="/admin-panel">Admin Panel</Link></li>
-            <li><Link to="/configuration">Configuration</Link></li>
-          </ul>
-          <div className="settings">
-            <p>Settings</p>
-            <p>Logout</p>
+    <CameraContext.Provider value={{ selectedCamera }}>
+      <Router>
+        <div className="App">
+          <div className="sidebar">
+            <ul>
+              <li><Link to="/">Dashboard</Link></li>
+              <li><Link to="/live-feed">Live Feed</Link></li>
+              <li><Link to="/admin-panel">Admin Panel</Link></li>
+              <li><Link to="/configuration">Configuration</Link></li>
+            </ul>
+            <div className="settings">
+              <p>Settings</p>
+              <p>Logout</p>
+            </div>
+          </div>
+          <div className="main-content">
+            <div className="header">
+              <Routes>
+                <Route path="/" element={<div>Dashboard</div>} />
+                <Route
+                  path="/live-feed"
+                  element={
+                    <LiveFeedPage
+                      liveStreamUrl={liveStreamUrl}
+                      handleCameraClick={handleCameraClick}
+                      cameras={cameraList}
+                      events={events}
+                      currentCameraName={currentCameraName}
+                    />
+                  }
+                />
+                <Route path="/admin-panel" element={<div className="blank-page">Admin Panel</div>} />
+                <Route path="/configuration" element={<div className="blank-page">Configuration</div>} />
+              </Routes>
+            </div>
           </div>
         </div>
-        <div className="main-content">
-          <div className="header">
-            <Routes>
-              <Route path="/" element={<div>Dashboard</div>} />
-              <Route
-                path="/live-feed"
-                element={
-                  <LiveFeedPage
-                    liveStreamUrl={liveStreamUrl}
-                    handleCameraClick={handleCameraClick}
-                    cameras={cameraList}
-                    events={events}
-                    currentCameraName={currentCameraName}
-                  />
-                }
-              />
-              <Route path="/admin-panel" element={<div className="blank-page">Admin Panel</div>} />
-              <Route path="/configuration" element={<div className="blank-page">Configuration</div>} />
-            </Routes>
-          </div>
-        </div>
-      </div>
-    </Router>
+      </Router>
+    </CameraContext.Provider>
   );
-}
+};
 
 export default App;
