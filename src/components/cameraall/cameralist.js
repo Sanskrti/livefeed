@@ -3,18 +3,12 @@ import axios from "axios";
 import CameraContext from "./cameracontext";
 
 const CameraList = ({ cameras, onCameraSelect }) => {
-  console.log("Cameras in CameraList:", cameras);
-
-  if (!cameras || cameras.length === 0) {
-    return <p>No cameras available</p>;
-  }
-
   return (
     <div className="camera-list">
       <ul>
         {cameras.map((camera, index) => (
           <li key={index} onClick={() => onCameraSelect(camera)}>
-            <h4>{camera}</h4>
+            <h4>{cameras}</h4>
           </li>
         ))}
       </ul>
@@ -22,7 +16,7 @@ const CameraList = ({ cameras, onCameraSelect }) => {
   );
 };
 
-function Camera() {
+const Camera = () => {
   const { setSelectedCamera } = useContext(CameraContext);
   const [cameras, setCameras] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,11 +39,10 @@ function Camera() {
             headers: {
               accept: "application/json",
               "Content-Type": "application/x-www-form-urlencoded",
-            },
-          },
+            }
+          }
         );
 
-        console.log("Token response:", tokenResponse.data);
         const token = tokenResponse.data.access_token;
 
         const cameraResponse = await axios.get(
@@ -58,23 +51,18 @@ function Camera() {
             headers: {
               accept: "application/json",
               Authorization: `Bearer ${token}`,
-            },
-          },
+            }
+          }
         );
 
-        console.log("Camera response:", cameraResponse.data);
-
         if (cameraResponse.data && Array.isArray(cameraResponse.data.data)) {
-          console.log("Cameras:", cameraResponse.data.data);
           setCameras(cameraResponse.data.data);
         } else {
-          console.log("No cameras found in response");
           setCameras([]);
         }
 
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching cameras or token:", error);
         setError("Failed to load cameras");
         setLoading(false);
       }
@@ -84,7 +72,7 @@ function Camera() {
   }, []);
 
   const handleCameraSelect = (camera) => {
-    setSelectedCamera(camera);
+    setSelectedCamera(camera); 
   };
 
   return (
@@ -100,7 +88,6 @@ function Camera() {
       )}
     </div>
   );
-}
+};
 
 export default Camera;
- 
