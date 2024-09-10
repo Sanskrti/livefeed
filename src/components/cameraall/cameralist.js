@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
+import './camera.css';
+import React, { useState, useEffect, useContext, createContext } from 'react';
 import axios from 'axios';
-import CameraContext from './cameracontext';
+
+
+const CameraContext = createContext();
 
 const CameraList = ({ cameras, onCameraSelect }) => {
-  console.log('Cameras in CameraList:', cameras);
-
   if (!cameras || cameras.length === 0) {
     return <p>No cameras available</p>;
   }
@@ -12,9 +13,9 @@ const CameraList = ({ cameras, onCameraSelect }) => {
   return (
     <div className="camera-list">
       <ul>
-        {cameras.map((camera, index) => (
-          <li key={camera.id || index} onClick={() => onCameraSelect(camera)}>
-            <h4>{camera.name || 'Camera-1'}</h4>
+        {cameras.map((camera) => (
+          <li key={camera.id} onClick={() => onCameraSelect(camera)}>
+            <h4>{cameras ['Camera-1']}</h4>
           </li>
         ))}
       </ul>
@@ -23,13 +24,13 @@ const CameraList = ({ cameras, onCameraSelect }) => {
 };
 
 function Camera() {
-  const { setSelectedCamera } = useContext(CameraContext);
+  const { selectedCamera, setSelectedCamera } = useContext(CameraContext);
   const [cameras, setCameras] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchTokenAndCameras = async () => {
+    const fetchCameras = async () => {
       try {
         const tokenResponse = await axios.post(
           'http://192.168.0.2:9001/hubapi/v1/user/token',
@@ -49,23 +50,21 @@ function Camera() {
           }
         );
 
-        console.log('Token response:', tokenResponse.data);
         const token = tokenResponse.data.access_token;
 
-        const cameraResponse = await axios.get('http://192.168.0.2:9001/hubapi/v1/camera/get_names', {
-          headers: {
-            'accept': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        console.log('Camera response:', cameraResponse.data);
+        const cameraResponse = await axios.get(
+          'http://192.168.0.2:9001/hubapi/v1/camera/get_names',
+          {
+            headers: {
+              'accept': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (cameraResponse.data && Array.isArray(cameraResponse.data.data)) {
-          console.log('Cameras:', cameraResponse.data.data);
           setCameras(cameraResponse.data.data);
         } else {
-          console.log('No cameras found in response');
           setCameras([]);
         }
 
@@ -77,7 +76,13 @@ function Camera() {
       }
     };
 
-    fetchTokenAndCameras();
+    fetchCameras(); 
+
+    const interval = setInterval(() => {
+      fetchCameras(); 
+    }, 10000); 
+
+    return () => clearInterval(interval); 
   }, []);
 
   const handleCameraSelect = (camera) => {
@@ -93,8 +98,25 @@ function Camera() {
       {!loading && !error && cameras.length > 0 && (
         <CameraList cameras={cameras} onCameraSelect={handleCameraSelect} />
       )}
+      {selectedCamera && (
+        <div className="selected-camera">
+          <h3>Selected Camera: {selectedCamera.name || 'Camera-1'}</h3>
+          <p>Camera ID: {selectedCamera.id}</p>
+        </div>
+      )}
     </div>
   );
 }
 
-export default Camera;
+const CameraProvider = ({ children }) => {
+  const [selectedCamera, setSelectedCamera] = useState(null);
+
+  return (
+    <CameraContext.Provider value={{ selectedCamera, setSelectedCamera }}>
+      {children}
+    </CameraContext.Provider>
+  );
+};
+
+
+export { CameraProvider, CameraList, Camera };

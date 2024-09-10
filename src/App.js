@@ -3,13 +3,12 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './App.css';
 import '@fortawesome/fontawesome-free/js/all.min.js';
 import LiveFeedPage from './components/livefeedall/livefeed';
-import Sidebar from './components/sidebarall/sidebar';
-import CameraContext from './components/cameraall/cameracontext';
+import { CameraProvider } from './components/cameraall/cameracontext';
 
 const App = () => {
   const [liveStreamUrl, setLiveStreamUrl] = useState(null);
   const [currentCameraName, setCurrentCameraName] = useState('');
-  const [selectedCamera, setSelectedCamera] = useState(null);
+
 
   const cameraList = [
     { id: 1, name: 'Camera 1', thumbnail: 'cam1.jpg' },
@@ -20,17 +19,18 @@ const App = () => {
   ];
 
   const events = [
+    { id: 1, title: 'Event 1', description: 'Description of Event 1' },
+    { id: 2, title: 'Event 2', description: 'Description of Event 2' },
     
   ];
 
   const handleCameraClick = (camera) => {
     setLiveStreamUrl(camera.thumbnail);
     setCurrentCameraName(camera.name);
-    setSelectedCamera(camera);
   };
 
   return (
-    <CameraContext.Provider value={{ selectedCamera }}>
+    <CameraProvider>
       <Router>
         <div className="App">
           <div className="sidebar">
@@ -68,7 +68,7 @@ const App = () => {
           </div>
         </div>
       </Router>
-    </CameraContext.Provider>
+    </CameraProvider>
   );
 };
 

@@ -1,9 +1,10 @@
 import React from "react";
 import EventList from "../eventall/eventlist";
 import Header from "../headerall/header";
-import CameraList from "../cameraall/cameralist";
+import  { CameraList } from "../cameraall/cameralist";
 import "./livefeed.css";
 import ButtonBox from "../buttonsall/buttons";
+import Sidebar from "../sidebarall/sidebar";
 
 const LiveFeedPage = ({
   liveStreamUrl,
@@ -27,19 +28,17 @@ const LiveFeedPage = ({
               )}
             </div>
             {selectedCamera && (
-              <div className="camera-name">
+              <div className="camera-info">
                 <h3>Selected Camera: {selectedCamera.name || 'Camera-1'}</h3>
                 <p>Camera ID: {selectedCamera.id}</p>
-                {/* Display additional details about the selected camera here */}
+       
               </div>
             )}
           </div>
         </div>
         <div className="camera-list-section">
-          <div>
-            <h2 className="section-title">Camera List</h2>
-            <CameraList cameras={cameras} onCameraSelect={handleCameraClick} />
-          </div>
+          <h2 className="section-title">Camera List</h2>
+          <CameraList cameras={cameras} onCameraSelect={handleCameraClick} />
         </div>
       </div>
       <div className="event-list-container">
