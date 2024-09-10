@@ -1,7 +1,7 @@
 import React from "react";
 import EventList from "../eventall/eventlist";
 import Header from "../headerall/header";
-import  { CameraList } from "../cameraall/cameralist";
+import  CameraList from "../cameraall/cameralist";
 import "./livefeed.css";
 import ButtonBox from "../buttonsall/buttons";
 import Sidebar from "../sidebarall/sidebar";
