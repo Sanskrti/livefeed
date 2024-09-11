@@ -8,7 +8,7 @@ const CameraList = ({ cameras, onCameraSelect }) => {
       <ul>
         {cameras.map((camera, index) => (
           <li key={index} onClick={() => onCameraSelect(camera)}>
-            <h4>{cameras}</h4>
+            <h4>{cameras}</h4> 
           </li>
         ))}
       </ul>
@@ -45,15 +45,12 @@ const Camera = () => {
 
         const token = tokenResponse.data.access_token;
 
-        const cameraResponse = await axios.get(
-          "http://192.168.0.2:9001/hubapi/v1/camera/get_names",
-          {
-            headers: {
-              accept: "application/json",
-              Authorization: `Bearer ${token}`,
-            }
+        const cameraResponse = await axios.get("http://192.168.0.2:9001/hubapi/v1/camera/get_names", {
+          headers: {
+            accept: "application/json",
+            Authorization: `Bearer ${token}`,
           }
-        );
+        });
 
         if (cameraResponse.data && Array.isArray(cameraResponse.data.data)) {
           setCameras(cameraResponse.data.data);

@@ -7,17 +7,23 @@ import ButtonBox from "../buttonsall/buttons";
 import CameraContext from "../cameraall/cameracontext";
 import "./livefeed.css";
 
-const transformArray = (arr, key) => Object.fromEntries(arr.map(obj => [obj[key], obj]));
+
+const transformArray = (arr, key) => {
+  if (Array.isArray(arr)) {
+    return Object.fromEntries(arr.map(obj => [obj[key], obj]));
+  } else {
+    console.error("Data is not an array:", arr);
+    return {};
+  }
+};
 
 const LiveFeedPage = () => {
   const { selectedCamera } = useContext(CameraContext);
   const [liveStreamUrl, setLiveStreamUrl] = useState(null);
-  const [cameraDetails, setCameraDetails] = useState(null);
+  const [CameraDetails, setCameraDetails] = useState(null);
   const [cameraMappedData, setCameraMappedData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // New state hooks for liveFeedResponse and cameraResponse
   const [liveFeedResponse, setLiveFeedResponse] = useState(null);
   const [cameraResponse, setCameraResponse] = useState(null);
 
@@ -41,7 +47,9 @@ const LiveFeedPage = () => {
         });
         setCameraResponse(cameraResponse.data);
         setCameraDetails(cameraResponse.data);
-        
+
+        console.log("Camera Response Data:", cameraResponse.data);
+
         const mappedData = transformArray(cameraResponse.data, 'image_cam');
         setCameraMappedData(mappedData);
 
@@ -88,6 +96,7 @@ const LiveFeedPage = () => {
                   <h3>
                     Selected Camera: {selectedCamera.name || "Camera-1"}
                   </h3>
+                 
                 </div>
               )}
             </div>
