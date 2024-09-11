@@ -7,32 +7,52 @@ import ButtonBox from "../buttonsall/buttons";
 import CameraContext from "../cameraall/cameracontext";
 import "./livefeed.css";
 
+const transformArray = (arr, key) => Object.fromEntries(arr.map(obj => [obj[key], obj]));
+
 const LiveFeedPage = () => {
   const { selectedCamera } = useContext(CameraContext);
   const [liveStreamUrl, setLiveStreamUrl] = useState(null);
+  const [cameraDetails, setCameraDetails] = useState(null);
+  const [cameraMappedData, setCameraMappedData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // New state hooks for liveFeedResponse and cameraResponse
+  const [liveFeedResponse, setLiveFeedResponse] = useState(null);
+  const [cameraResponse, setCameraResponse] = useState(null);
+
   useEffect(() => {
-    const fetchLiveFeed = async () => {
+    const fetchLiveFeedAndCameraDetails = async () => {
       try {
-        const response = await axios.get('http://192.168.0.2:9001/hubapi/v1/livefeed/fetch-livefeed', {
+        const liveFeedResponse = await axios.get('http://192.168.0.2:9001/hubapi/v1/livefeed/fetch-livefeed', {
           headers: {
             'accept': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVhZ2xhaSIsImV4cCI6MTc0Mzk2MDk2MSwic3ViIjoiYjk3ZDI2MzgtYWY4MS00MmI1LThmNGMtMTk1YjkxMzI5MWY1In0.VKpcF7b5SHpfY0xiQBAkRcd7v6HVH-7UpYPeGE4JEWk'
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVhZ2xhaSIsImV4cCI6MTc0NDAzMzA3OSwic3ViIjoiMmNiMGFhODEtYTIzMy00ZjhhLWI1MzMtMmYzNmRkODA0OTZkIn0.TzGbHYrm6nVu5nOHSaNqcQk9rpc0I5tJTWy9Vick2EI'
           }
         });
+        setLiveFeedResponse(liveFeedResponse.data);
+        setLiveStreamUrl(liveFeedResponse.data.liveStreamUrl);
 
-       
-        setLiveStreamUrl(response.data.liveStreamUrl);
+        const cameraResponse = await axios.get('http://192.168.0.2:9001/hubapi/v1/camera/get_names', {
+          headers: {
+            'accept': 'application/json',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVhZ2xhaSIsImV4cCI6MTc0NDAzMzA3OSwic3ViIjoiMmNiMGFhODEtYTIzMy00ZjhhLWI1MzMtMmYzNmRkODA0OTZkIn0.TzGbHYrm6nVu5nOHSaNqcQk9rpc0I5tJTWy9Vick2EI'
+          }
+        });
+        setCameraResponse(cameraResponse.data);
+        setCameraDetails(cameraResponse.data);
+        
+        const mappedData = transformArray(cameraResponse.data, 'image_cam');
+        setCameraMappedData(mappedData);
+
         setLoading(false);
       } catch (error) {
-        setError("Failed to load live feed");
+        setError("Failed to load live feed or camera details");
         setLoading(false);
       }
     };
 
-    fetchLiveFeed();
+    fetchLiveFeedAndCameraDetails();
   }, []);
 
   const sessionName = selectedCamera?.sessionName || "dummy";
@@ -48,9 +68,9 @@ const LiveFeedPage = () => {
             <h2 className="section-title">Live Feed</h2>
             <div className="video-stream">
               <div className="video-content">
-                {loading && <p>Loading live feed...</p>}
+                {loading && <p>Loading live feed and camera details...</p>}
                 {error && <p>{error}</p>}
-                {!loading && liveStreamUrl && (
+                {!loading && liveFeedResponse && (
                   <img
                     src={liveStreamUrl}
                     alt={selectedCamera?.name || "Live Feed"}
@@ -59,22 +79,20 @@ const LiveFeedPage = () => {
                 {!loading && !liveStreamUrl && !error && (
                   <p>Select a camera to view the live feed.</p>
                 )}
-                {selectedCamera && (
+                {selectedCamera && cameraResponse && (
                   <img src={imageUrl} alt={selectedCamera?.name || "Selected Camera Image"} />
                 )}
               </div>
-              {selectedCamera && (
+              {selectedCamera && cameraMappedData && (
                 <div className="camera-info">
                   <h3>
                     Selected Camera: {selectedCamera.name || "Camera-1"}
                   </h3>
-                  <p>Camera ID: {selectedCamera.id}</p>
                 </div>
               )}
             </div>
           </div>
           <div className="camera-list-section">
-            <h2 className="section-title"></h2>
             <CameraList />
           </div>
         </div>
