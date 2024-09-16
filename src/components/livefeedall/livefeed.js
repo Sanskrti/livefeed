@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from 'axios';
+import axios from "axios";
 import EventList from "../eventall/eventlist";
 import Header from "../headerall/header";
 import ButtonBox from "../buttonsall/buttons";
@@ -7,28 +7,46 @@ import CameraContext from "../cameraall/cameracontext";
 import "./livefeed.css";
 
 const LiveFeedPage = () => {
-  const { selectedCamera, setSelectedCamera } = useContext(CameraContext); 
+  const { selectedCamera, setSelectedCamera } = useContext(CameraContext);
   const [liveStreamUrl, setLiveStreamUrl] = useState(null);
   const [cameraDetails, setCameraDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [batchData, setBatchData] = useState([]);
+  const [imageURL, setImageURL] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [liveFeedResponse, cameraResponse] = await Promise.all([
-          axios.get('http://192.168.0.2:9001/hubapi/v1/livefeed/fetch-livefeed', {
-            headers: { 'accept': 'application/json',  'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVhZ2xhaSIsImV4cCI6MTc0NDAzMzA3OSwic3ViIjoiMmNiMGFhODEtYTIzMy00ZjhhLWI1MzMtMmYzNmRkODA0OTZkIn0.TzGbHYrm6nVu5nOHSaNqcQk9rpc0I5tJTWy9Vick2EI'
-            }
-          }),
-          axios.get('http://192.168.0.2:9001/hubapi/v1/camera/get_names', {
-            headers: { 'accept': 'application/json', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVhZ2xhaSIsImV4cCI6MTc0NDAzMzA3OSwic3ViIjoiMmNiMGFhODEtYTIzMy00ZjhhLWI1MzMtMmYzNmRkODA0OTZkIn0.TzGbHYrm6nVu5nOHSaNqcQk9rpc0I5tJTWy9Vick2EI'
+       
+        const liveFeedResponse = await axios.get(
+          "http://192.168.0.2:9001/hubapi/v1/livefeed/fetch-livefeed",
+          {
+            headers: {
+              accept: "application/json",
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVhZ2xhaSIsImV4cCI6MTc0NDAzMzA3OSwic3ViIjoiMmNiMGFhODEtYTIzMy00ZjhhLWI1MzMtMmYzNmRkODA0OTZkIn0.TzGbHYrm6nVu5nOHSaNqcQk9rpc0I5tJTWy9Vick2EI",
+            },
           }
-          })
-        ]);
+        );
 
         setLiveStreamUrl(liveFeedResponse.data.liveStreamUrl);
-        setCameraDetails(cameraResponse.data.data); 
+        setBatchData(liveFeedResponse.data.data.batch_jobs);
+
+        
+        const cameraResponse = await axios.get(
+          "http://192.168.0.2:9001/hubapi/v1/camera/get_names",
+          {
+            headers: {
+              accept: "application/json",
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVhZ2xhaSIsImV4cCI6MTc0NDAzMzA3OSwic3ViIjoiMmNiMGFhODEtYTIzMy00ZjhhLWI1MzMtMmYzNmRkODA0OTZkIn0.TzGbHYrm6nVu5nOHSaNqcQk9rpc0I5tJTWy9Vick2EI",
+            },
+          }
+        );
+
+      
+        setCameraDetails(cameraResponse.data.data);
       } catch (error) {
         setError("Failed to load live feed or camera details");
       } finally {
@@ -39,13 +57,13 @@ const LiveFeedPage = () => {
     fetchData();
   }, []);
 
-  const sessionName = selectedCamera?.sessionName || "dummy";
-  const imageName = selectedCamera?.imageName || "1461";
-  const imageUrl = `http://192.168.0.2:9001/serving-static-files-for-download/res/${sessionName}/${imageName}.jpg`;
-
   const handleCameraClick = (camera) => {
-    setSelectedCamera(camera);
+    let data = findObjectByKey(batchData, "image_cam", camera);
+    setSelectedCamera(data);
   };
+
+  const findObjectByKey = (array, key, value) =>
+    array.find((item) => item[key] === value);
 
   return (
     <div>
@@ -57,11 +75,17 @@ const LiveFeedPage = () => {
             {loading && <p>Loading live feed and camera details...</p>}
             {error && <p>{error}</p>}
             {liveStreamUrl && (
-              <img src={liveStreamUrl} alt={selectedCamera?.name || "Live Feed"} />
+              <img
+                src={liveStreamUrl}
+                alt={selectedCamera?.image_cam || "Live Feed"}
+              />
             )}
             {selectedCamera && (
               <>
-                <img src={imageUrl} alt={selectedCamera.name || "Selected Camera Image"} />
+                <img
+                  src={`http://192.168.0.2:9001/serving-static-files-for-download/res/${selectedCamera.session_name}/${selectedCamera.image_name}.jpg`}
+                  alt={selectedCamera.image_cam || "Selected Camera Image"}
+                />
                 <div className="camera-info">
                   <h3>Selected Camera: {selectedCamera.name || "Camera-1"}</h3>
                 </div>
@@ -73,11 +97,11 @@ const LiveFeedPage = () => {
             <h2>Camera List</h2>
             {cameraDetails.length > 0 ? (
               cameraDetails.map((camera, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="camera-item"
-                  onClick={() => handleCameraClick(camera)} 
-                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleCameraClick(camera)}
+                  style={{ cursor: "pointer" }}
                 >
                   <h3>{camera}</h3>
                 </div>
