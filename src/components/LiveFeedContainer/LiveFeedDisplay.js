@@ -20,7 +20,7 @@ const LiveFeedPage = () => {
     const fetchData = async () => {
       try {
        
-        const liveFeedResponse = await axios.get(
+        const liveFeedResponse = axios.get(
           "http://192.168.0.2:9001/hubapi/v1/livefeed/fetch-livefeed",
           {
             headers: {
@@ -35,7 +35,7 @@ const LiveFeedPage = () => {
         setBatchData(liveFeedResponse.data.data.batch_jobs);
 
         
-        const cameraResponse = await axios.get(
+        const cameraResponse =  axios.get(
           "http://192.168.0.2:9001/hubapi/v1/camera/get_names",
           {
             headers: {
