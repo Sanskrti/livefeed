@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
-import CameraContext from './CameraContext';
-import './CameraListDisplay.scss';
+import React, { useContext } from "react";
+import { LiveFeedContext } from "../LiveFeedContainer/LiveFeedDisplay";
+import "./CameraListDisplay.scss";
 
 const CameraListDisplay = () => {
-  const { setSelectedCamera } = useContext(CameraContext); 
+  const { setSelectedCamera } = useContext(LiveFeedContext);
 
   const handleCameraClick = (camera) => {
     setSelectedCamera(camera);
@@ -11,9 +11,12 @@ const CameraListDisplay = () => {
 
   return (
     <div>
-      <button onClick={() => handleCameraClick('Camera1')}>Select Camera 1</button>
+      <button onClick={() => handleCameraClick("Camera1")}>
+        Select Camera 1
+      </button>
     </div>
   );
 };
 
 export default CameraListDisplay;
+ 
