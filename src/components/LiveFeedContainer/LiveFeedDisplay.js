@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import EventList from "../eventall/eventlist";
-import Header from "../headerall/header";
-import ButtonBox from "../buttonsall/buttons";
-import CameraContext from "../cameraall/cameracontext";
-import "./LiveFeed.scss";
+import EventList from "../EventContainer/EventsDisplay";
+import Header from "../HeaderContainer/HeaderDisplay";
+import ButtonBox from "../ButtonContainer/ButtonDisplay";
+import CameraContext from "../CameraContainer/CameraContext";
+import "./LiveFeedStyling.scss";
 
 const LiveFeedPage = () => {
   const { selectedCamera, setSelectedCamera } = useContext(CameraContext);

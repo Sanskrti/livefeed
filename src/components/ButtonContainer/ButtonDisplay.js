@@ -1,5 +1,5 @@
 import React from 'react';
-import './button.scss';
+import './ButtonStyling.scss';
 
 const ButtonBox = () => {
   return (

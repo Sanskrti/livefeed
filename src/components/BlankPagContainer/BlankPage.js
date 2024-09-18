@@ -1,5 +1,5 @@
 import React from 'react';
-import './blank.scss'; 
+import './BlankPageStyling.scss'; 
 
 const BlankPage = ({ page }) => (
   <div className="blank-page">{page}</div>

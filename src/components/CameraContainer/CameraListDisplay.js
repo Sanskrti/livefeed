@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import CameraContext from "./cameracontext";
+import CameraContext from "./CameraContext";
+// import "./CameraStyling.scss";
 
 const CameraList = ({ cameras, onCameraSelect }) => {
   return (

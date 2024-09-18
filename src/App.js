@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import "./App.css";
 import "@fortawesome/fontawesome-free/js/all.min.js";
-import LiveFeedPage from "./components/LiveFeedDisplay/LiveFeedDisplay";
-import Sidebar from "./components/sidebarall/sidebar";
-import CameraContext from "./components/cameraall/cameracontext";
+import LiveFeedPage from "./components/LiveFeedContainer/LiveFeedDisplay";
+import Sidebar from "./components/SideBarContainer/SideBarDisplay";
+import CameraContext from "./components/CameraContainer/CameraContext";
 
 
 const App = () => {
@@ -23,7 +23,7 @@ const events = [];
   };
 
   return (
-    
+
     <CameraContext.Provider value={{ selectedCamera, setSelectedCamera }}>
       <Router>
         <div className="App">

@@ -1,5 +1,5 @@
 import React from 'react';
-import './event.scss';
+import './EventStyling.scss';
 const EventList = () => {
   const events = [
     { id: 1, title: 'Event 1', className: 'event-card-1', image: 'cam1.jpg' },
