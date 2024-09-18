@@ -1,0 +1,55 @@
+
+$padding: 10px;
+$border-radius: 5px;
+$box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+$background-color: #fff;
+$img-height: 400px;
+$width-primary: 80%;
+$width-secondary: 20%;
+
+
+.content-container {
+  padding: $padding;
+  width: 98%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: $width-primary $width-secondary;
+}
+
+
+.live-feed-page {
+  display: grid;
+  grid-template-rows: 50% 50%;
+  height: 90vh;
+  overflow: hidden;
+}
+
+
+.live-feed-section {
+  flex: 2;
+  background-color: $background-color;
+  padding: 2px;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  width: 100%;
+
+  img {
+    width: 100%;
+    height: $img-height;
+    border-radius: $border-radius;
+  }
+}
+
+
+.camera-list-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+
+.event-list-container {
+  display: grid;
+  grid-template-columns: $width-primary $width-secondary;
+}

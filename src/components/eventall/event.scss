@@ -1,0 +1,73 @@
+
+$border-color: #ddd;
+$background-color: #fff;
+$box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+$font-size-small: 12px;
+$text-color-primary: #333;
+$text-color-secondary: #666;
+$event-item-width: 165px;
+$event-item-height: 150px;
+$event-image-height: 160px;
+
+
+.event-list-section {
+  width: 100%;
+  height: 100%;
+  margin-top: 40px;
+}
+
+
+.event-list {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 50px;
+  padding-left: 10px;
+  margin-top: 140px;
+  height: 100%;
+  overflow-x: auto;
+}
+
+
+.event-item {
+  background: $background-color;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  flex: 0 0 $event-item-width;
+  height: $event-item-height;
+  width: $event-item-width;
+  box-shadow: $box-shadow;
+  overflow: hidden;
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+.event-image {
+  width: 100%;
+  height: $event-image-height;
+  background-size: cover;
+  background-position: center;
+  border-bottom: 1px solid $border-color;
+}
+
+
+.event-item h3 {
+  margin: 5px 0 0 0;
+  padding: 0 5px;
+  font-size: $font-size-small;
+  text-align: center;
+  color: $text-color-primary;
+}
+
+
+.event-item p {
+  margin: 0;
+  padding: 0 5px 8px 5px;
+  font-size: $font-size-small;
+  text-align: center;
+  color: $text-color-secondary;
+}

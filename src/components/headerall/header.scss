@@ -1,0 +1,20 @@
+
+$background-color-header: #fff;
+$text-color-header: #333;
+$padding-header: 2px;
+$font-size-header: 12px;
+$font-weight-header: bold;
+$border-color-header: #ddd;
+$height-header: 100vh;
+
+
+.header {
+  background-color: $background-color-header;
+  color: $text-color-header;
+  padding: $padding-header;
+  text-align: left;
+  font-size: $font-size-header;
+  font-weight: $font-weight-header;
+  border-bottom: 1px solid $border-color-header;
+  height: $height-header;
+}

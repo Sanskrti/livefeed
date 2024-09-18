@@ -4,7 +4,7 @@ import EventList from "../eventall/eventlist";
 import Header from "../headerall/header";
 import ButtonBox from "../buttonsall/buttons";
 import CameraContext from "../cameraall/cameracontext";
-import "./livefeed.css";
+import "./LiveFeed.scss";
 
 const LiveFeedPage = () => {
   const { selectedCamera, setSelectedCamera } = useContext(CameraContext);
@@ -14,6 +14,7 @@ const LiveFeedPage = () => {
   const [error, setError] = useState(null);
   const [batchData, setBatchData] = useState([]);
   const [imageURL, setImageURL] = useState("");
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,6 +62,7 @@ const LiveFeedPage = () => {
     let data = findObjectByKey(batchData, "image_cam", camera);
     setSelectedCamera(data);
   };
+
 
   const findObjectByKey = (array, key, value) =>
     array.find((item) => item[key] === value);

@@ -75,6 +75,7 @@ const Camera = () => {
   return (
     <div className="camera-container">
       <h2>Camera List</h2>
+      
       {loading && <p>Loading cameras...</p>}
       {error && <p>{error}</p>}
       {!loading && !error && cameras.length === 0 && (

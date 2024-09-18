@@ -1,0 +1,45 @@
+
+$border-color-light: #ccc;
+$border-color-secondary: #ddd;
+$background-color-hover: #f0f0f0;
+$background-color-selected: #e0e0e0;
+$padding: 10px;
+$padding-item: 8px;
+$margin-item: 5px;
+$font-size-heading: 1.2rem;
+$font-weight-bold: bold;
+
+
+.camera-list-container {
+  border: 1px solid $border-color-light;
+  padding: $padding;
+}
+
+.camera-list-heading {
+  font-size: $font-size-heading;
+  margin-bottom: 10px;
+}
+
+
+.camera-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+.camera-item {
+  padding: $padding-item;
+  margin: $margin-item 0;
+  border: 1px solid $border-color-secondary;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $background-color-hover;
+  }
+
+  &.selected {
+    background-color: $background-color-selected;
+    font-weight: $font-weight-bold;
+  }
+}
