@@ -1,8 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faCamera, faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import '@fortawesome/fontawesome-free/css/all.min.css'; 
 import './SideBarStyling.scss';
 
 function Sidebar() {
@@ -11,31 +8,31 @@ function Sidebar() {
       <ul>
         <li>
           <Link to="/">
-            <FontAwesomeIcon icon={faHome} /> <span>Dashboard</span>
+            <span>Dashboard</span>
           </Link>
         </li>
         <li>
           <Link to="/live-feed">
-            <FontAwesomeIcon icon={faCamera} /> <span>Live Feed</span>
+            <span>Live Feed</span>
           </Link>
         </li>
         <li>
           <Link to="/admin-panel">
-            <FontAwesomeIcon icon={faCog} /> <span>Admin Panel</span>
+            <span>Admin Panel</span>
           </Link>
         </li>
         <li>
           <Link to="/configuration">
-            <FontAwesomeIcon icon={faCog} /> <span>Configuration</span>
+            <span>Configuration</span>
           </Link>
         </li>
       </ul>
       <div className="settings">
         <p>
-          <FontAwesomeIcon icon={faCog} /> <span>Settings</span>
+          <span>Settings</span>
         </p>
         <p>
-          <FontAwesomeIcon icon={faSignOutAlt} /> <span>Logout</span>
+          <span>Logout</span>
         </p>
       </div>
     </div>

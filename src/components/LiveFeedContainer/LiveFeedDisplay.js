@@ -1,31 +1,25 @@
-import React, { useState, useEffect, useContext, createContext } from "react";
-import {
-  apiClient,
-  liveFeedEndpoint,
-  cameraNamesEndpoint,
-} from "../../api/apiclient";
-// import { apiClient } from '../../api/apiclient';
+import React, { useState, useEffect, createContext } from "react";
+import { apiClient, liveFeedEndpoint, cameraNamesEndpoint } from "../../api/apiclient";
 import EventList from "../EventContainer/EventsDisplay";
 import Header from "../HeaderContainer/HeaderDisplay";
 import ButtonBox from "../ButtonContainer/ButtonDisplay";
+import CameraListDisplay from "../CameraContainer/CameraListDisplay";
 import "./LiveFeedStyling.scss";
-import SideBarContainer from "../SideBarContainer/SideBarDisplay";
+import SideBarDisplay from "../SideBarContainer/SideBarDisplay";
 
 export const LiveFeedContext = createContext();
 
 const LiveFeedPage = () => {
-  // const { selectedCamera, setSelectedCamera } = useContext(CameraContext);
   const [liveStreamUrl, setLiveStreamUrl] = useState(null);
   const [cameraDetails, setCameraDetails] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [batchData, setBatchData] = useState([]);
-  const [selectedCamera, setSelectedCamera] = useState([]);
+  const [selectedCamera, setSelectedCamera] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-
       try {
         const liveFeedResponse = await apiClient.get(liveFeedEndpoint);
         setLiveStreamUrl(liveFeedResponse.data.liveStreamUrl);
@@ -38,11 +32,7 @@ const LiveFeedPage = () => {
         const cameraResponse = await apiClient.get(cameraNamesEndpoint);
         setCameraDetails(cameraResponse.data.data);
       } catch (error) {
-        setError((prevError) =>
-          prevError
-            ? `${prevError}. Failed to load camera details`
-            : "Failed to load camera details",
-        );
+        setError((prevError) => `${prevError}. Failed to load camera details`);
       } finally {
         setLoading(false);
       }
@@ -62,10 +52,7 @@ const LiveFeedPage = () => {
               {loading && <p>Loading live feed and camera details...</p>}
               {error && <p>{error}</p>}
               {liveStreamUrl && (
-                <img
-                  src={liveStreamUrl}
-                  alt={selectedCamera?.image_cam || "Live Feed"}
-                />
+                <img src={liveStreamUrl} alt={selectedCamera?.image_cam || "Live Feed"} />
               )}
               {selectedCamera && (
                 <>
@@ -74,33 +61,13 @@ const LiveFeedPage = () => {
                     alt={selectedCamera.image_cam || "Selected Camera Image"}
                   />
                   <div className="camera-info">
-                    <h3>
-                      Selected Camera: {selectedCamera.name || "Camera-1"}
-                    </h3>
+                    <h3>Selected Camera: {selectedCamera.name || "Camera-1"}</h3>
                   </div>
                 </>
               )}
             </div>
-
-            <div className="camera-list-section">
-              <h2>Camera List</h2>
-              {cameraDetails.length > 0 ? (
-                cameraDetails.map((camera, index) => (
-                  <div
-                    key={index}
-                    className="camera-item"
-                    onClick={() => setSelectedCamera(camera)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <h3>{camera}</h3>
-                  </div>
-                ))
-              ) : (
-                <p>No cameras available</p>
-              )}
-            </div>
+            <CameraListDisplay cameraDetails={cameraDetails} />
           </div>
-
           <div className="event-list-container">
             <EventList />
             <ButtonBox />
@@ -112,4 +79,3 @@ const LiveFeedPage = () => {
 };
 
 export default LiveFeedPage;
- 

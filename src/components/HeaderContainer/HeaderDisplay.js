@@ -1,13 +1,12 @@
-import React from 'react';
+import React from "react";
+import "./HeaderStyling.scss";
 
-const Header = () => (
-  <div className="header">
-    <nav className="navbar">
-      <ul>
-       
-      </ul>
-    </nav>
-  </div>
-);
+const Header = () => {
+  return (
+    <header>
+      <h1>Live Feed Application</h1>
+    </header>
+  );
+};
 
 export default Header;

@@ -1,22 +1,29 @@
 import React, { useContext } from "react";
 import { LiveFeedContext } from "../LiveFeedContainer/LiveFeedDisplay";
-import "./CameraListDisplay.scss";
+import "./CameraStyling.scss";
 
-const CameraListDisplay = () => {
+const CameraListDisplay = ({ cameraDetails }) => {
   const { setSelectedCamera } = useContext(LiveFeedContext);
 
-  const handleCameraClick = (camera) => {
-    setSelectedCamera(camera);
-  };
-
   return (
-    <div>
-      <button onClick={() => handleCameraClick("Camera1")}>
-        Select Camera 1
-      </button>
+    <div className="camera-list-section">
+      <h2>Camera List</h2>
+      {cameraDetails.length > 0 ? (
+        cameraDetails.map((camera, index) => (
+          <div
+            key={index}
+            className="camera-item"
+            onClick={() => setSelectedCamera(camera)}
+            style={{ cursor: "pointer" }}
+          >
+            <h3>{camera}</h3>
+          </div>
+        ))
+      ) : (
+        <p>No cameras available</p>
+      )}
     </div>
   );
 };
 
 export default CameraListDisplay;
- 
