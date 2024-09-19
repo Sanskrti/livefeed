@@ -1,13 +1,16 @@
 import React, { useState, useEffect, createContext } from "react";
-import { apiClient, liveFeedEndpoint, cameraNamesEndpoint } from "../../api/apiclient";
 import EventList from "../EventContainer/EventsDisplay";
 import Header from "../HeaderContainer/HeaderDisplay";
 import ButtonBox from "../ButtonContainer/ButtonDisplay";
 import CameraListDisplay from "../CameraContainer/CameraListDisplay";
 import "./LiveFeedStyling.scss";
 import SideBarDisplay from "../SideBarContainer/SideBarDisplay";
+import { apiClient } from "../../api/apiClient";
+import filterArrayByKeyValue from "../../utils/FilterArrayByKeyValue";
 
 export const LiveFeedContext = createContext();
+const liveFeedEndpoint = process.env.REACT_APP_LIVE_FEED_ENDPOINT;
+const cameraNamesEndpoint = process.env.REACT_APP_CAMERA_NAMES_ENDPOINT;
 
 const LiveFeedPage = () => {
   const [liveStreamUrl, setLiveStreamUrl] = useState(null);
@@ -24,15 +27,11 @@ const LiveFeedPage = () => {
         const liveFeedResponse = await apiClient.get(liveFeedEndpoint);
         setLiveStreamUrl(liveFeedResponse.data.liveStreamUrl);
         setBatchData(liveFeedResponse.data.data.batch_jobs);
-      } catch (error) {
-        setError("Failed to load live feed");
-      }
 
-      try {
         const cameraResponse = await apiClient.get(cameraNamesEndpoint);
         setCameraDetails(cameraResponse.data.data);
       } catch (error) {
-        setError((prevError) => `${prevError}. Failed to load camera details`);
+        setError("Failed to load live feed or camera details");
       } finally {
         setLoading(false);
       }
@@ -40,6 +39,18 @@ const LiveFeedPage = () => {
 
     fetchData();
   }, []);
+
+  // Base URL for images from environment variable
+  const baseImageUrl = process.env.REACT_APP_BASE_IMAGE_URL;
+
+  // Function to filter batch data
+  const getFilteredBatchData = () => {
+    if (!selectedCamera) return [];
+    return filterArrayByKeyValue(batchData, 'session_name', selectedCamera.session_name)
+      .filter(item => item.image_name === selectedCamera.image_name);
+  };
+
+  const filteredBatchData = getFilteredBatchData();
 
   return (
     <LiveFeedContext.Provider value={{ selectedCamera, setSelectedCamera }}>
@@ -57,11 +68,11 @@ const LiveFeedPage = () => {
               {selectedCamera && (
                 <>
                   <img
-                    src={`http://192.168.0.2:9001/serving-static-files-for-download/res/${selectedCamera.session_name}/${selectedCamera.image_name}.jpg`}
+                    src={`${baseImageUrl}/${selectedCamera.session_name}/${selectedCamera.image_name}.jpg`}
                     alt={selectedCamera.image_cam || "Selected Camera Image"}
                   />
                   <div className="camera-info">
-                    <h3>Selected Camera: {selectedCamera.name || "Camera-1"}</h3>
+                    <h3>Selected Camera: {selectedCamera.image_cam}</h3>
                   </div>
                 </>
               )}
@@ -69,7 +80,7 @@ const LiveFeedPage = () => {
             <CameraListDisplay cameraDetails={cameraDetails} />
           </div>
           <div className="event-list-container">
-            <EventList />
+            <EventList batchData={filteredBatchData} />
             <ButtonBox />
           </div>
         </div>
