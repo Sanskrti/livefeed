@@ -4,13 +4,10 @@ import Header from "../HeaderContainer/HeaderDisplay";
 import ButtonBox from "../ButtonContainer/ButtonDisplay";
 import CameraListDisplay from "../CameraContainer/CameraListDisplay";
 import "./LiveFeedStyling.scss";
-import SideBarDisplay from "../SideBarContainer/SideBarDisplay";
-import { apiClient } from "../../api/apiClient";
+import { apiClient,cameraFetchEndpoint } from "../../api/apiClient";
 import filterArrayByKeyValue from "../../utils/FilterArrayByKeyValue";
 
 export const LiveFeedContext = createContext();
-const liveFeedEndpoint = process.env.REACT_APP_LIVE_FEED_ENDPOINT;
-const cameraNamesEndpoint = process.env.REACT_APP_CAMERA_NAMES_ENDPOINT;
 
 const LiveFeedPage = () => {
   const [liveStreamUrl, setLiveStreamUrl] = useState(null);
@@ -20,16 +17,39 @@ const LiveFeedPage = () => {
   const [batchData, setBatchData] = useState([]);
   const [selectedCamera, setSelectedCamera] = useState(null);
 
+  const baseImageUrl = process.env.REACT_APP_BASE_IMAGE_URL;
+  
+  const fetchLiveFeedData = async () => {
+    try {
+      const response = await apiClient.get("/livefeed/fetch-livefeed");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching live feed data:", error);
+      throw new Error("Error fetching live feed data");
+    }
+  };
+
+
+  const fetchCameraNames = async () => {
+    try {
+      const response = await apiClient.get(cameraFetchEndpoint);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching camera names:", error);
+      throw new Error("Error fetching camera names");
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const liveFeedResponse = await apiClient.get(liveFeedEndpoint);
-        setLiveStreamUrl(liveFeedResponse.data.liveStreamUrl);
-        setBatchData(liveFeedResponse.data.data.batch_jobs);
+        const liveFeedResponse = await fetchLiveFeedData();
+        setLiveStreamUrl(liveFeedResponse.liveStreamUrl);
+        setBatchData(liveFeedResponse.data.batch_jobs);
 
-        const cameraResponse = await apiClient.get(cameraNamesEndpoint);
-        setCameraDetails(cameraResponse.data.data);
+        const cameraResponse = await fetchCameraNames();
+        setCameraDetails(cameraResponse.data);
       } catch (error) {
         setError("Failed to load live feed or camera details");
       } finally {
@@ -40,17 +60,7 @@ const LiveFeedPage = () => {
     fetchData();
   }, []);
 
-  // Base URL for images from environment variable
-  const baseImageUrl = process.env.REACT_APP_BASE_IMAGE_URL;
-
-  // Function to filter batch data
-  const getFilteredBatchData = () => {
-    if (!selectedCamera) return [];
-    return filterArrayByKeyValue(batchData, 'session_name', selectedCamera.session_name)
-      .filter(item => item.image_name === selectedCamera.image_name);
-  };
-
-  const filteredBatchData = getFilteredBatchData();
+  const filteredBatchData = filterArrayByKeyValue(batchData, "image_cam", selectedCamera)[0];
 
   return (
     <LiveFeedContext.Provider value={{ selectedCamera, setSelectedCamera }}>
@@ -63,16 +73,16 @@ const LiveFeedPage = () => {
               {loading && <p>Loading live feed and camera details...</p>}
               {error && <p>{error}</p>}
               {liveStreamUrl && (
-                <img src={liveStreamUrl} alt={selectedCamera?.image_cam || "Live Feed"} />
+                <img src={liveStreamUrl} alt={filteredBatchData?.image_cam || "Live Feed"} />
               )}
-              {selectedCamera && (
+              {filteredBatchData && (
                 <>
                   <img
-                    src={`${baseImageUrl}/${selectedCamera.session_name}/${selectedCamera.image_name}.jpg`}
-                    alt={selectedCamera.image_cam || "Selected Camera Image"}
+                    src={`${baseImageUrl}/${filteredBatchData.session_name}/${filteredBatchData.image_name}.jpg`}
+                    alt={filteredBatchData.image_cam || "Selected Camera Image"}
                   />
                   <div className="camera-info">
-                    <h3>Selected Camera: {selectedCamera.image_cam}</h3>
+                    <h3>Selected Camera: {filteredBatchData.image_cam}</h3>
                   </div>
                 </>
               )}
