@@ -12,7 +12,7 @@ const events = [
 const EventList = () => {
   return (
     <div className="event-list-section">
-      <h3 className="section-title">Events</h3>
+      <h3 className="section-title"></h3>
       <div className="event-list">
         {events.map((event) => (
           <div key={event.id} className={`event-item ${event.className}`}>

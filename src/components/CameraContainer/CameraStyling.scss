@@ -3,8 +3,8 @@ $border-color-light: #ccc;
 $border-color-secondary: #ddd;
 $background-color-hover: #f0f0f0;
 $background-color-selected: #e0e0e0;
-$padding: 10px;
-$padding-item: 8px;
+$padding: 2px;
+$padding-item: 4px;
 $margin-item: 5px;
 $font-size-heading: 1.2rem;
 $font-weight-bold: bold;
@@ -17,14 +17,14 @@ $font-weight-bold: bold;
 
 .camera-list-heading {
   font-size: $font-size-heading;
-  margin-bottom: 10px;
+  margin-bottom: 3px;
 }
 
 
 .camera-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 10px;
 }
 
 
@@ -33,6 +33,7 @@ $font-weight-bold: bold;
   margin: $margin-item 0;
   border: 1px solid $border-color-secondary;
   cursor: pointer;
+  height: 30px;
 
   &:hover {
     background-color: $background-color-hover;

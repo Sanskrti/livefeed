@@ -16,7 +16,7 @@ const CameraListDisplay = ({ cameraDetails }) => {
             onClick={() => setSelectedCamera(camera)}
             style={{ cursor: "pointer" }}
           >
-            <h3>{camera}</h3>
+            <h4>{camera}</h4>
           </div>
         ))
       ) : (

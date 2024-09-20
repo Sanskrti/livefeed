@@ -1,8 +1,7 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { BrowserRouter as Router, Link } from "react-router-dom";
 import "./App.css";
-import LiveFeedPage from "./components/LiveFeedContainer/LiveFeedDisplay";
-
+import AppRoutes from "./Routes/Routes";
 
 const App = () => {
   return (
@@ -22,12 +21,7 @@ const App = () => {
         </div>
         <div className="main-content">
           <div className="header">
-            <Routes>
-              <Route path="/" element={<div>Dashboard</div>} />
-              <Route path="/live-feed" element={<LiveFeedPage />} />
-              <Route path="/admin-panel" element={<div className="blank-page">Admin Panel</div>} />
-              <Route path="/configuration" element={<div className="blank-page">Configuration</div>} />
-            </Routes>
+            <AppRoutes />
           </div>
         </div>
       </div>

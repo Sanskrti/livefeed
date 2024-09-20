@@ -3,7 +3,7 @@ $padding: 10px;
 $border-radius: 5px;
 $box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 $background-color: #fff;
-$img-height: 400px;
+$img-height: 300px;
 $width-primary: 80%;
 $width-secondary: 20%;
 
@@ -11,7 +11,7 @@ $width-secondary: 20%;
 .content-container {
   padding: $padding;
   width: 98%;
-  height: 100%;
+  height: 80%;
   display: grid;
   grid-template-columns: $width-primary $width-secondary;
 }
@@ -44,8 +44,9 @@ $width-secondary: 20%;
 .camera-list-section {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
   width: 100%;
+  height: 60%;
 }
 
 

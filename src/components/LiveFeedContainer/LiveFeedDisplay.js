@@ -4,8 +4,9 @@ import Header from "../HeaderContainer/HeaderDisplay";
 import ButtonBox from "../ButtonContainer/ButtonDisplay";
 import CameraListDisplay from "../CameraContainer/CameraListDisplay";
 import "./LiveFeedStyling.scss";
-import { apiClient,cameraFetchEndpoint } from "../../api/apiClient";
+import { apiClient, liveFeedEndpoint, cameraFetchEndpoint } from "../../api/apiClient";
 import filterArrayByKeyValue from "../../utils/FilterArrayByKeyValue";
+import SideBarDisplay from "../SideBarContainer/SideBarDisplay";
 
 export const LiveFeedContext = createContext();
 
@@ -17,18 +18,16 @@ const LiveFeedPage = () => {
   const [batchData, setBatchData] = useState([]);
   const [selectedCamera, setSelectedCamera] = useState(null);
 
-  const baseImageUrl = process.env.REACT_APP_BASE_IMAGE_URL;
-  
+  const baseImageUrl = process.env.REACT_APP_BASE_IMAGE_URL ;  
   const fetchLiveFeedData = async () => {
     try {
-      const response = await apiClient.get("/livefeed/fetch-livefeed");
+      const response = await apiClient.get(liveFeedEndpoint);
       return response.data;
     } catch (error) {
       console.error("Error fetching live feed data:", error);
       throw new Error("Error fetching live feed data");
     }
   };
-
 
   const fetchCameraNames = async () => {
     try {
@@ -39,7 +38,10 @@ const LiveFeedPage = () => {
       throw new Error("Error fetching camera names");
     }
   };
-
+  console.log('Base URL:', process.env.REACT_APP_API_BASE_URL);
+  console.log('API Token:', process.env.REACT_APP_API_TOKEN);
+  console.log('Base Image URL:', process.env.REACT_APP_BASE_IMAGE_URL);
+  
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
