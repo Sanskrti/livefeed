@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Link } from "react-router-dom";
 import "./App.css";
 import AppRoutes from "./Routes/Routes";
 
+
 const App = () => {
   return (
     <Router>
@@ -11,7 +12,7 @@ const App = () => {
           <ul>
             <li><Link to="/">Dashboard</Link></li>
             <li><Link to="/live-feed">Live Feed</Link></li>
-            <li><Link to="/admin-panel">Admin Panel</Link></li>
+            <li><Link to="/admin-panel">UserManagement</Link></li>
             <li><Link to="/configuration">Configuration</Link></li>
           </ul>
           <div className="settings">
