@@ -9,7 +9,14 @@ const apiClient = axios.create({
 
 const liveFeedEndpoint ="livefeed/fetch-livefeed";
 const cameraFetchEndpoint ="camera/get_names";
+
+
 const userListEndpoint ='http://localhost:3000/api/users';
+const userDetailEndpoint = (id) => `http://localhost:3000/api/users/${id}`; 
+const createUserEndpoint = "http://localhost:3000/api/users";
+export const updateUserEndpoint = (id) => `http://localhost:3000/api/users/${id}`;
+export const deleteUserEndpoint = (id) => `http://localhost:3000/api/users/${id}`;
 
 
-export { apiClient , liveFeedEndpoint, cameraFetchEndpoint, userListEndpoint}
+
+export { apiClient , liveFeedEndpoint, cameraFetchEndpoint, userListEndpoint , userDetailEndpoint ,createUserEndpoint}

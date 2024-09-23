@@ -1,12 +1,12 @@
-.user-list-container {
+.user-management-container {
     margin: 20px auto;
     padding: 20px;
     max-width: 800px;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
-    
+    transition: box-shadow 0.3s;
+  
     &:hover {
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     }
@@ -14,56 +14,166 @@
     .user-list-title {
       font-size: 26px;
       font-weight: bold;
-      margin-bottom: 20px;
+      margin: 0 0 20px;
       color: #333;
       text-align: center;
       border-bottom: 2px solid #ff9900;
       padding-bottom: 10px;
     }
   
-    .user-list-table {
-      width: 100%;
-      border-collapse: collapse;
+    .user-list-section {
       margin-top: 20px;
   
-      th {
-        background-color:#ff9900;
-        color: white;
-        padding: 12px;
-        text-align: left;
-        font-size: 16px;
-        text-transform: uppercase;
-      }
+      .user-list-table {
+        width: 100%;
+        border-collapse: collapse;
   
-      td {
-        padding: 12px;
-        border: 1px solid #ddd;
-        font-size: 14px;
-        color: #333;
-      }
+        th {
+          background-color: #ff9900;
+          color: #fff;
+          padding: 12px;
+          text-align: left;
+          font-size: 16px;
+          text-transform: uppercase;
+        }
   
-      tr:nth-child(even) {
-        background-color: #f9f9f9;
-      }
+        td {
+          padding: 12px;
+          border: 1px solid #ddd;
+          font-size: 14px;
+          color: #333;
   
-      tr:hover {
-        background-color: #f1f1f1;
-        cursor: pointer;
+          &:nth-child(even) {
+            background-color: #f9f9f9;
+          }
+  
+          button {
+            padding: 8px 12px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+  
+            &.view-btn {
+              background-color: #4caf50;
+              color: #fff;
+  
+              &:hover {
+                background-color: #45a049;
+              }
+            }
+  
+            &.update-btn {
+              background-color: #2196f3;
+              color: #fff;
+              margin-left: 5px;
+  
+              &:hover {
+                background-color: #1976d2;
+              }
+            }
+  
+            &.delete-btn {
+              background-color: #f44336;
+              color: #fff;
+              margin-left: 5px;
+  
+              &:hover {
+                background-color: #d32f2f;
+              }
+            }
+          }
+        }
+  
+        tr {
+          &:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+          }
+        }
       }
     }
-  }
   
-  .loading {
-    text-align: center;
-    color: #777;
-    font-size: 18px;
-    margin-top: 30px;
-  }
+    .loading,
+    .error,
+    .success {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 30px;
   
-  .error {
-    text-align: center;
-    color: red;
-    font-size: 18px;
-    margin-top: 30px;
+      &.loading {
+        color: #777;
+      }
+  
+      &.error {
+        color: red;
+      }
+  
+      &.success {
+        color: green;
+      }
+    }
+  
+    .create-user-section {
+      margin-top: 30px;
+  
+      form {
+        display: flex;
+        flex-direction: column;
+  
+        .form-group {
+          margin-bottom: 15px;
+  
+          label {
+            margin-bottom: 5px;
+            font-weight: bold;
+          }
+  
+          input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+          }
+        }
+  
+        button {
+          padding: 10px;
+          background-color: #ff9900;
+          color: #fff;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          font-size: 16px;
+          width: 100%;
+  
+          &:hover {
+            background-color: #e68a00;
+          }
+        }
+      }
+    }
+  
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+  
+    .modal-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 500px;
+      max-width: 90%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
   }
   
