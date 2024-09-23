@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './UserData.scss';
 import axios from 'axios';
-import { userListEndpoint, userDetailEndpoint, createUserEndpoint, updateUserEndpoint, deleteUserEndpoint } from '../../../api/apiClient';
+import { userListEndpoint, createUserEndpoint } from '../../../api/apiClient';
 import Modal from 'react-modal';
+import { fetchUserDetail, handleUpdateUser, handleDeleteUser } from '../Extras/UserAction';
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -16,6 +17,41 @@ const UserList = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdateMode, setIsUpdateMode] = useState(false);
+
+  const handleError = (err, setErrorCallback) => {
+    if (err.response) {
+      setErrorCallback(`Server error: ${err.response.status} - ${err.response.statusText}`);
+    } else if (err.request) {
+      setErrorCallback('No response received from server. Please check your network connection.');
+    } else {
+      setErrorCallback(`Error in request: ${err.message}`);
+    }
+  };
+
+  const handleCreateUser = async (e) => {
+    e.preventDefault();
+    setCreateError(null);
+    setSuccessMessage(null);
+
+    const { name, password } = newUser;
+    if (!name || !password) {
+      setCreateError('Both name and password are required.');
+      return;
+    }
+
+    try {
+      const response = await axios.post(createUserEndpoint, { name, password });
+      if (response.status === 201) {
+        setSuccessMessage('User created successfully!');
+        const updatedUsers = await axios.get(userListEndpoint);
+        setUsers(updatedUsers.data);
+      } else {
+        setCreateError(`Unexpected status code: ${response.status}`);
+      }
+    } catch (err) {
+      handleError(err, setCreateError);
+    }
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -35,113 +71,8 @@ const UserList = () => {
     fetchUsers();
   }, []);
 
-  const fetchUserDetail = async (id) => {
-    setLoadingUserDetail(true);
-    setSelectedUser(null);
-    console.log(`Fetching details for user ID: ${id}`);
-    try {
-      const response = await axios.get(userDetailEndpoint(id));
-      if (response.status === 200) {
-        setSelectedUser(response.data);
-        setUserDetailError(null);
-      } else {
-        setUserDetailError(`Unexpected status code: ${response.status}`);
-      }
-    } catch (err) {
-      handleError(err, setUserDetailError);
-    } finally {
-      setLoadingUserDetail(false);
-    }
-  };
-
-  const handleCreateUser = async (e) => {
-    e.preventDefault();
-    setCreateError(null);
-    setSuccessMessage(null);
-    const { name, password } = newUser;
-
-    if (!name || !password) {
-      setCreateError('Name and password fields are required.');
-      return;
-    }
-
-    try {
-      const response = await axios.post(createUserEndpoint, newUser);
-      if (response.status === 201) {
-        setSuccessMessage('User created successfully!');
-        setNewUser({ name: '', password: '' });
-        setIsModalOpen(false);
-        const updatedUsers = await axios.get(userListEndpoint);
-        setUsers(updatedUsers.data);
-      } else {
-        setCreateError(`Unexpected status code: ${response.status}`);
-      }
-    } catch (err) {
-      handleError(err, setCreateError);
-    }
-  };
-
-  const handleUpdateUser = async (e) => {
-    e.preventDefault();
-    setCreateError(null);
-    setSuccessMessage(null);
-
-    const { name, password } = newUser;
-    if (!name || !password) {
-      setCreateError('Both name and password are required.');
-      return;
-    }
-
-    try {
-      const response = await axios.put(updateUserEndpoint(selectedUser.id), { name, password });
-      if (response.status === 200) {
-        setSuccessMessage('User updated successfully!');
-        setIsModalOpen(false);
-        const updatedUsers = await axios.get(userListEndpoint);
-        setUsers(updatedUsers.data);
-      } else {
-        setCreateError(`Unexpected status code: ${response.status}`);
-      }
-    } catch (err) {
-      handleError(err, setCreateError);
-    }
-  };
-
-  const handleDeleteUser = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this user?')) {
-      return;
-    }
-
-    try {
-      const response = await axios.delete(deleteUserEndpoint(id));
-      if (response.status === 200) {
-        setUsers(users.filter((user) => user.id !== id));
-        setSuccessMessage('User deleted successfully!');
-      } else {
-        setError(`Unexpected status code: ${response.status}`);
-      }
-    } catch (err) {
-      handleError(err, setError);
-    }
-  };
-
-  const handleError = (err, setErrorCallback) => {
-    if (err.response) {
-      setErrorCallback(`Server error: ${err.response.status} - ${err.response.statusText}`);
-    } else if (err.request) {
-      setErrorCallback('No response received from server. Please check your network connection.');
-    } else {
-      setErrorCallback(`Error in request: ${err.message}`);
-    }
-  };
-
-  if (loading) {
-    return <div className="loading">Loading users...</div>;
-  }
-
-  if (error) {
-    return <div className="error">{error}</div>;
-  }
+  if (loading) return <div className="loading">Loading users...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="user-management-container">
@@ -163,31 +94,39 @@ const UserList = () => {
                 <td>{user.id}</td>
                 <td>{user.name}</td>
                 <td>
-                  <button onClick={() => fetchUserDetail(user.id)}>View</button>
+                  <button onClick={() => fetchUserDetail(user.id, setSelectedUser, setUserDetailError, setLoadingUserDetail)}>View</button>
                   <button onClick={() => { setIsModalOpen(true); setIsUpdateMode(true); setNewUser({ name: user.name, password: '' }); setSelectedUser(user); }}>Update</button>
-                  <button onClick={() => handleDeleteUser(user.id)}>Delete</button>
+                  <button onClick={() => handleDeleteUser(user.id, users, setUsers, setSuccessMessage, setError)}>Delete</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+
+       
+        {selectedUser && (
+          <div className="user-details">
+            <h3>User Details</h3>
+            {loadingUserDetail ? (
+              <p>Loading user details...</p>
+            ) : userDetailError ? (
+              <p className="error">{userDetailError}</p>
+            ) : (
+              <div>
+                <p><strong>ID:</strong> {selectedUser.id}</p>
+                <p><strong>Name:</strong> {selectedUser.name}</p>
+              
+              </div>
+            )}
+          </div>
+        )}
       </div>
-      {loadingUserDetail ? (
-        <div className="loading">Loading user detail...</div>
-      ) : selectedUser ? (
-        <div className="user-detail-section">
-          <h2>User Detail</h2>
-          <p><strong>ID:</strong> {selectedUser.id}</p>
-          <p><strong>Name:</strong> {selectedUser.name}</p>
-        </div>
-      ) : (
-        userDetailError && <div className="error">{userDetailError}</div>
-      )}
-     <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
+
+      <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
         <h2>{isUpdateMode ? 'Update User' : 'Create New User'}</h2>
         {createError && <div className="error">{createError}</div>}
         {successMessage && <div className="success">{successMessage}</div>}
-        <form onSubmit={isUpdateMode ? handleUpdateUser : handleCreateUser}>
+        <form onSubmit={isUpdateMode ? (e) => handleUpdateUser(e, selectedUser, newUser, setCreateError, setSuccessMessage, setIsModalOpen, setUsers) : handleCreateUser}>
           <div className="form-group">
             <label>Name</label>
             <input
