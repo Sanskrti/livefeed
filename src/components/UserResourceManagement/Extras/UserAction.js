@@ -1,11 +1,11 @@
-import axios from 'axios';
-import { userDetailEndpoint, updateUserEndpoint, deleteUserEndpoint, userListEndpoint } from '../../../api/apiClient';
+import { apiClient,userDetailEndpoint, updateUserEndpoint, deleteUserEndpoint, userListEndpoint } from '../../../api/apiClient';
+
 
 export const fetchUserDetail = async (id, setSelectedUser, setUserDetailError, setLoadingUserDetail) => {
   setLoadingUserDetail(true);
   setSelectedUser(null);
   try {
-    const response = await axios.get(userDetailEndpoint(id));
+    const response = await apiClient.get(userDetailEndpoint(id)); 
     if (response.status === 200) {
       setSelectedUser(response.data);
       setUserDetailError(null);
@@ -18,7 +18,6 @@ export const fetchUserDetail = async (id, setSelectedUser, setUserDetailError, s
     setLoadingUserDetail(false);
   }
 };
-
 export const handleUpdateUser = async (e, selectedUser, newUser, setCreateError, setSuccessMessage, setIsModalOpen, setUsers) => {
   e.preventDefault();
   setCreateError(null);
@@ -31,11 +30,11 @@ export const handleUpdateUser = async (e, selectedUser, newUser, setCreateError,
   }
 
   try {
-    const response = await axios.put(updateUserEndpoint(selectedUser.id), { name, password });
+    const response = await apiClient.put(updateUserEndpoint(selectedUser.id), { name, password });
     if (response.status === 200) {
       setSuccessMessage('User updated successfully!');
       setIsModalOpen(false);
-      const updatedUsers = await axios.get(userListEndpoint);
+      const updatedUsers = await apiClient.get(userListEndpoint); 
       setUsers(updatedUsers.data);
     } else {
       setCreateError(`Unexpected status code: ${response.status}`);
@@ -44,24 +43,27 @@ export const handleUpdateUser = async (e, selectedUser, newUser, setCreateError,
     handleError(err, setCreateError);
   }
 };
-
-export const handleDeleteUser = async (id, users, setUsers, setSuccessMessage, setError) => {
-  if (!window.confirm('Are you sure you want to delete this user?')) {
-    return;
-  }
-
-  try {
-    const response = await axios.delete(deleteUserEndpoint(id));
-    if (response.status === 200) {
-      setUsers(users.filter((user) => user.id !== id));
-      setSuccessMessage('User deleted successfully!');
-    } else {
-      setError(`Unexpected status code: ${response.status}`);
+export const handleDeleteUser = async (id, setUsers, setSuccessMessage, setError) => {
+    if (!window.confirm('Are you sure you want to delete this user?')) {
+      return;
     }
-  } catch (err) {
-    handleError(err, setError);
-  }
-};
+  
+    try {
+      const response = await apiClient.delete(deleteUserEndpoint(id)); 
+      if (response.status === 200) {
+        setSuccessMessage('User deleted successfully!');
+      
+        const updatedUsers = await apiClient.get(userListEndpoint);
+        setUsers(updatedUsers.data);
+      } else {
+        setError(`Unexpected status code: ${response.status}`);
+      }
+    } catch (err) {
+      handleError(err, setError);
+    }
+  };
+  
+
 
 const handleError = (err, setErrorCallback) => {
   if (err.response) {

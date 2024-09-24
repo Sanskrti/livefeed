@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './UserData.scss';
-import axios from 'axios';
-import { userListEndpoint, createUserEndpoint } from '../../../api/apiClient';
 import Modal from 'react-modal';
+import { apiClient, userListEndpoint, createUserEndpoint } from '../../../api/apiClient';
 import { fetchUserDetail, handleUpdateUser, handleDeleteUser } from '../Extras/UserAction';
 
 const UserList = () => {
@@ -40,10 +39,10 @@ const UserList = () => {
     }
 
     try {
-      const response = await axios.post(createUserEndpoint, { name, password });
+      const response = await apiClient.post(createUserEndpoint, { name, password });
       if (response.status === 201) {
         setSuccessMessage('User created successfully!');
-        const updatedUsers = await axios.get(userListEndpoint);
+        const updatedUsers = await apiClient.get(userListEndpoint);
         setUsers(updatedUsers.data);
       } else {
         setCreateError(`Unexpected status code: ${response.status}`);
@@ -53,23 +52,29 @@ const UserList = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get(userListEndpoint);
-        if (response.status === 200) {
-          setUsers(response.data);
-        } else {
-          setError(`Unexpected status code: ${response.status}`);
-        }
-      } catch (err) {
-        handleError(err, setError);
-      } finally {
-        setLoading(false);
+  const fetchUsers = async () => {
+    try {
+      const response = await apiClient.get(userListEndpoint);
+      if (response.status === 200) {
+        setUsers(response.data);
+      } else {
+        setError(`Unexpected status code: ${response.status}`);
       }
-    };
+    } catch (err) {
+      handleError(err, setError);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchUsers();
   }, []);
+
+  const handleDeleteAndRefresh = async (id) => {
+    await handleDeleteUser(id, users, setUsers, setSuccessMessage, setError);
+     fetchUsers(); 
+  };
 
   if (loading) return <div className="loading">Loading users...</div>;
   if (error) return <div className="error">{error}</div>;
@@ -96,14 +101,13 @@ const UserList = () => {
                 <td>
                   <button onClick={() => fetchUserDetail(user.id, setSelectedUser, setUserDetailError, setLoadingUserDetail)}>View</button>
                   <button onClick={() => { setIsModalOpen(true); setIsUpdateMode(true); setNewUser({ name: user.name, password: '' }); setSelectedUser(user); }}>Update</button>
-                  <button onClick={() => handleDeleteUser(user.id, users, setUsers, setSuccessMessage, setError)}>Delete</button>
+                  <button onClick={() => handleDeleteAndRefresh(user.id)}>Delete</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
 
-       
         {selectedUser && (
           <div className="user-details">
             <h3>User Details</h3>
@@ -115,7 +119,6 @@ const UserList = () => {
               <div>
                 <p><strong>ID:</strong> {selectedUser.id}</p>
                 <p><strong>Name:</strong> {selectedUser.name}</p>
-              
               </div>
             )}
           </div>
