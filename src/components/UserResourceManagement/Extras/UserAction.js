@@ -1,76 +1,62 @@
-import { apiClient,userDetailEndpoint, updateUserEndpoint, deleteUserEndpoint, userListEndpoint } from '../../../api/apiClient';
+import { apiClient } from '../../../api/apiClient';
+import { userListEndpoint, createUserEndpoint, updateUserEndpoint, deleteUserEndpoint } from '../../../api/endpoints'; 
 
-
-export const fetchUserDetail = async (id, setSelectedUser, setUserDetailError, setLoadingUserDetail) => {
-  setLoadingUserDetail(true);
-  setSelectedUser(null);
+export const fetchUsers = async (setUsers, setError) => {
   try {
-    const response = await apiClient.get(userDetailEndpoint(id)); 
+    const response = await apiClient.get(userListEndpoint);
     if (response.status === 200) {
-      setSelectedUser(response.data);
-      setUserDetailError(null);
+      setUsers(response.data);
     } else {
-      setUserDetailError(`Unexpected status code: ${response.status}`);
+      setError(`Unexpected status code: ${response.status}`);
     }
   } catch (err) {
-    handleError(err, setUserDetailError);
-  } finally {
-    setLoadingUserDetail(false);
+    setError(`Error fetching users: ${err.message}`);
   }
 };
-export const handleUpdateUser = async (e, selectedUser, newUser, setCreateError, setSuccessMessage, setIsModalOpen, setUsers) => {
-  e.preventDefault();
-  setCreateError(null);
-  setSuccessMessage(null);
 
-  const { name, password } = newUser;
-  if (!name || !password) {
-    setCreateError('Both name and password are required.');
-    return;
-  }
-
+export const handleCreateUser = async (e, newUser, setCreateError, setSuccessMessage, setUsers, closeModal) => {
   try {
-    const response = await apiClient.put(updateUserEndpoint(selectedUser.id), { name, password });
-    if (response.status === 200) {
-      setSuccessMessage('User updated successfully!');
-      setIsModalOpen(false);
-      const updatedUsers = await apiClient.get(userListEndpoint); 
-      setUsers(updatedUsers.data);
+    const response = await apiClient.post(createUserEndpoint, newUser);
+    if (response.status === 201) {
+      setSuccessMessage('User created successfully!');
+      await fetchUsers(setUsers, setCreateError); 
+      closeModal();
     } else {
       setCreateError(`Unexpected status code: ${response.status}`);
     }
   } catch (err) {
-    handleError(err, setCreateError);
+    setCreateError(`Error creating user: ${err.message}`);
   }
 };
+
+export const handleUpdateUser = async (e, selectedUser, newUser, setCreateError, setSuccessMessage, closeModal, setUsers) => {
+  try {
+    const response = await apiClient.put(updateUserEndpoint(selectedUser.id), newUser);
+    if (response.status === 200) {
+      setSuccessMessage('User updated successfully!');
+      await fetchUsers(setUsers, setCreateError); 
+      closeModal();
+    } else {
+      setCreateError(`Unexpected status code: ${response.status}`);
+    }
+  } catch (err) {
+    setCreateError(`Error updating user: ${err.message}`);
+  }
+};
+
 export const handleDeleteUser = async (id, setUsers, setSuccessMessage, setError) => {
-    if (!window.confirm('Are you sure you want to delete this user?')) {
-      return;
+  if (!window.confirm('Are you sure you want to delete this user?')) {
+    return;
+  }
+  try {
+    const response = await apiClient.delete(deleteUserEndpoint(id));
+    if (response.status === 200) {
+      setSuccessMessage('User deleted successfully!');
+      await fetchUsers(setUsers, setError); 
+    } else {
+      setError(`Unexpected status code: ${response.status}`);
     }
-  
-    try {
-      const response = await apiClient.delete(deleteUserEndpoint(id)); 
-      if (response.status === 200) {
-        setSuccessMessage('User deleted successfully!');
-      
-        const updatedUsers = await apiClient.get(userListEndpoint);
-        setUsers(updatedUsers.data);
-      } else {
-        setError(`Unexpected status code: ${response.status}`);
-      }
-    } catch (err) {
-      handleError(err, setError);
-    }
-  };
-  
-
-
-const handleError = (err, setErrorCallback) => {
-  if (err.response) {
-    setErrorCallback(`Server error: ${err.response.status} - ${err.response.statusText}`);
-  } else if (err.request) {
-    setErrorCallback('No response received from server. Please check your network connection.');
-  } else {
-    setErrorCallback(`Error in request: ${err.message}`);
+  } catch (err) {
+    setError(`Error deleting user: ${err.message}`);
   }
 };
