@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import UserData from './Extras/UserData';
+import UserData from '../components/UserResourceManagement/Extras/UserDetails';
+
 
 const App = () => {
   return (
@@ -12,3 +13,4 @@ const App = () => {
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
+export default App;
