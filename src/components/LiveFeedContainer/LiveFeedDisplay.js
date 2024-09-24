@@ -4,7 +4,11 @@ import Header from "../HeaderContainer/HeaderDisplay";
 import ButtonBox from "../ButtonContainer/ButtonDisplay";
 import CameraListDisplay from "../CameraContainer/CameraListDisplay";
 import "./LiveFeedStyling.scss";
-import { apiClient, liveFeedEndpoint, cameraFetchEndpoint } from "../../api/apiClient";
+import {
+  axiosClient,
+  liveFeedEndpoint,
+  cameraFetchEndpoint,
+} from "../../api/axiosClient";
 import filterArrayByKeyValue from "../../utils/FilterArrayByKeyValue";
 import SideBarDisplay from "../SideBarContainer/SideBarDisplay";
 
@@ -18,10 +22,10 @@ const LiveFeedPage = () => {
   const [batchData, setBatchData] = useState([]);
   const [selectedCamera, setSelectedCamera] = useState(null);
 
-  const baseImageUrl = process.env.REACT_APP_BASE_IMAGE_URL ;  
+  const baseImageUrl = process.env.REACT_APP_BASE_IMAGE_URL;
   const fetchLiveFeedData = async () => {
     try {
-      const response = await apiClient.get(liveFeedEndpoint);
+      const response = await axiosClient.get(liveFeedEndpoint);
       return response.data;
     } catch (error) {
       console.error("Error fetching live feed data:", error);
@@ -31,17 +35,17 @@ const LiveFeedPage = () => {
 
   const fetchCameraNames = async () => {
     try {
-      const response = await apiClient.get(cameraFetchEndpoint);
+      const response = await axiosClient.get(cameraFetchEndpoint);
       return response.data;
     } catch (error) {
       console.error("Error fetching camera names:", error);
       throw new Error("Error fetching camera names");
     }
   };
-  console.log('Base URL:', process.env.REACT_APP_API_BASE_URL);
-  console.log('API Token:', process.env.REACT_APP_API_TOKEN);
-  console.log('Base Image URL:', process.env.REACT_APP_BASE_IMAGE_URL);
-  
+  console.log("Base URL:", process.env.REACT_APP_API_BASE_URL);
+  console.log("API Token:", process.env.REACT_APP_API_TOKEN);
+  console.log("Base Image URL:", process.env.REACT_APP_BASE_IMAGE_URL);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -62,7 +66,11 @@ const LiveFeedPage = () => {
     fetchData();
   }, []);
 
-  const filteredBatchData = filterArrayByKeyValue(batchData, "image_cam", selectedCamera)[0];
+  const filteredBatchData = filterArrayByKeyValue(
+    batchData,
+    "image_cam",
+    selectedCamera,
+  )[0];
 
   return (
     <LiveFeedContext.Provider value={{ selectedCamera, setSelectedCamera }}>
@@ -75,7 +83,10 @@ const LiveFeedPage = () => {
               {loading && <p>Loading live feed and camera details...</p>}
               {error && <p>{error}</p>}
               {liveStreamUrl && (
-                <img src={liveStreamUrl} alt={filteredBatchData?.image_cam || "Live Feed"} />
+                <img
+                  src={liveStreamUrl}
+                  alt={filteredBatchData?.image_cam || "Live Feed"}
+                />
               )}
               {filteredBatchData && (
                 <>
