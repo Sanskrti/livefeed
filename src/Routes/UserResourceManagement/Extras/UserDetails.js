@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { fetchUsers, handleCreateUser, handleUpdateUser, handleDeleteUser } from './UserAction';
-import './UserData.scss';
+import './UserDetails.scss';
 
 const UserData = () => {
   const [users, setUsers] = useState([]);
@@ -9,6 +9,7 @@ const UserData = () => {
   const [error, setError] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [newUser, setNewUser] = useState({ name: '', password: '' });
+  const [viewUser, setViewUser] = useState(null); 
   const [createError, setCreateError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,6 +28,8 @@ const UserData = () => {
     setIsModalOpen(false);
     setNewUser({ name: '', password: '' });
     setSelectedUser(null);
+    setCreateError(null);
+    setSuccessMessage(null);
   };
 
   const handleDeleteAndRefresh = async (id) => {
@@ -39,10 +42,12 @@ const UserData = () => {
   return (
     <div className="user-management-container">
       <h1>User Management</h1>
-      <button onClick={() => { 
+
+      <button className="create-button" onClick={() => { 
         setIsModalOpen(true); 
         setIsUpdateMode(false); 
       }}>Create User</button>
+
       <div className="user-list-section">
         <h2>User List</h2>
         <table className="user-list-table">
@@ -59,13 +64,14 @@ const UserData = () => {
                 <td>{user.id}</td>
                 <td>{user.name}</td>
                 <td>
-                  <button onClick={() => { 
+                  <button className="update-button" onClick={() => { 
                     setIsModalOpen(true); 
                     setIsUpdateMode(true); 
                     setNewUser({ name: user.name, password: '' }); 
                     setSelectedUser(user); 
                   }}>Update</button>
-                  <button onClick={() => handleDeleteAndRefresh(user.id)}>Delete</button>
+                  <button className="delete-button" onClick={() => handleDeleteAndRefresh(user.id)}>Delete</button>
+                  <button className="view-button" onClick={() => setViewUser(user)}>View</button> 
                 </td>
               </tr>
             ))}
@@ -73,35 +79,76 @@ const UserData = () => {
         </table>
       </div>
 
-      <Modal isOpen={isModalOpen} onRequestClose={handleModalClose}>
-        <h2>{isUpdateMode ? 'Update User' : 'Create New User'}</h2>
-        {createError && <div className="error">{createError}</div>}
-        {successMessage && <div className="success">{successMessage}</div>}
-        <form onSubmit={(e) => {
-          e.preventDefault(); 
-          if (isUpdateMode) {
-            handleUpdateUser(e, selectedUser, newUser, setCreateError, setSuccessMessage, handleModalClose, setUsers);
-          } else {
-            handleCreateUser(e, newUser, setCreateError, setSuccessMessage, setUsers, handleModalClose);
-          }
-        }}>
-          <input 
-            type="text" 
-            value={newUser.name} 
-            onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} 
-            placeholder="Enter name" 
-            required 
-          />
-          <input 
-            type="password" 
-            value={newUser.password} 
-            onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} 
-            placeholder="Enter password" 
-            required 
-          />
-          <button type="submit">{isUpdateMode ? 'Update User' : 'Create User'}</button>
-          <button type="button" onClick={handleModalClose}>Cancel</button>
-        </form>
+      {/* View User Modal */}
+      {viewUser && (
+        <Modal 
+          className="modal-content"
+          overlayClassName="modal-overlay"
+          isOpen={!!viewUser} 
+          onRequestClose={() => setViewUser(null)}
+        >
+          <div className="modal-header">
+            <h3>User Details</h3>
+            <button className="close-button" onClick={() => setViewUser(null)}>×</button>
+          </div>
+          <div className="modal-body">
+            <p><strong>ID:</strong> {viewUser.id}</p>
+            <p><strong>Name:</strong> {viewUser.name}</p>
+            <div className="button-group">
+              <button className="cancel-button" onClick={() => setViewUser(null)}>Close</button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* Create/Update User Modal */}
+      <Modal 
+        className="modal-content"
+        overlayClassName="modal-overlay"
+        isOpen={isModalOpen} 
+        onRequestClose={handleModalClose}
+      >
+        <div className="modal-header">
+          <h3>{isUpdateMode ? 'Update User' : 'Create New User'}</h3>
+          <button className="close-button" onClick={handleModalClose}>×</button>
+        </div>
+
+        <div className="modal-body">
+          {createError && <div className="error">{createError}</div>}
+          {successMessage && <div className="success">{successMessage}</div>}
+
+          <form 
+            onSubmit={async (e) => {
+              e.preventDefault(); 
+              if (isUpdateMode) {
+                await handleUpdateUser(e, selectedUser, newUser, setCreateError, setSuccessMessage, handleModalClose, setUsers);
+              } else {
+                await handleCreateUser(e, newUser, setCreateError, setSuccessMessage, setUsers, handleModalClose);
+              }
+            }}
+          >
+            <input 
+              className="input-field"
+              type="text" 
+              value={newUser.name} 
+              onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} 
+              placeholder="Enter name" 
+              required 
+            />
+            <input 
+              className="input-field"
+              type="password" 
+              value={newUser.password} 
+              onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} 
+              placeholder="Enter password" 
+              required 
+            />
+            <div className="button-group">
+              <button className="confirm-button" type="submit">{isUpdateMode ? 'Update User' : 'Create User'}</button>
+              <button className="cancel-button" type="button" onClick={handleModalClose}>Cancel</button>
+            </div>
+          </form>
+        </div>
       </Modal>
     </div>
   );
