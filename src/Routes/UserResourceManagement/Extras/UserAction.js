@@ -4,7 +4,10 @@ import {
   createUserEndpoint,
   updateUserEndpoint,
   deleteUserEndpoint,
-} from "../../../api/axiosClient";
+  fetchAllowedActions,
+  fetchAllowedPages,
+} from "../../../api/axiosClient"; 
+
 
 export const fetchUsers = async (setUsers, setError) => {
   try {
@@ -19,6 +22,7 @@ export const fetchUsers = async (setUsers, setError) => {
   }
 };
 
+
 export const handleCreateUser = async (
   e,
   newUser,
@@ -27,7 +31,17 @@ export const handleCreateUser = async (
   setUsers,
   closeModal,
 ) => {
+  e.preventDefault(); 
+
   try {
+
+    const allowedActions = await fetchAllowedActions();
+    const allowedPages = await fetchAllowedPages();
+    
+
+    newUser.allowedActions = allowedActions; 
+    newUser.allowedPages = allowedPages; 
+
     const response = await axiosClient.post(createUserEndpoint, newUser);
     if (response.status === 201) {
       setSuccessMessage("User created successfully!");
@@ -41,6 +55,7 @@ export const handleCreateUser = async (
   }
 };
 
+
 export const handleUpdateUser = async (
   e,
   selectedUser,
@@ -50,7 +65,17 @@ export const handleUpdateUser = async (
   closeModal,
   setUsers,
 ) => {
+  e.preventDefault(); 
+
   try {
+
+    const allowedActions = await fetchAllowedActions();
+    const allowedPages = await fetchAllowedPages();
+    
+
+    newUser.allowedActions = allowedActions; 
+    newUser.allowedPages = allowedPages;
+
     const response = await axiosClient.put(
       updateUserEndpoint(selectedUser.id),
       newUser,
@@ -66,6 +91,7 @@ export const handleUpdateUser = async (
     setCreateError(`Error updating user: ${err.message}`);
   }
 };
+
 
 export const handleDeleteUser = async (
   id,

@@ -2,178 +2,162 @@
     margin: 20px auto;
     padding: 20px;
     max-width: 800px;
-    background-color: #fff;
+    background-color: #f9f9f9;
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s, background-color 0.3s;
 
-  
     &:hover {
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        background-color: #f5f5f5;
     }
-  
-    h1 {
-      font-size: 28px;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
+}
+
+h1, h2, h3 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 25px;
+
+    &.h1 {
+        font-size: 32px;
+        font-weight: 700;
     }
-  
-    button {
-      padding: 10px 15px;
-      font-size: 16px;
-      background-color: #ced4da;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      margin-right: 10px;  
-      margin-bottom: 10px;
-  
-      &:hover {
-        background-color: darken(#ff9900, 10%);
-      }
-  
-      &.danger {
-        background-color: #e74c3c;
-  
-        &:hover {
-          background-color: darken(#e74c3c, 10%);
-        }
-      }
-  
-      &.secondary {
-        background-color: #3498db;
-  
-        &:hover {
-          background-color: darken(#3498db, 10%);
-        }
-      }
+
+    &.h2 {
+        font-size: 26px;
+        font-weight: 600;
+        border-bottom: 3px solid #ff9900;
+        padding-bottom: 10px;
     }
-  }
-  
-  .user-list-section {
-    margin-top: 20px;
-  
-    h2 {
-      font-size: 24px;
-      font-weight: bold;
-      text-align: center;
-      color: #333;
-      margin-bottom: 20px;
-      border-bottom: 2px solid #ff9900;
-      padding-bottom: 10px;
+
+    &.h3 {
+        font-size: 26px;
+        font-weight: 600;
+        margin-bottom: 20px;
     }
-  }
-  
-  .user-list-table {
+}
+
+button {
+    padding: 12px 18px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    background-color: #fda966; // Set default button color
+    color: white; // Keep text color white
+    transition: background-color 0.3s ease, transform 0.2s;
+
+    &:hover {
+        transform: scale(1.05);
+        background-color: darken(#fda966, 10%); // Darken on hover for effect
+    }
+
+    &.create { // Specific styles for the Create button
+        background-color: #ff9900; // Keep Create button color
+    }
+}
+
+.user-list-table {
     width: 100%;
     border-collapse: collapse;
-  
+
+    th, td {
+        padding: 15px;
+        text-align: left;
+        font-size: 16px;
+        border: 1px solid #ddd;
+    }
+
     th {
-      background-color: #ff9900;
-      color: #fff;
-      padding: 12px;
-      text-align: left;
-      font-size: 16px;
-      text-transform: uppercase;
+        background-color: #ff9900;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
-  
+
     td {
-      padding: 12px;
-      border: 1px solid #ddd;
-      font-size: 14px;
-      color: #333;
-  
-      &:nth-child(even) {
-        background-color: #f9f9f9;
-      }
+        color: #333;
+
+        &:nth-child(even) {
+            background-color: #f4f4f4;
+        }
     }
-  
+
     tr:hover {
-      background-color: #f1f1f1;
-      cursor: pointer;
+        background-color: #f2f2f2;
+        cursor: pointer;
     }
-  
-    .actions {
-      button {
-        margin-right: 10px;
-      }
-    }
-  }
-  
-  .modal-overlay {
+}
+
+.actions button {
+    margin-right: 12px;
+}
+
+.modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
-  }
-  
-  .modal-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    width: 90%;
+    max-width: 600px;
     background-color: white;
-    padding: 20px;
     border-radius: 10px;
-    width: 500px;
-    max-width: 90%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  
-    h2 {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      color: #333;
-    }
-  
-    form {
-      display: flex;
-      flex-direction: column;
-  
-      input {
-        margin-bottom: 15px;
-        padding: 10px;
-        font-size: 16px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-  
-        &:focus {
-          border-color: #ff9900;
-          outline: none;
+    padding: 20px;
+    position: relative;
+    animation: fadeIn 0.3s ease-out;
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
         }
-      }
-  
-      button {
-        margin-right: 10px;
-      }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
     }
-  
-    .error,
-    .success {
-      font-size: 16px;
-      margin-top: 10px;
-      text-align: center;
-  
-      &.error {
-        color: red;
-      }
-  
-      &.success {
-        color: green;
-      }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+
+        .close-icon {
+            cursor: pointer;
+            font-size: 24px;
+        }
     }
-  }
-  
-  .loading {
-    text-align: center;
-    font-size: 18px;
-    color: #777;
-    margin-top: 30px;
-  }
-  
+
+    .modal-body {
+        p {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+    }
+}
+
+.input-field {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+}

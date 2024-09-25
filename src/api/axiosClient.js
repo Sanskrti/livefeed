@@ -1,4 +1,5 @@
 import axios from "axios";
+
 const axiosClient = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL,
   headers: {
@@ -13,10 +14,18 @@ const cameraFetchEndpoint = "camera/get_names";
 const userListEndpoint = "http://localhost:3000/api/users";
 const userDetailEndpoint = (id) => `http://localhost:3000/api/users/${id}`;
 const createUserEndpoint = "http://localhost:3000/api/users";
-export const updateUserEndpoint = (id) =>
-  `http://localhost:3000/api/users/${id}`;
-export const deleteUserEndpoint = (id) =>
-  `http://localhost:3000/api/users/${id}`;
+export const updateUserEndpoint = (id) => `http://localhost:3000/api/users/${id}`;
+export const deleteUserEndpoint = (id) => `http://localhost:3000/api/users/${id}`;
+
+ const fetchAllowedActions = async () => {
+  const response = await axiosClient.get("http://localhost:3000/api/allowed-actions");
+  return response.data; 
+};
+
+ const fetchAllowedPages = async () => {
+  const response = await axiosClient.get("http://localhost:3000/api/allowed-pages");
+  return response.data; 
+};
 
 export {
   axiosClient,
@@ -24,5 +33,7 @@ export {
   cameraFetchEndpoint,
   userListEndpoint,
   userDetailEndpoint,
-  createUserEndpoint,
+  createUserEndpoint, 
+  fetchAllowedActions ,
+  fetchAllowedPages
 };

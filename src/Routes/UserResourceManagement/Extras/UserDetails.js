@@ -20,7 +20,6 @@ const UserData = () => {
       await fetchUsers(setUsers, setError);
       setLoading(false);
     };
-
     loadUsers();
   }, []);
 
@@ -43,10 +42,15 @@ const UserData = () => {
     <div className="user-management-container">
       <h1>User Management</h1>
 
-      <button className="create-button" onClick={() => { 
-        setIsModalOpen(true); 
-        setIsUpdateMode(false); 
-      }}>Create User</button>
+      <button 
+        className="create-button" 
+        onClick={() => { 
+          setIsModalOpen(true); 
+          setIsUpdateMode(false); 
+        }}
+      >
+        Create User
+      </button>
 
       <div className="user-list-section">
         <h2>User List</h2>
@@ -64,14 +68,29 @@ const UserData = () => {
                 <td>{user.id}</td>
                 <td>{user.name}</td>
                 <td>
-                  <button className="update-button" onClick={() => { 
-                    setIsModalOpen(true); 
-                    setIsUpdateMode(true); 
-                    setNewUser({ name: user.name, password: '' }); 
-                    setSelectedUser(user); 
-                  }}>Update</button>
-                  <button className="delete-button" onClick={() => handleDeleteAndRefresh(user.id)}>Delete</button>
-                  <button className="view-button" onClick={() => setViewUser(user)}>View</button> 
+                  <button 
+                    className="update-button" 
+                    onClick={() => { 
+                      setIsModalOpen(true); 
+                      setIsUpdateMode(true); 
+                      setNewUser({ name: user.name, password: '' }); 
+                      setSelectedUser(user); 
+                    }}
+                  >
+                    Update
+                  </button>
+                  <button 
+                    className="delete-button" 
+                    onClick={() => handleDeleteAndRefresh(user.id)}
+                  >
+                    Delete
+                  </button>
+                  <button 
+                    className="view-button" 
+                    onClick={() => setViewUser(user)}
+                  >
+                    View
+                  </button> 
                 </td>
               </tr>
             ))}
@@ -79,7 +98,6 @@ const UserData = () => {
         </table>
       </div>
 
-      {/* View User Modal */}
       {viewUser && (
         <Modal 
           className="modal-content"
@@ -89,7 +107,8 @@ const UserData = () => {
         >
           <div className="modal-header">
             <h3>User Details</h3>
-            <button className="close-button" onClick={() => setViewUser(null)}>×</button>
+
+            <span className="close-icon" onClick={() => setViewUser(null)}>&times;</span>
           </div>
           <div className="modal-body">
             <p><strong>ID:</strong> {viewUser.id}</p>
@@ -101,7 +120,6 @@ const UserData = () => {
         </Modal>
       )}
 
-      {/* Create/Update User Modal */}
       <Modal 
         className="modal-content"
         overlayClassName="modal-overlay"
@@ -110,7 +128,8 @@ const UserData = () => {
       >
         <div className="modal-header">
           <h3>{isUpdateMode ? 'Update User' : 'Create New User'}</h3>
-          <button className="close-button" onClick={handleModalClose}>×</button>
+
+          <span className="close-icon" onClick={handleModalClose}>&times;</span>
         </div>
 
         <div className="modal-body">
