@@ -11,19 +11,19 @@ const axiosClient = axios.create({
 const liveFeedEndpoint = "livefeed/fetch-livefeed";
 const cameraFetchEndpoint = "camera/get_names";
 
-const userListEndpoint = "http://localhost:3000/api/users";
-const userDetailEndpoint = (id) => `http://localhost:3000/api/users/${id}`;
-const createUserEndpoint = "http://localhost:3000/api/users";
-export const updateUserEndpoint = (id) => `http://localhost:3000/api/users/${id}`;
-export const deleteUserEndpoint = (id) => `http://localhost:3000/api/users/${id}`;
+const userListEndpoint = "/api/users";
+const userDetailEndpoint = (id) => `/api/users/${id}`;
+const createUserEndpoint = "/api/users";
+export const updateUserEndpoint = (id) => `/api/users/${id}`;
+export const deleteUserEndpoint = (id) => `/api/users/${id}`;
 
  const fetchAllowedActions = async () => {
-  const response = await axiosClient.get("http://localhost:3000/api/allowed-actions");
+  const response = await axiosClient.get("/api/allowed-actions");
   return response.data; 
 };
 
  const fetchAllowedPages = async () => {
-  const response = await axiosClient.get("http://localhost:3000/api/allowed-pages");
+  const response = await axiosClient.get("/api/allowed-pages");
   return response.data; 
 };
 

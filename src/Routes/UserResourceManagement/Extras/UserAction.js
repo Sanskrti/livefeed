@@ -1,116 +1,43 @@
-import { axiosClient } from "../../../api/axiosClient";
-import {
-  userListEndpoint,
-  createUserEndpoint,
-  updateUserEndpoint,
-  deleteUserEndpoint,
-  fetchAllowedActions,
-  fetchAllowedPages,
-} from "../../../api/axiosClient"; 
-
-
+import { axiosClient } from '../../../api/axiosClient';
+import {  userListEndpoint, createUserEndpoint, updateUserEndpoint, deleteUserEndpoint } from './axiosClient';
 export const fetchUsers = async (setUsers, setError) => {
   try {
     const response = await axiosClient.get(userListEndpoint);
-    if (response.status === 200) {
-      setUsers(response.data);
-    } else {
-      setError(`Unexpected status code: ${response.status}`);
-    }
-  } catch (err) {
-    setError(`Error fetching users: ${err.message}`);
+    setUsers(response.data);
+  } catch (error) {
+    setError('Error fetching users: ' + error.message);
   }
 };
-
-
-export const handleCreateUser = async (
-  e,
-  newUser,
-  setCreateError,
-  setSuccessMessage,
-  setUsers,
-  closeModal,
-) => {
-  e.preventDefault(); 
-
+export const handleCreateUser = async (e, newUser, setError, setLoading, setUsers, setCreateModalOpen) => {
+  e.preventDefault();
   try {
-
-    const allowedActions = await fetchAllowedActions();
-    const allowedPages = await fetchAllowedPages();
-    
-
-    newUser.allowedActions = allowedActions; 
-    newUser.allowedPages = allowedPages; 
-
     const response = await axiosClient.post(createUserEndpoint, newUser);
-    if (response.status === 201) {
-      setSuccessMessage("User created successfully!");
-      await fetchUsers(setUsers, setCreateError);
-      closeModal();
-    } else {
-      setCreateError(`Unexpected status code: ${response.status}`);
-    }
-  } catch (err) {
-    setCreateError(`Error creating user: ${err.message}`);
+    setUsers((prevUsers) => [...prevUsers, response.data]); 
+    setCreateModalOpen(false);
+  } catch (error) {
+    setError('Error creating user: ' + error.message);
+  } finally {
+    setLoading(false);
   }
 };
-
-
-export const handleUpdateUser = async (
-  e,
-  selectedUser,
-  newUser,
-  setCreateError,
-  setSuccessMessage,
-  closeModal,
-  setUsers,
-) => {
-  e.preventDefault(); 
-
+export const handleUpdateUser = async (viewUser, updatedUser, setError, setLoading, setUsers, setViewUser) => {
   try {
-
-    const allowedActions = await fetchAllowedActions();
-    const allowedPages = await fetchAllowedPages();
-    
-
-    newUser.allowedActions = allowedActions; 
-    newUser.allowedPages = allowedPages;
-
-    const response = await axiosClient.put(
-      updateUserEndpoint(selectedUser.id),
-      newUser,
-    );
-    if (response.status === 200) {
-      setSuccessMessage("User updated successfully!");
-      await fetchUsers(setUsers, setCreateError);
-      closeModal();
-    } else {
-      setCreateError(`Unexpected status code: ${response.status}`);
-    }
-  } catch (err) {
-    setCreateError(`Error updating user: ${err.message}`);
+    const response = await axiosClient.put(updateUserEndpoint(viewUser.id), updatedUser);
+    setUsers((prevUsers) => prevUsers.map((user) => (user.id === viewUser.id ? response.data : user)));
+    setViewUser(null);
+  } catch (error) {
+    setError('Error updating user: ' + error.message);
+  } finally {
+    setLoading(false);
   }
 };
-
-
-export const handleDeleteUser = async (
-  id,
-  setUsers,
-  setSuccessMessage,
-  setError,
-) => {
-  if (!window.confirm("Are you sure you want to delete this user?")) {
-    return;
-  }
+export const handleDeleteUser = async (userId, setUsers, setError) => {
   try {
-    const response = await axiosClient.delete(deleteUserEndpoint(id));
-    if (response.status === 200) {
-      setSuccessMessage("User deleted successfully!");
-      await fetchUsers(setUsers, setError);
-    } else {
-      setError(`Unexpected status code: ${response.status}`);
-    }
-  } catch (err) {
-    setError(`Error deleting user: ${err.message}`);
+    await axiosClient.delete(deleteUserEndpoint(userId));
+    setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+  } catch (error) {
+    setError('Error deleting user: ' + error.message);
   }
 };
+
+
