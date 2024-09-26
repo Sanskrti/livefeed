@@ -26,7 +26,8 @@ export const deleteUserEndpoint = (id) => `/api/users/${id}`;
   const response = await axiosClient.get("/api/allowed-pages");
   return response.data; 
 };
-
+    // console.log('Allowed Actions:', fetchAllowedActions);
+    // console.log('Allowed Pages:', fetchAllowedPages);
 export {
   axiosClient,
   liveFeedEndpoint,

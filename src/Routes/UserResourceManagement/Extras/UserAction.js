@@ -30,6 +30,7 @@ export const handleUpdateUser = async (viewUser, updatedUser, setError, setLoadi
     setLoading(false);
   }
 };
+
 export const handleDeleteUser = async (userId, setUsers, setError) => {
   try {
     await axiosClient.delete(deleteUserEndpoint(userId));

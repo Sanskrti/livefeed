@@ -8,13 +8,13 @@ const UserData = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [viewUser, setViewUser] = useState(null); // User to view details
+  const [viewUser, setViewUser] = useState(null); 
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', can_login: false, password: '' });
   const [passwordError, setPasswordError] = useState('');
   const [allowedActions, setAllowedActions] = useState([]); 
-  const [allowedPages, setAllowedPages] = useState([]); 
+  const [allowedPages, setAllowedPages] = useState([]);     
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -24,28 +24,26 @@ const UserData = () => {
     loadUsers();
   }, []);
 
-  useEffect(() => {
-    const loadAllowedData = async () => {
-      try {
-        const actions = await fetchAllowedActions();
-        const pages = await fetchAllowedPages();
-        setAllowedActions(actions);
-        setAllowedPages(pages);
-      } catch (error) {
-        setError('Error fetching allowed actions/pages: ' + error.message);
-      }
-    };
-    loadAllowedData();
-  }, []); 
+  const fetchUserAllowedData = async (userId) => {
+    try {
+      const actions = await fetchAllowedActions(userId);  
+      const pages = await fetchAllowedPages(userId);     
+      setAllowedActions(actions); 
+      setAllowedPages(pages);    
+    } catch (error) {
+      setError('Error fetching allowed actions/pages: ' + error.message);
+    }
+  };
 
-  if (loading) return <div className="loading">Loading users...</div>;
-  if (error) return <div className="error">{error}</div>;
+  const handleViewDetailsClick = async (user) => {
+    setViewUser(user);  
+    await fetchUserAllowedData(user.id, setAllowedActions, setAllowedPages, setError);  
+  };
 
   const handleUpdateUserClick = (user) => {
-    // Populate the form with the selected user's details
     setNewUser({ name: user.name, can_login: user.can_login, password: '' });
-    setViewUser(user); // Set the user to view
-    setUpdateModalOpen(true); // Open the update modal
+    setViewUser(user); 
+    setUpdateModalOpen(true); 
   };
 
   const validatePassword = (password) => {
@@ -67,14 +65,17 @@ const UserData = () => {
   const handleUpdateUserSubmit = async (e) => {
     e.preventDefault();
     if (validatePassword(newUser.password)) {
-      if (viewUser) { // Ensure viewUser is set
-        await handleUpdateUser(viewUser.id, newUser, setError, setLoading, setUsers); // Pass user ID for update
-        setUpdateModalOpen(false); // Close modal after updating
+      if (viewUser) { 
+        await handleUpdateUser(viewUser.id, newUser, setError, setLoading, setUsers); 
+        setUpdateModalOpen(false); 
       } else {
         setError('No user selected for update.');
       }
     }
   };
+
+  if (loading) return <div className="loading">Loading users...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="user-management-container">
@@ -99,7 +100,7 @@ const UserData = () => {
                 <td>{user.name}</td>
                 <td>{user.can_login ? 'Yes' : 'No'}</td>
                 <td>
-                  <button className="view-button" onClick={() => setViewUser(user)}>
+                  <button className="view-button" onClick={() => handleViewDetailsClick(user)}>
                     View Details
                   </button>
                   <button className="update-button" onClick={() => handleUpdateUserClick(user)}>
@@ -130,10 +131,35 @@ const UserData = () => {
             <p><strong>ID:</strong> {viewUser.id}</p>
             <p><strong>Name:</strong> {viewUser.name}</p>
             <p><strong>Can Login:</strong> {viewUser.can_login ? 'Yes' : 'No'}</p>
+
+
+            <h4>Allowed Actions</h4>
+            {allowedActions.length > 0 ? (
+              <ul>
+                {allowedActions.map((action) => (
+                  <li key={action.id}>{action.name}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>No allowed actions.</p>
+            )}
+
+            
+            <h4>Allowed Pages</h4>
+            {allowedPages.length > 0 ? (
+              <ul>
+                {allowedPages.map((page) => (
+                  <li key={page.id}>{page.name}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>No allowed pages.</p>
+            )}
           </div>
         </Modal>
       )}
 
+   
       {isCreateModalOpen && (
         <Modal
           className="modal-content"
