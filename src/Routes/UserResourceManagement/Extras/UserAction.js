@@ -1,5 +1,4 @@
-import { axiosClient } from '../../../api/axiosClient';
-import {  userListEndpoint, createUserEndpoint, updateUserEndpoint, deleteUserEndpoint } from './axiosClient';
+import { axiosClient, userListEndpoint, createUserEndpoint, updateUserEndpoint, deleteUserEndpoint } from '../../../api/axiosClient';
 export const fetchUsers = async (setUsers, setError) => {
   try {
     const response = await axiosClient.get(userListEndpoint);

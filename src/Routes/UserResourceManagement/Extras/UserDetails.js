@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
-import { fetchUsers, handleCreateUser, handleUpdateUser, handleDeleteUser, fetchAllowedActions, fetchAllowedPages } from './UserAction';  
+import { fetchUsers, handleCreateUser, handleUpdateUser, handleDeleteUser } from './UserAction';   
+import { fetchAllowedActions, fetchAllowedPages } from '../../../api/axiosClient';
 import './UserDetails.scss';
 
 const UserData = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [viewUser, setViewUser] = useState(null);
+  const [viewUser, setViewUser] = useState(null); // User to view details
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', can_login: false, password: '' });
   const [passwordError, setPasswordError] = useState('');
   const [allowedActions, setAllowedActions] = useState([]); 
@@ -40,12 +42,14 @@ const UserData = () => {
   if (error) return <div className="error">{error}</div>;
 
   const handleUpdateUserClick = (user) => {
-    setNewUser({ name: user.name, can_login: user.can_login, password: '' }); 
-    setViewUser(user);
+    // Populate the form with the selected user's details
+    setNewUser({ name: user.name, can_login: user.can_login, password: '' });
+    setViewUser(user); // Set the user to view
+    setUpdateModalOpen(true); // Open the update modal
   };
 
   const validatePassword = (password) => {
-    if (password.length < 6) {
+    if (password && password.length < 6) {
       setPasswordError('Password must be at least 6 characters long.');
       return false;
     }
@@ -60,10 +64,15 @@ const UserData = () => {
     }
   };
 
-  const handleUpdateUserSubmit = (e) => {
+  const handleUpdateUserSubmit = async (e) => {
     e.preventDefault();
     if (validatePassword(newUser.password)) {
-      handleUpdateUser(viewUser, newUser, setError, setLoading, setUsers, setViewUser);
+      if (viewUser) { // Ensure viewUser is set
+        await handleUpdateUser(viewUser.id, newUser, setError, setLoading, setUsers); // Pass user ID for update
+        setUpdateModalOpen(false); // Close modal after updating
+      } else {
+        setError('No user selected for update.');
+      }
     }
   };
 
@@ -105,6 +114,25 @@ const UserData = () => {
           </tbody>
         </table>
       </div>
+
+      {viewUser && (
+        <Modal
+          className="modal-content"
+          overlayClassName="modal-overlay"
+          isOpen={!!viewUser}
+          onRequestClose={() => setViewUser(null)}
+        >
+          <div className="modal-header">
+            <h3>User Details</h3>
+            <span className="close-icon" onClick={() => setViewUser(null)}>&times;</span>
+          </div>
+          <div className="modal-body">
+            <p><strong>ID:</strong> {viewUser.id}</p>
+            <p><strong>Name:</strong> {viewUser.name}</p>
+            <p><strong>Can Login:</strong> {viewUser.can_login ? 'Yes' : 'No'}</p>
+          </div>
+        </Modal>
+      )}
 
       {isCreateModalOpen && (
         <Modal
@@ -153,52 +181,48 @@ const UserData = () => {
         </Modal>
       )}
 
-      {viewUser && (
+      {isUpdateModalOpen && (
         <Modal
           className="modal-content"
           overlayClassName="modal-overlay"
-          isOpen={!!viewUser}
-          onRequestClose={() => setViewUser(null)}
+          isOpen={isUpdateModalOpen}
+          onRequestClose={() => setUpdateModalOpen(false)}
         >
           <div className="modal-header">
-            <h3>User Details</h3>
-            <span className="close-icon" onClick={() => setViewUser(null)}>&times;</span>
+            <h3>Update User</h3>
+            <span className="close-icon" onClick={() => setUpdateModalOpen(false)}>&times;</span>
           </div>
           <div className="modal-body">
-            <p><strong>ID:</strong> {viewUser.id}</p>
-            <p><strong>Name:</strong> {viewUser.name}</p>
-            <p><strong>Can Login:</strong> {viewUser.can_login ? 'Yes' : 'No'}</p>
-            
-            <p><strong>Pages:</strong></p>
-            <ul>
-              {allowedPages.length > 0 ? (
-                allowedPages.map((page, index) => (
-                  <li key={index}>{page}</li>
-                ))
-              ) : (
-                <li>No pages available</li>
-              )}
-            </ul>
-
-            <p><strong>Allowed Actions:</strong></p>
-            <ul>
-              {allowedActions.length > 0 ? (
-                allowedActions.map((action, index) => (
-                  <li key={index}>{action}</li>
-                ))
-              ) : (
-                <li>No actions available</li>
-              )}
-            </ul>
-
-            <div className="button-group">
-              <button className="update-button" onClick={() => {
-                setNewUser({ name: viewUser.name, can_login: viewUser.can_login, password: '' });
-                setViewUser(users);
-              }}>Update User</button>
-              <button className="delete-button" onClick={() => handleDeleteUser(viewUser.id, setUsers, setError)}>Delete User</button>
-              <button className="cancel-button" onClick={() => setViewUser(null)}>Close</button>
-            </div>
+            <form onSubmit={handleUpdateUserSubmit}>
+              <div>
+                <label>Name:</label>
+                <input
+                  type="text"
+                  value={newUser.name}
+                  onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label>Can Login:</label>
+                <input
+                  type="checkbox"
+                  checked={newUser.can_login}
+                  onChange={(e) => setNewUser({ ...newUser, can_login: e.target.checked })}
+                />
+              </div>
+              <div>
+                <label>Password:</label>
+                <input
+                  type="password"
+                  value={newUser.password}
+                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                />
+                {passwordError && <span className="error">{passwordError}</span>}
+              </div>
+              <button type="submit">Update User</button>
+              <button type="button" onClick={() => setUpdateModalOpen(false)}>Cancel</button>
+            </form>
           </div>
         </Modal>
       )}
