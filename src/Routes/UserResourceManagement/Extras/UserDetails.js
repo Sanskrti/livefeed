@@ -37,7 +37,7 @@ const UserData = () => {
 
   const handleViewDetailsClick = async (user) => {
     setViewUser(user);  
-    await fetchUserAllowedData(user.id, setAllowedActions, setAllowedPages, setError);  
+    await fetchUserAllowedData(user.id);  
   };
 
   const handleUpdateUserClick = (user) => {
@@ -56,21 +56,14 @@ const UserData = () => {
   };
 
   const handleCreateUserSubmit = (e) => {
-    e.preventDefault();
     if (validatePassword(newUser.password)) {
       handleCreateUser(e, newUser, setError, setLoading, setUsers, setCreateModalOpen);
     }
   };
 
   const handleUpdateUserSubmit = async (e) => {
-    e.preventDefault();
-    if (validatePassword(newUser.password)) {
-      if (viewUser) { 
-        await handleUpdateUser(viewUser.id, newUser, setError, setLoading, setUsers); 
-        setUpdateModalOpen(false); 
-      } else {
-        setError('No user selected for update.');
-      }
+    if (validatePassword(newUser.password) && viewUser) {
+      await handleUpdateUser(viewUser, newUser, setError, setLoading, setUsers, setUpdateModalOpen);
     }
   };
 
@@ -132,24 +125,22 @@ const UserData = () => {
             <p><strong>Name:</strong> {viewUser.name}</p>
             <p><strong>Can Login:</strong> {viewUser.can_login ? 'Yes' : 'No'}</p>
 
-
             <h4>Allowed Actions</h4>
             {allowedActions.length > 0 ? (
               <ul>
                 {allowedActions.map((action) => (
-                  <li key={action.id}>{action.name}</li>
+                  <li key={action}>{action}</li> 
                 ))}
               </ul>
             ) : (
               <p>No allowed actions.</p>
             )}
 
-            
             <h4>Allowed Pages</h4>
             {allowedPages.length > 0 ? (
               <ul>
                 {allowedPages.map((page) => (
-                  <li key={page.id}>{page.name}</li>
+                  <li key={page}>{page}</li> 
                 ))}
               </ul>
             ) : (
@@ -159,7 +150,6 @@ const UserData = () => {
         </Modal>
       )}
 
-   
       {isCreateModalOpen && (
         <Modal
           className="modal-content"

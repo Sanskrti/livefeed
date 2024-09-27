@@ -1,4 +1,5 @@
 import { axiosClient, userListEndpoint, createUserEndpoint, updateUserEndpoint, deleteUserEndpoint } from '../../../api/axiosClient';
+
 export const fetchUsers = async (setUsers, setError) => {
   try {
     const response = await axiosClient.get(userListEndpoint);
@@ -7,6 +8,7 @@ export const fetchUsers = async (setUsers, setError) => {
     setError('Error fetching users: ' + error.message);
   }
 };
+
 export const handleCreateUser = async (e, newUser, setError, setLoading, setUsers, setCreateModalOpen) => {
   e.preventDefault();
   try {
@@ -19,11 +21,12 @@ export const handleCreateUser = async (e, newUser, setError, setLoading, setUser
     setLoading(false);
   }
 };
-export const handleUpdateUser = async (viewUser, updatedUser, setError, setLoading, setUsers, setViewUser) => {
+
+export const handleUpdateUser = async (viewUser, updatedUser, setError, setLoading, setUsers, setUpdateModalOpen) => {
   try {
     const response = await axiosClient.put(updateUserEndpoint(viewUser.id), updatedUser);
     setUsers((prevUsers) => prevUsers.map((user) => (user.id === viewUser.id ? response.data : user)));
-    setViewUser(null);
+    setUpdateModalOpen(false);
   } catch (error) {
     setError('Error updating user: ' + error.message);
   } finally {
@@ -39,5 +42,3 @@ export const handleDeleteUser = async (userId, setUsers, setError) => {
     setError('Error deleting user: ' + error.message);
   }
 };
-
-
