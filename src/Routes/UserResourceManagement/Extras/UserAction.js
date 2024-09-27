@@ -14,8 +14,8 @@ export const handleCreateUser = async (e, newUser, setError, setLoading, setUser
   setLoading(true);
   try {
     const response = await axiosClient.post(createUserEndpoint, newUser);
-    setUsers((prevUsers) => [...prevUsers, response.data]); 
-    setCreateModalOpen(false); 
+    setUsers((prevUsers) => [...prevUsers, response.data]);
+    setCreateModalOpen(false);
   } catch (error) {
     setError('Error creating user: ' + error.message);
   } finally {
@@ -28,7 +28,7 @@ export const handleUpdateUser = async (viewUser, updatedUser, setError, setLoadi
   try {
     const response = await axiosClient.put(updateUserEndpoint(viewUser.id), updatedUser);
     setUsers((prevUsers) => prevUsers.map((user) => (user.id === viewUser.id ? response.data : user)));
-    setUpdateModalOpen(false); 
+    setUpdateModalOpen(false);
   } catch (error) {
     setError('Error updating user: ' + error.message);
   } finally {
@@ -40,7 +40,6 @@ export const handleDeleteUser = async (userId, setUsers, setError) => {
   try {
     await axiosClient.delete(deleteUserEndpoint(userId));
     setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
-    
   } catch (error) {
     setError('Error deleting user: ' + error.message);
   }
