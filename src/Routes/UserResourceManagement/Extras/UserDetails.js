@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
-import { fetchUsers, handleCreateUser, handleUpdateUser, handleDeleteUser } from './UserAction';   
+import { fetchUsers, handleCreateUser, handleUpdateUser , handleDeleteUser } from './UserAction';   
 import { fetchAllowedActions, fetchAllowedPages } from '../../../api/axiosClient';
 import './UserDetails.scss';
 
@@ -8,6 +8,7 @@ const UserData = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(''); 
   const [viewUser, setViewUser] = useState(null); 
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
@@ -18,11 +19,25 @@ const UserData = () => {
 
   useEffect(() => {
     const loadUsers = async () => {
-      await fetchUsers(setUsers, setError);
-      setLoading(false);
+      try {
+        await fetchUsers(setUsers, setError);
+      } catch (err) {
+        setError('Failed to load users: ' + err.message);
+      } finally {
+        setLoading(false);
+      }
     };
     loadUsers();
   }, []);
+
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage(''); 
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
 
   const fetchUserAllowedData = async (userId) => {
     try {
@@ -55,17 +70,35 @@ const UserData = () => {
     return true;
   };
 
-  const handleCreateUserSubmit = (e) => {
+  const handleCreateUserSubmit = async (e) => {
+    e.preventDefault();
     if (validatePassword(newUser.password)) {
-      handleCreateUser(e, newUser, setError, setLoading, setUsers, setCreateModalOpen);
+      await handleCreateUser(e, newUser, setError, setLoading, setUsers, setCreateModalOpen);
+      setSuccessMessage('User created successfully!'); 
+      setNewUser({ name: '', can_login: false, password: '' }); 
     }
   };
 
   const handleUpdateUserSubmit = async (e) => {
+    e.preventDefault();
     if (validatePassword(newUser.password) && viewUser) {
       await handleUpdateUser(viewUser, newUser, setError, setLoading, setUsers, setUpdateModalOpen);
+      setSuccessMessage('User updated successfully!'); 
+      setUpdateModalOpen(false); 
     }
   };
+
+  const handleDeleteUser = async (userId) => {
+  if (window.confirm("Are you sure you want to delete this user?")) {
+    try {
+      await handleDeleteUser(userId, setUsers, setError);
+      setSuccessMessage('User deleted successfully!'); 
+    } catch (error) {
+      setError('Error deleting user: ' + error.message);
+    }
+  }
+};
+
 
   if (loading) return <div className="loading">Loading users...</div>;
   if (error) return <div className="error">{error}</div>;
@@ -73,6 +106,7 @@ const UserData = () => {
   return (
     <div className="user-management-container">
       <h1>User Management</h1>
+      {successMessage && <div className="success-message">{successMessage}</div>}
 
       <div className="user-list-section">
         <h2>User List</h2>
@@ -99,7 +133,7 @@ const UserData = () => {
                   <button className="update-button" onClick={() => handleUpdateUserClick(user)}>
                     Update User
                   </button>
-                  <button className="delete-button" onClick={() => handleDeleteUser(user.id, setUsers, setError)}>
+                  <button className="delete-button" onClick={() => handleDeleteUser(user.id)}>
                     Delete User
                   </button>
                 </td>
@@ -188,7 +222,7 @@ const UserData = () => {
                   onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
                   required
                 />
-                {passwordError && <span className="error">{passwordError}</span>}
+                {newUser.password && passwordError && <span className="error">{passwordError}</span>}
               </div>
               <button type="submit">Create User</button>
               <button type="button" onClick={() => setCreateModalOpen(false)}>Cancel</button>
@@ -234,7 +268,7 @@ const UserData = () => {
                   value={newUser.password}
                   onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
                 />
-                {passwordError && <span className="error">{passwordError}</span>}
+                {newUser.password && passwordError && <span className="error">{passwordError}</span>}
               </div>
               <button type="submit">Update User</button>
               <button type="button" onClick={() => setUpdateModalOpen(false)}>Cancel</button>
