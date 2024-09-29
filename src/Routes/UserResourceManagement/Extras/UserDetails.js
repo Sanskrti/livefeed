@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
-import { fetchUsers, handleCreateUser, handleUpdateUser, handleDeleteUser } from './UserAction';   
+import { 
+  fetchUsers, 
+  handleCreateUser, 
+  handleUpdateUser, 
+  handleDeleteUser 
+} from './UserAction';   
 import { fetchAllowedActions, fetchAllowedPages } from '../../../api/axiosClient';
 import './UserDetails.scss';
 
@@ -8,16 +13,14 @@ const UserData = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(''); 
-  const [viewUser, setViewUser] = useState(null); 
+  const [successMessage, setSuccessMessage] = useState('');
+  const [viewUser, setViewUser] = useState(null);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
-  const [newUser, setNewUser] = useState({ name: '', can_login: false, password: '', allowedActions: [], allowedPages: [] });
-  const [passwordError, setPasswordError] = useState('');
+  const [newUser, setNewUser] = useState({ name: '', can_login: false, password: '' });
   const [allowedActions, setAllowedActions] = useState([]); 
   const [allowedPages, setAllowedPages] = useState([]);     
-  const [actionOptions, setActionOptions] = useState([]); 
-  const [pageOptions, setPageOptions] = useState([]);     
+  const [passwordError, setPasswordError] = useState('');
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -33,20 +36,6 @@ const UserData = () => {
   }, []);
 
   useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const actions = await fetchAllowedActions();  
-        const pages = await fetchAllowedPages();  
-        setActionOptions(actions);
-        setPageOptions(pages);
-      } catch (error) {
-        setError('Error fetching actions/pages: ' + error.message);
-      }
-    };
-    fetchOptions();
-  }, []);
-
-  useEffect(() => {
     if (successMessage) {
       const timer = setTimeout(() => setSuccessMessage(''), 3000);
       return () => clearTimeout(timer);
@@ -55,15 +44,12 @@ const UserData = () => {
 
   const fetchUserAllowedData = async (userId) => {
     try {
-      const actions = await fetchAllowedActions(userId);
-      const pages = await fetchAllowedPages(userId);
-      setViewUser((prevUser) => ({
-        ...prevUser,
-        allowedActions: actions,
-        allowedPages: pages
-      }));
+      const actions = await fetchAllowedActions(userId);  
+      const pages = await fetchAllowedPages(userId);     
+      setAllowedActions(actions); 
+      setAllowedPages(pages);    
     } catch (error) {
-      setError('Error fetching user allowed data: ' + error.message);
+      setError('Error fetching allowed actions/pages: ' + error.message);
     }
   };
 
@@ -73,7 +59,10 @@ const UserData = () => {
   };
 
   const handleUpdateUserClick = (user) => {
-    setNewUser({ name: user.name, can_login: user.can_login, password: '', allowedActions: user.allowedActions, allowedPages: user.allowedPages });
+    setNewUser({ name: user.name, can_login: user.can_login, password: '' });
+    setAllowedActions([]);  
+    setAllowedPages([]);    
+    fetchUserAllowedData(user.id);  
     setViewUser(user); 
     setUpdateModalOpen(true); 
   };
@@ -92,14 +81,19 @@ const UserData = () => {
     if (validatePassword(newUser.password)) {
       await handleCreateUser(e, newUser, setError, setLoading, setUsers, setCreateModalOpen);
       setSuccessMessage('User created successfully!'); 
-      setNewUser({ name: '', can_login: false, password: '', allowedActions: [], allowedPages: [] }); 
+      setNewUser({ name: '', can_login: false, password: '' }); 
     }
   };
 
   const handleUpdateUserSubmit = async (e) => {
     e.preventDefault();
     if (validatePassword(newUser.password) && viewUser) {
-      await handleUpdateUser(viewUser, newUser, setError, setLoading, setUsers, setUpdateModalOpen);
+      const updatedUser = {
+        ...newUser,
+        allowedActions,  
+        allowedPages,    
+      };
+      await handleUpdateUser(viewUser, updatedUser, setError, setLoading, setUsers, setUpdateModalOpen);
       setSuccessMessage('User updated successfully!'); 
     }
   };
@@ -118,7 +112,7 @@ const UserData = () => {
     <div className="user-management-container">
       <h1>User Management</h1>
       {successMessage && <div className="success-message">{successMessage}</div>}
-
+      
       <div className="user-list-section">
         <h2>User List</h2>
         <button onClick={() => setCreateModalOpen(true)}>Create User</button>
@@ -138,15 +132,9 @@ const UserData = () => {
                 <td>{user.name}</td>
                 <td>{user.can_login ? 'Yes' : 'No'}</td>
                 <td>
-                  <button className="view-button" onClick={() => handleViewDetailsClick(user)}>
-                    View Details
-                  </button>
-                  <button className="update-button" onClick={() => handleUpdateUserClick(user)}>
-                    Update User
-                  </button>
-                  <button className="delete-button" onClick={() => handleDeleteUserClick(user.id)}>
-                    Delete User
-                  </button>
+                  <button className="view-button" onClick={() => handleViewDetailsClick(user)}>View Details</button>
+                  <button className="update-button" onClick={() => handleUpdateUserClick(user)}>Update User</button>
+                  <button className="delete-button" onClick={() => handleDeleteUserClick(user.id)}>Delete User</button>
                 </td>
               </tr>
             ))}
@@ -169,28 +157,10 @@ const UserData = () => {
             <p><strong>ID:</strong> {viewUser.id}</p>
             <p><strong>Name:</strong> {viewUser.name}</p>
             <p><strong>Can Login:</strong> {viewUser.can_login ? 'Yes' : 'No'}</p>
-
             <h4>Allowed Actions</h4>
-            {viewUser.allowedActions.length > 0 ? (
-              <ul>
-                {viewUser.allowedActions.map((action) => (
-                  <li key={action}>{action}</li> 
-                ))}
-              </ul>
-            ) : (
-              <p>No allowed actions.</p>
-            )}
-
+            <ul>{allowedActions.length ? allowedActions.map(action => <li key={action}>{action}</li>) : <p>No allowed actions.</p>}</ul>
             <h4>Allowed Pages</h4>
-            {viewUser.allowedPages.length > 0 ? (
-              <ul>
-                {viewUser.allowedPages.map((page) => (
-                  <li key={page}>{page}</li> 
-                ))}
-              </ul>
-            ) : (
-              <p>No allowed pages.</p>
-            )}
+            <ul>{allowedPages.length ? allowedPages.map(page => <li key={page}>{page}</li>) : <p>No allowed pages.</p>}</ul>
           </div>
         </Modal>
       )}
@@ -235,22 +205,6 @@ const UserData = () => {
                 />
                 {passwordError && <div className="error">{passwordError}</div>}
               </div>
-              <div>
-                <label>Allowed Actions:</label>
-                <select multiple value={newUser.allowedActions} onChange={(e) => setNewUser({ ...newUser, allowedActions: Array.from(e.target.selectedOptions, option => option.value) })}>
-                  {actionOptions.map((action) => (
-                    <option key={action} value={action}>{action}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label>Allowed Pages:</label>
-                <select multiple value={newUser.allowedPages} onChange={(e) => setNewUser({ ...newUser, allowedPages: Array.from(e.target.selectedOptions, option => option.value) })}>
-                  {pageOptions.map((page) => (
-                    <option key={page} value={page}>{page}</option>
-                  ))}
-                </select>
-              </div>
               <button type="submit">Create User</button>
             </form>
           </div>
@@ -288,7 +242,7 @@ const UserData = () => {
                 />
               </div>
               <div>
-                <label>Password:</label>
+                <label>Password (leave blank to keep unchanged):</label>
                 <input
                   type="password"
                   value={newUser.password}
@@ -298,19 +252,19 @@ const UserData = () => {
               </div>
               <div>
                 <label>Allowed Actions:</label>
-                <select multiple value={newUser.allowedActions} onChange={(e) => setNewUser({ ...newUser, allowedActions: Array.from(e.target.selectedOptions, option => option.value) })}>
-                  {actionOptions.map((action) => (
-                    <option key={action} value={action}>{action}</option>
-                  ))}
-                </select>
+                <input
+                  type="text"
+                  value={allowedActions.join(', ')}
+                  onChange={(e) => setAllowedActions(e.target.value.split(', ').map(action => action.trim()))}
+                />
               </div>
               <div>
                 <label>Allowed Pages:</label>
-                <select multiple value={newUser.allowedPages} onChange={(e) => setNewUser({ ...newUser, allowedPages: Array.from(e.target.selectedOptions, option => option.value) })}>
-                  {pageOptions.map((page) => (
-                    <option key={page} value={page}>{page}</option>
-                  ))}
-                </select>
+                <input
+                  type="text"
+                  value={allowedPages.join(', ')}
+                  onChange={(e) => setAllowedPages(e.target.value.split(', ').map(page => page.trim()))}
+                />
               </div>
               <button type="submit">Update User</button>
             </form>
