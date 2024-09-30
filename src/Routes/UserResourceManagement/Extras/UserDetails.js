@@ -15,11 +15,11 @@ const UserData = () => {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [viewUser, setViewUser] = useState(null);
-  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
-  const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [isCreateMode, setIsCreateMode] = useState(true);
   const [newUser, setNewUser] = useState({ name: '', can_login: false, password: '' });
-  const [allowedActions, setAllowedActions] = useState([]); 
-  const [allowedPages, setAllowedPages] = useState([]);     
+  const [allowedActions, setAllowedActions] = useState([]);
+  const [allowedPages, setAllowedPages] = useState([]);
   const [passwordError, setPasswordError] = useState('');
 
   useEffect(() => {
@@ -44,27 +44,30 @@ const UserData = () => {
 
   const fetchUserAllowedData = async (userId) => {
     try {
-      const actions = await fetchAllowedActions(userId);  
-      const pages = await fetchAllowedPages(userId);     
-      setAllowedActions(actions); 
-      setAllowedPages(pages);    
+      const actions = await fetchAllowedActions(userId);
+      const pages = await fetchAllowedPages(userId);
+      setAllowedActions(actions);
+      setAllowedPages(pages);
     } catch (error) {
       setError('Error fetching allowed actions/pages: ' + error.message);
     }
   };
 
   const handleViewDetailsClick = async (user) => {
-    setViewUser(user);  
-    await fetchUserAllowedData(user.id);  
+    setViewUser(user);
+    await fetchUserAllowedData(user.id);
   };
 
-  const handleUpdateUserClick = (user) => {
-    setNewUser({ name: user.name, can_login: user.can_login, password: '' });
-    setAllowedActions([]);  
-    setAllowedPages([]);    
-    fetchUserAllowedData(user.id);  
-    setViewUser(user); 
-    setUpdateModalOpen(true); 
+  const handleOpenModal = (user = null) => {
+    if (user) {
+      setNewUser({ name: user.name, can_login: user.can_login, password: '' });
+      fetchUserAllowedData(user.id);
+      setIsCreateMode(false);
+    } else {
+      setNewUser({ name: '', can_login: false, password: '' });
+      setIsCreateMode(true);
+    }
+    setModalOpen(true);
   };
 
   const validatePassword = (password) => {
@@ -76,32 +79,29 @@ const UserData = () => {
     return true;
   };
 
-  const handleCreateUserSubmit = async (e) => {
-    e.preventDefault();
-    if (validatePassword(newUser.password)) {
-      await handleCreateUser(e, newUser, setError, setLoading, setUsers, setCreateModalOpen);
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (validatePassword(newUser.password)) {
+    if (isCreateMode) {
+      await handleCreateUser(e, newUser, setError, setLoading, setUsers, setModalOpen);
       setSuccessMessage('User created successfully!'); 
-      setNewUser({ name: '', can_login: false, password: '' }); 
-    }
-  };
-
-  const handleUpdateUserSubmit = async (e) => {
-    e.preventDefault();
-    if (validatePassword(newUser.password) && viewUser) {
+    } else if (viewUser) {
       const updatedUser = {
         ...newUser,
-        allowedActions,  
-        allowedPages,    
+        allowedActions,
+        allowedPages,
       };
-      await handleUpdateUser(viewUser, updatedUser, setError, setLoading, setUsers, setUpdateModalOpen);
+      await handleUpdateUser(viewUser, updatedUser, setError, setLoading, setUsers, setModalOpen);
       setSuccessMessage('User updated successfully!'); 
+      setViewUser(null); 
     }
-  };
+  }
+};
 
   const handleDeleteUserClick = async (userId) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       await handleDeleteUser(userId, setUsers, setError);
-      setSuccessMessage('User deleted successfully!'); 
+      setSuccessMessage('User deleted successfully!');
     }
   };
 
@@ -115,7 +115,7 @@ const UserData = () => {
       
       <div className="user-list-section">
         <h2>User List</h2>
-        <button onClick={() => setCreateModalOpen(true)}>Create User</button>
+        <button onClick={() => handleOpenModal()}>Create User</button>
         <table className="user-list-table">
           <thead>
             <tr>
@@ -133,7 +133,7 @@ const UserData = () => {
                 <td>{user.can_login ? 'Yes' : 'No'}</td>
                 <td>
                   <button className="view-button" onClick={() => handleViewDetailsClick(user)}>View Details</button>
-                  <button className="update-button" onClick={() => handleUpdateUserClick(user)}>Update User</button>
+                  <button className="update-button" onClick={() => handleOpenModal(user)}>Update User</button>
                   <button className="delete-button" onClick={() => handleDeleteUserClick(user.id)}>Delete User</button>
                 </td>
               </tr>
@@ -165,19 +165,19 @@ const UserData = () => {
         </Modal>
       )}
 
-      {isCreateModalOpen && (
+      {isModalOpen && (
         <Modal
           className="modal-content"
           overlayClassName="modal-overlay"
-          isOpen={isCreateModalOpen}
-          onRequestClose={() => setCreateModalOpen(false)}
+          isOpen={isModalOpen}
+          onRequestClose={() => setModalOpen(false)}
         >
           <div className="modal-header">
-            <h3>Create User</h3>
-            <span className="close-icon" onClick={() => setCreateModalOpen(false)}>&times;</span>
+            <h3>{isCreateMode ? 'Create User' : 'Update User'}</h3>
+            <span className="close-icon" onClick={() => setModalOpen(false)}>&times;</span>
           </div>
           <div className="modal-body">
-            <form onSubmit={handleCreateUserSubmit}>
+            <form onSubmit={handleSubmit}>
               <div>
                 <label>Name:</label>
                 <input
@@ -201,52 +201,7 @@ const UserData = () => {
                   type="password"
                   value={newUser.password}
                   onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                  required
-                />
-                {passwordError && <div className="error">{passwordError}</div>}
-              </div>
-              <button type="submit">Create User</button>
-            </form>
-          </div>
-        </Modal>
-      )}
-
-      {isUpdateModalOpen && (
-        <Modal
-          className="modal-content"
-          overlayClassName="modal-overlay"
-          isOpen={isUpdateModalOpen}
-          onRequestClose={() => setUpdateModalOpen(false)}
-        >
-          <div className="modal-header">
-            <h3>Update User</h3>
-            <span className="close-icon" onClick={() => setUpdateModalOpen(false)}>&times;</span>
-          </div>
-          <div className="modal-body">
-            <form onSubmit={handleUpdateUserSubmit}>
-              <div>
-                <label>Name:</label>
-                <input
-                  type="text"
-                  value={newUser.name}
-                  onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <label>Can Login:</label>
-                <input
-                  type="checkbox"
-                  checked={newUser.can_login}
-                  onChange={(e) => setNewUser({ ...newUser, can_login: e.target.checked })}
-                />
-              </div>
-              <div>
-                <label>Password (leave blank to keep unchanged):</label>
-                <input
-                  type="password"
-                  value={newUser.password}
-                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  required={isCreateMode} 
                 />
                 {passwordError && <div className="error">{passwordError}</div>}
               </div>
@@ -266,7 +221,7 @@ const UserData = () => {
                   onChange={(e) => setAllowedPages(e.target.value.split(', ').map(page => page.trim()))}
                 />
               </div>
-              <button type="submit">Update User</button>
+              <button type="submit">{isCreateMode ? 'Create User' : 'Update User'}</button>
             </form>
           </div>
         </Modal>

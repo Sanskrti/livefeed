@@ -27,7 +27,8 @@ export const handleUpdateUser = async (viewUser, updatedUser, setError, setLoadi
   setLoading(true);
   try {
     const response = await axiosClient.put(updateUserEndpoint(viewUser.id), updatedUser);
-    setUsers((prevUsers) => prevUsers.map((user) => (user.id === viewUser.id ? response.data : user)));
+
+    setUsers((prevUsers) => prevUsers.map((user) => (user.id === response.data.id ? response.data : user)));
     setUpdateModalOpen(false);
   } catch (error) {
     setError('Error updating user: ' + error.message);
@@ -35,7 +36,6 @@ export const handleUpdateUser = async (viewUser, updatedUser, setError, setLoadi
     setLoading(false);
   }
 };
-
 export const handleDeleteUser = async (userId, setUsers, setError) => {
   try {
     await axiosClient.delete(deleteUserEndpoint(userId));
