@@ -1,33 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import Modal from 'react-modal';
-import { 
-  fetchUsers, 
-  handleCreateUser, 
-  handleUpdateUser, 
-  handleDeleteUser 
-} from './UserAction';   
-import { fetchAllowedActions, fetchAllowedPages } from '../../../api/axiosClient';
-import './UserDetails.scss';
+import React, { useState, useEffect } from "react";
+import Modal from "react-modal";
+import {
+  fetchUsers,
+  handleCreateUser,
+  handleUpdateUser,
+  handleDeleteUser,
+} from "./UserAction";
+import {
+  fetchAllowedActions,
+  fetchAllowedPages,
+} from "../../../api/axiosClient";
+import "./UserDetails.scss";
 
 const UserData = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
   const [viewUser, setViewUser] = useState(null);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
-  const [newUser, setNewUser] = useState({ name: '', can_login: false, password: '' });
-  const [allowedActions, setAllowedActions] = useState([]); 
-  const [allowedPages, setAllowedPages] = useState([]);     
-  const [passwordError, setPasswordError] = useState('');
+  const [userSelectedActions, setUserSelectedActions] = useState([]);
+  const [newUser, setNewUser] = useState({
+    name: "",
+    can_login: false,
+    password: "",
+  });
+  const [allowedActions, setAllowedActions] = useState([]);
+  const [allowedPages, setAllowedPages] = useState([]);
+  const [passwordError, setPasswordError] = useState("");
 
   useEffect(() => {
     const loadUsers = async () => {
       try {
         await fetchUsers(setUsers, setError);
       } catch (err) {
-        setError('Failed to load users: ' + err.message);
+        setError("Failed to load users: " + err.message);
       } finally {
         setLoading(false);
       }
@@ -37,51 +45,58 @@ const UserData = () => {
 
   useEffect(() => {
     if (successMessage) {
-      const timer = setTimeout(() => setSuccessMessage(''), 3000);
+      const timer = setTimeout(() => setSuccessMessage(""), 3000);
       return () => clearTimeout(timer);
     }
   }, [successMessage]);
 
   const fetchUserAllowedData = async (userId) => {
     try {
-      const actions = await fetchAllowedActions(userId);  
-      const pages = await fetchAllowedPages(userId);     
-      setAllowedActions(actions); 
-      setAllowedPages(pages);    
+      const actions = await fetchAllowedActions(userId);
+      const pages = await fetchAllowedPages(userId);
+      setAllowedActions(actions);
+      setAllowedPages(pages);
     } catch (error) {
-      setError('Error fetching allowed actions/pages: ' + error.message);
+      setError("Error fetching allowed actions/pages: " + error.message);
     }
   };
 
   const handleViewDetailsClick = async (user) => {
-    setViewUser(user);  
-    await fetchUserAllowedData(user.id);  
+    setViewUser(user);
+    await fetchUserAllowedData(user.id);
   };
 
   const handleUpdateUserClick = (user) => {
-    setNewUser({ name: user.name, can_login: user.can_login, password: '' });
-    setAllowedActions([]);  
-    setAllowedPages([]);    
-    fetchUserAllowedData(user.id);  
-    setViewUser(user); 
-    setUpdateModalOpen(true); 
+    setNewUser({ name: user.name, can_login: user.can_login, password: "" });
+    setAllowedActions([]);
+    setAllowedPages([]);
+    fetchUserAllowedData(user.id);
+    setViewUser(user);
+    setUpdateModalOpen(true);
   };
 
   const validatePassword = (password) => {
     if (password && password.length < 6) {
-      setPasswordError('Password must be at least 6 characters long.');
+      setPasswordError("Password must be at least 6 characters long.");
       return false;
     }
-    setPasswordError('');
+    setPasswordError("");
     return true;
   };
 
   const handleCreateUserSubmit = async (e) => {
     e.preventDefault();
     if (validatePassword(newUser.password)) {
-      await handleCreateUser(e, newUser, setError, setLoading, setUsers, setCreateModalOpen);
-      setSuccessMessage('User created successfully!'); 
-      setNewUser({ name: '', can_login: false, password: '' }); 
+      await handleCreateUser(
+        e,
+        newUser,
+        setError,
+        setLoading,
+        setUsers,
+        setCreateModalOpen,
+      );
+      setSuccessMessage("User created successfully!");
+      setNewUser({ name: "", can_login: false, password: "" });
     }
   };
 
@@ -90,18 +105,25 @@ const UserData = () => {
     if (validatePassword(newUser.password) && viewUser) {
       const updatedUser = {
         ...newUser,
-        allowedActions,  
-        allowedPages,    
+        userSelectedActions,
+        allowedPages,
       };
-      await handleUpdateUser(viewUser, updatedUser, setError, setLoading, setUsers, setUpdateModalOpen);
-      setSuccessMessage('User updated successfully!'); 
+      await handleUpdateUser(
+        viewUser,
+        updatedUser,
+        setError,
+        setLoading,
+        setUsers,
+        setUpdateModalOpen,
+      );
+      setSuccessMessage("User updated successfully!");
     }
   };
 
   const handleDeleteUserClick = async (userId) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       await handleDeleteUser(userId, setUsers, setError);
-      setSuccessMessage('User deleted successfully!'); 
+      setSuccessMessage("User deleted successfully!");
     }
   };
 
@@ -111,8 +133,10 @@ const UserData = () => {
   return (
     <div className="user-management-container">
       <h1>User Management</h1>
-      {successMessage && <div className="success-message">{successMessage}</div>}
-      
+      {successMessage && (
+        <div className="success-message">{successMessage}</div>
+      )}
+
       <div className="user-list-section">
         <h2>User List</h2>
         <button onClick={() => setCreateModalOpen(true)}>Create User</button>
@@ -130,11 +154,26 @@ const UserData = () => {
               <tr key={user.id}>
                 <td>{user.id}</td>
                 <td>{user.name}</td>
-                <td>{user.can_login ? 'Yes' : 'No'}</td>
+                <td>{user.can_login ? "Yes" : "No"}</td>
                 <td>
-                  <button className="view-button" onClick={() => handleViewDetailsClick(user)}>View Details</button>
-                  <button className="update-button" onClick={() => handleUpdateUserClick(user)}>Update User</button>
-                  <button className="delete-button" onClick={() => handleDeleteUserClick(user.id)}>Delete User</button>
+                  <button
+                    className="view-button"
+                    onClick={() => handleViewDetailsClick(user)}
+                  >
+                    View Details
+                  </button>
+                  <button
+                    className="update-button"
+                    onClick={() => handleUpdateUserClick(user)}
+                  >
+                    Update User
+                  </button>
+                  <button
+                    className="delete-button"
+                    onClick={() => handleDeleteUserClick(user.id)}
+                  >
+                    Delete User
+                  </button>
                 </td>
               </tr>
             ))}
@@ -151,16 +190,36 @@ const UserData = () => {
         >
           <div className="modal-header">
             <h3>User Details</h3>
-            <span className="close-icon" onClick={() => setViewUser(null)}>&times;</span>
+            <span className="close-icon" onClick={() => setViewUser(null)}>
+              &times;
+            </span>
           </div>
           <div className="modal-body">
-            <p><strong>ID:</strong> {viewUser.id}</p>
-            <p><strong>Name:</strong> {viewUser.name}</p>
-            <p><strong>Can Login:</strong> {viewUser.can_login ? 'Yes' : 'No'}</p>
+            <p>
+              <strong>ID:</strong> {viewUser.id}
+            </p>
+            <p>
+              <strong>Name:</strong> {viewUser.name}
+            </p>
+            <p>
+              <strong>Can Login:</strong> {viewUser.can_login ? "Yes" : "No"}
+            </p>
             <h4>Allowed Actions</h4>
-            <ul>{allowedActions.length ? allowedActions.map(action => <li key={action}>{action}</li>) : <p>No allowed actions.</p>}</ul>
+            <ul>
+              {allowedActions.length ? (
+                allowedActions.map((action) => <li key={action}>{action}</li>)
+              ) : (
+                <p>No allowed actions.</p>
+              )}
+            </ul>
             <h4>Allowed Pages</h4>
-            <ul>{allowedPages.length ? allowedPages.map(page => <li key={page}>{page}</li>) : <p>No allowed pages.</p>}</ul>
+            <ul>
+              {allowedPages.length ? (
+                allowedPages.map((page) => <li key={page}>{page}</li>)
+              ) : (
+                <p>No allowed pages.</p>
+              )}
+            </ul>
           </div>
         </Modal>
       )}
@@ -174,7 +233,12 @@ const UserData = () => {
         >
           <div className="modal-header">
             <h3>Create User</h3>
-            <span className="close-icon" onClick={() => setCreateModalOpen(false)}>&times;</span>
+            <span
+              className="close-icon"
+              onClick={() => setCreateModalOpen(false)}
+            >
+              &times;
+            </span>
           </div>
           <div className="modal-body">
             <form onSubmit={handleCreateUserSubmit}>
@@ -183,7 +247,9 @@ const UserData = () => {
                 <input
                   type="text"
                   value={newUser.name}
-                  onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, name: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -192,7 +258,9 @@ const UserData = () => {
                 <input
                   type="checkbox"
                   checked={newUser.can_login}
-                  onChange={(e) => setNewUser({ ...newUser, can_login: e.target.checked })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, can_login: e.target.checked })
+                  }
                 />
               </div>
               <div>
@@ -200,7 +268,9 @@ const UserData = () => {
                 <input
                   type="password"
                   value={newUser.password}
-                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, password: e.target.value })
+                  }
                   required
                 />
                 {passwordError && <div className="error">{passwordError}</div>}
@@ -220,7 +290,12 @@ const UserData = () => {
         >
           <div className="modal-header">
             <h3>Update User</h3>
-            <span className="close-icon" onClick={() => setUpdateModalOpen(false)}>&times;</span>
+            <span
+              className="close-icon"
+              onClick={() => setUpdateModalOpen(false)}
+            >
+              &times;
+            </span>
           </div>
           <div className="modal-body">
             <form onSubmit={handleUpdateUserSubmit}>
@@ -229,7 +304,9 @@ const UserData = () => {
                 <input
                   type="text"
                   value={newUser.name}
-                  onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, name: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -238,7 +315,9 @@ const UserData = () => {
                 <input
                   type="checkbox"
                   checked={newUser.can_login}
-                  onChange={(e) => setNewUser({ ...newUser, can_login: e.target.checked })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, can_login: e.target.checked })
+                  }
                 />
               </div>
               <div>
@@ -246,24 +325,47 @@ const UserData = () => {
                 <input
                   type="password"
                   value={newUser.password}
-                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, password: e.target.value })
+                  }
                 />
                 {passwordError && <div className="error">{passwordError}</div>}
               </div>
               <div>
                 <label>Allowed Actions:</label>
-                <input
-                  type="text"
-                  value={allowedActions.join(', ')}
-                  onChange={(e) => setAllowedActions(e.target.value.split(', ').map(action => action.trim()))}
-                />
+                {/* <input */}
+                {/*   type="text" */}
+                {/*   value={allowedActions.join(', ')} */}
+                {/*   onChange={(e) => setAllowedActions(e.target.value.split(', ').map(action => action.trim()))} */}
+                {/* /> */}
+                <select
+                  onChange={(e) => {
+                    const values = Array.from(
+                      e.target.selectedOptions,
+                      (option) => option.value,
+                    );
+                    console.warn(values);
+                    setUserSelectedActions(values);
+                  }}
+                  multiple={true}
+                >
+                  {allowedActions.map((item, index) => (
+                    <option key={index} value={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label>Allowed Pages:</label>
                 <input
                   type="text"
-                  value={allowedPages.join(', ')}
-                  onChange={(e) => setAllowedPages(e.target.value.split(', ').map(page => page.trim()))}
+                  value={allowedPages.join(", ")}
+                  onChange={(e) =>
+                    setAllowedPages(
+                      e.target.value.split(", ").map((page) => page.trim()),
+                    )
+                  }
                 />
               </div>
               <button type="submit">Update User</button>

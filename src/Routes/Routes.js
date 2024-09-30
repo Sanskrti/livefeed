@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import LiveFeedPage from "../components/LiveFeedContainer/LiveFeedDisplay";
+import UserManagement from "./UserManagement";
 import UserData from "./UserResourceManagement/Extras/UserDetails";
 
 const Dashboard = () => <div>Dashboard</div>;
@@ -11,7 +12,7 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/live-feed" element={<LiveFeedPage />} />
-      <Route path="/admin-panel" element={<UserData />} />
+      <Route path="/admin-panel" element={<UserManagement />} />
       <Route path="/configuration" element={<Configuration />} />
     </Routes>
   );
