@@ -1,9 +1,9 @@
 import { axiosClient } from "../../api/axiosClient";
 import { useEffect, useState } from "react";
-import { userListEndpoint } from "../../api/axiosClient";
 import UserDeletion from "./extras/user-deletion";
 import UserUpdation from "./extras/user-updation";
 import UserCreation from "./extras/user-creation";
+import { userListEndpoint } from "../../api/axiosClient";
 
 const UserManagement = () => {
   const [userList, setUserList] = useState([]);
@@ -25,22 +25,21 @@ const UserManagement = () => {
   }, []);
 
   const handleUserCreated = (newUser) => {
-    setUserList((prevUsers) => [...prevUsers, newUser]);
+    setUserList(prevUsers => [...prevUsers, newUser]);
     setIsCreatingUser(false);
   };
 
   const handleUserUpdated = (updatedUser) => {
-    setUserList((prevUsers) =>
-      prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+    setUserList(prevUsers =>
+      prevUsers.map(user => (user.id === updatedUser.id ? updatedUser : user))
     );
   };
 
   const handleUserDelete = (userId) => {
-    setUserList((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+    setUserList(prevUsers => prevUsers.filter(user => user.id !== userId));
     setSelectedUser(null);
   };
 
-  console.error("Error deleting user:", error); 
   return (
     <div>
       <h2>User List</h2>
@@ -55,12 +54,11 @@ const UserManagement = () => {
           </tr>
         </thead>
         <tbody>
-          {userList.map((item, index) => (
-            <tr key={index}>
+          {userList.map(item => (
+            <tr key={item.id}>
               <td>{item.name}</td>
               <td>{item.can_login ? "Yes" : "No"}</td>
               <td>
-                
                 <UserUpdation
                   selectedUser={selectedUser}
                   onUserUpdated={handleUserUpdated}
