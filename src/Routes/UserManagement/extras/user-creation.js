@@ -1,17 +1,17 @@
-import { useState, useRef, useEffect } from "react";
-import { axiosClient, createUserEndpoint } from "../../../api/axiosClient";
-import './user-creation.scss';
-import { FaTimes } from 'react-icons/fa';
+import { useState } from "react";
+import { axiosClient } from "../../../api/axiosClient";
+import { createUserEndpoint } from "../../../api/axiosClient";
+import './user_creation.module.scss';
 
-const UserCreation = ({ onUserCreated, dialogOpen, onClose }) => {
+const UserCreation = ({ onUserCreated, dialogOpen }) => {
   const [userName, setUserName] = useState("");
   const [canLogin, setCanLogin] = useState(false);
   const [allowedActions, setAllowedActions] = useState([]); 
   const [allowedPages, setAllowedPages] = useState([]); 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState([]);  
-  const formRef = useRef(null); // Create a ref for the form
+  const [users, setUsers] = useState([]);  // To store the list of created users
+  const [selectedUser, setSelectedUser] = useState(null); // State for the selected user
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
@@ -27,11 +27,8 @@ const UserCreation = ({ onUserCreated, dialogOpen, onClose }) => {
     try {
       const response = await axiosClient.post(createUserEndpoint, newUser);
       onUserCreated(response.data);
-      setUsers([...users, response.data]);  
-      setUserName("");
-      setCanLogin(false);
-      setAllowedActions([]);
-      setAllowedPages([]);
+      setUsers([...users, response.data]);  // Add the new user to the user list
+      resetForm();
     } catch (error) {
       setError("Error creating user: " + error.message);
     } finally {
@@ -39,51 +36,28 @@ const UserCreation = ({ onUserCreated, dialogOpen, onClose }) => {
     }
   };
 
-  // Close dialog on outside click
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (formRef.current && !formRef.current.contains(event.target)) {
-        onClose(); // Call the close function passed as prop
-      }
-    };
-
-    if (dialogOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [dialogOpen, onClose]);
-
-  const handleDeleteUser = async (userId) => {
-    // Implement your delete user logic here
-    try {
-      await axiosClient.delete(`${createUserEndpoint}/${userId}`);
-      setUsers(users.filter(user => user.id !== userId)); // Update the user list
-    } catch (error) {
-      setError("Error deleting user: " + error.message);
-    }
+  const resetForm = () => {
+    setUserName("");
+    setCanLogin(false);
+    setAllowedActions([]);
+    setAllowedPages([]);
   };
 
   const handleViewDetails = (user) => {
-    // Show user details (e.g., in an alert or modal)
-    alert(`User Details:\nName: ${user.name}\nCan Login: ${user.can_login}\nAllowed Actions: ${user.allowed_actions.join(", ")}\nAllowed Pages: ${user.allowed_pages.join(", ")}`);
+    setSelectedUser(user); // Set the selected user
   };
 
-  const handleUpdateUser = (userId) => {
-    // Implement your update user logic here (e.g., open a modal with a form)
-    console.log(`Update user with ID: ${userId}`);
-    // This is where you could set up an update form or something similar
+  const handleCloseDetails = () => {
+    setSelectedUser(null); // Clear the selected user
   };
 
   if (!dialogOpen) return null;
 
   return (
     <div className="user-creation-container">
-      <button className="close-icon" onClick={onClose}><FaTimes /></button> {/* Close icon */}
       {error && <p className="error">{error}</p>}
       <h3>Create New User</h3>
-      <form onSubmit={handleCreateUser} ref={formRef}> {/* Attach ref to the form */}
+      <form onSubmit={handleCreateUser}>
         <input
           type="text"
           placeholder="Enter user name"
@@ -125,32 +99,36 @@ const UserCreation = ({ onUserCreated, dialogOpen, onClose }) => {
       {users.length > 0 && (
         <div className="user-list">
           <h4>User List:</h4>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Can Login</th>
-                <th>Allowed Actions</th>
-                <th>Allowed Pages</th>
-                <th>Actions</th> {/* New Actions column */}
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user, index) => (
-                <tr key={index}>
-                  <td>{user.name}</td>
-                  <td>{user.can_login ? "Yes" : "No"}</td>
-                  <td>{user.allowed_actions.join(", ")}</td>
-                  <td>{user.allowed_pages.join(", ")}</td>
-                  <td>
-                    <button onClick={() => handleViewDetails(user)}>View Details</button>
-                    <button onClick={() => handleUpdateUser(user.id)}>Update</button>
-                    <button onClick={() => handleDeleteUser(user.id)}>Delete</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <ul>
+            {users.map((user, index) => (
+              <li key={index} className="user-item">
+                <span>{user.name} - </span>
+                <span>{user.can_login ? "Can Login" : "Cannot Login"}</span>
+                <span> | Allowed Actions: {user.allowed_actions.join(", ")}</span>
+                <span> | Allowed Pages: {user.allowed_pages.join(", ")}</span>
+                <button onClick={() => handleViewDetails(user)}>View Details</button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {selectedUser && (
+        <div className="user-details">
+          <h4>User Details</h4>
+          <form>
+            <label>Name:</label>
+            <input type="text" value={selectedUser.name} readOnly />
+            <label>
+              Can Login:
+              <input type="checkbox" checked={selectedUser.can_login} readOnly />
+            </label>
+            <label>Allowed Actions:</label>
+            <input type="text" value={selectedUser.allowed_actions.join(", ")} readOnly />
+            <label>Allowed Pages:</label>
+            <input type="text" value={selectedUser.allowed_pages.join(", ")} readOnly />
+            <button type="button" onClick={handleCloseDetails}>Close</button>
+          </form>
         </div>
       )}
     </div>
