@@ -10,8 +10,8 @@ const UserCreation = ({ onUserCreated, dialogOpen }) => {
   const [allowedPages, setAllowedPages] = useState([]); 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState([]);  // To store the list of created users
-  const [selectedUser, setSelectedUser] = useState(null); // State for the selected user
+  const [users, setUsers] = useState([]);  
+  const [selectedUser, setSelectedUser] = useState(null); 
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
@@ -27,7 +27,7 @@ const UserCreation = ({ onUserCreated, dialogOpen }) => {
     try {
       const response = await axiosClient.post(createUserEndpoint, newUser);
       onUserCreated(response.data);
-      setUsers([...users, response.data]);  // Add the new user to the user list
+      setUsers([...users, response.data]);  
       resetForm();
     } catch (error) {
       setError("Error creating user: " + error.message);
@@ -44,11 +44,11 @@ const UserCreation = ({ onUserCreated, dialogOpen }) => {
   };
 
   const handleViewDetails = (user) => {
-    setSelectedUser(user); // Set the selected user
+    setSelectedUser(user);
   };
 
   const handleCloseDetails = () => {
-    setSelectedUser(null); // Clear the selected user
+    setSelectedUser(null); 
   };
 
   if (!dialogOpen) return null;

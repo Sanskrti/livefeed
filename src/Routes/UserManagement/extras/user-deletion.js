@@ -2,34 +2,36 @@ import { useState } from "react";
 import { axiosClient, deleteUserEndpoint } from "../../../api/axiosClient";
 
 const UserDeletion = ({ selectedUser, onUserDeleted }) => {
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleUserDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
+    if (window.confirm("Are you sure you want to delete this user?")) {
+      setLoading(true);
+      setError("");
 
-    setLoading(true);
-    setError("");
+      console.log(`Attempting to delete user with ID: ${selectedUser.id}`);
 
-    try {
-      if (selectedUser?.id) {
-        await axiosClient.delete(`${deleteUserEndpoint}/${selectedUser.id}`);
-        onUserDeleted(selectedUser.id);
-      } else {
-        setError("Invalid user ID.");
+      try {
+        if (selectedUser && selectedUser.id) {
+          await axiosClient.delete(`${deleteUserEndpoint}/${selectedUser.id}`);
+          onUserDeleted();
+        } else {
+          setError("Invalid user ID.");
+        }
+      } catch (error) {
+        console.error("Error deleting user:", error.response);
+        setError("Error deleting user: " + (error.response?.data?.message || error.message));
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error deleting user:", error);
-      setError("Error deleting user: " + (error.response?.data?.message || error.message));
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
     <div>
       {error && <p className="error">{error}</p>}
-      <button onClick={handleUserDelete} disabled={loading}>
+      <button onClick={handleUserDelete}>
         {loading ? "Deleting..." : "Delete User"}
       </button>
     </div>
