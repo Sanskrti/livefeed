@@ -1,7 +1,7 @@
-$primary-color: #28a745;
-$secondary-color: #007bff;
+$primary-color:  #fb9039;
+$secondary-color: #fda966;
 $danger-color: #ff4d4d;
-$hover-color: #0056b3;
+$hover-color:  #fda966;
 $background-color: #f4f4f4;
 $border-color: #ccc;
 $text-color: #333;
@@ -12,17 +12,89 @@ $input-padding: 10px;
 $table-padding: 8px;
 $modal-max-width: 500px;
 
+body {
+    background-color: $background-color;
+    color: $text-color;
+    font-family: Arial, sans-serif;
+}
+
+h1, h2 {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.create-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    border-radius: $border-radius;
+    cursor: pointer;
+    
+    &:hover {
+        background-color: darken($primary-color, 10%);
+    }
+}
+
+.user-table {
+    width: 80%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    border: 1px solid $border-color;
+    
+    th, td {
+        padding: $table-padding;
+        text-align: left;
+        border: 1px solid $border-color;
+    }
+
+    th {
+        background-color: $secondary-color;
+        color: white;
+    }
+
+    tr:nth-child(even) {
+        background-color: lighten($background-color, 5%);
+    }
+}
+
+button {
+    padding: 5px 10px;
+    margin: 5px;
+    background-color: $secondary-color;
+    color: white;
+    border: none;
+    border-radius: $border-radius;
+    cursor: pointer;
+
+    &:hover {
+        background-color: darken($secondary-color, 10%);
+    }
+}
+
+button.danger {
+    background-color: $danger-color;
+
+    &:hover {
+        background-color: darken($danger-color, 10%);
+    }
+}
+
 .modal-overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-   
+    right: 0;
+    bottom: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     background: rgba(0, 0, 0, 0.5);
     z-index: 1000;
 }
+
 .modal-content {
     width: 90%;
     max-width: $modal-max-width; 
@@ -30,38 +102,34 @@ $modal-max-width: 500px;
     border-radius: $border-radius;
     box-shadow: $box-shadow;
     padding: $padding;
-}
-.userCreationContainer{
-    display:relative;
-}
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
 
-    .close-icon {
-        position:absolute;
-        top:5px;
-        right:5px;
-        cursor: pointer;
-        font-size: 24px;
-        color: $text-color;
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid $border-color;
+        padding-bottom: 10px;
 
-        &:hover {
-            color: $danger-color;
+        .close-icon {
+            cursor: pointer;
+            font-size: 24px;
+            color: $text-color;
+
+            &:hover {
+                color: $danger-color;
+            }
         }
     }
-}
-.modal-body {
-    padding: $padding;
 
-    h4 {
-        margin-top: 20px;
-    }
+    .modal-body {
+        padding: $padding;
 
-    button {
-        margin-top: 15px;
+        h4 {
+            margin-top: 20px;
+        }
+
+        button {
+            margin-top: 15px;
+        }
     }
 }

@@ -19,14 +19,14 @@ const UserManagement = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false); 
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [allowedPages, setAllowedPages] = useState([]);
   const [allowedActions, setAllowedActions] = useState([]);
 
   const fetchUsers = async () => {
     try {
       const response = await axiosClient.get("/api/users");
-      console.log("API Response:", response.data); 
+      console.log("API Response:", response.data);
       setUserList(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -44,13 +44,8 @@ const UserManagement = () => {
       .catch((error) => setError("Error fetching allowed actions: " + error.message));
   }, []);
 
-  const handleOpenCreateModal = () => {
-    setIsCreateModalOpen(true);
-  };
-
-  const handleCloseCreateModal = () => {
-    setIsCreateModalOpen(false);
-  };
+  const handleOpenCreateModal = () => setIsCreateModalOpen(true);
+  const handleCloseCreateModal = () => setIsCreateModalOpen(false);
 
   const handleOpenUpdateModal = (user) => {
     setSelectedUser(user);
@@ -90,7 +85,6 @@ const UserManagement = () => {
       </button>
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-     
       <Dialog open={isCreateModalOpen} onClose={handleCloseCreateModal}>
         <DialogTitle>
           <span>Create User</span>
@@ -110,7 +104,6 @@ const UserManagement = () => {
         </DialogContent>
       </Dialog>
 
-     
       <Dialog open={isUpdateModalOpen} onClose={handleCloseUpdateModal}>
         <DialogTitle>
           <span>Update User</span>
@@ -131,7 +124,6 @@ const UserManagement = () => {
         </DialogContent>
       </Dialog>
 
-      
       <Dialog open={isDeleteModalOpen} onClose={handleCloseDeleteModal}>
         <DialogTitle>
           <span>Confirmation</span>
@@ -179,18 +171,16 @@ const UserManagement = () => {
           </tr>
         </thead>
         <tbody>
-          {userList.map((user, index) => (
-            user && user.id ? ( 
-              <tr key={user.id}>
-                <td>{user.name}</td>
-                <td>{user.can_login ? "Yes" : "No"}</td>
-                <td>
-                  <button onClick={() => handleOpenUpdateModal(user)}>Update</button>
-                  <button onClick={() => handleOpenDeleteModal(user)}>Delete</button>
-                  <button onClick={() => handleOpenDetailsModal(user)}>View Details</button>
-                </td>
-              </tr>
-            ) : null 
+          {userList.map((user) => (
+            <tr key={user.id}>
+              <td>{user.name}</td>
+              <td>{user.can_login ? "Yes" : "No"}</td>
+              <td>
+                <button onClick={() => handleOpenUpdateModal(user)}>Update</button>
+                <button onClick={() => handleOpenDeleteModal(user)}>Delete</button>
+                <button onClick={() => handleOpenDetailsModal(user)}>View Details</button>
+              </td>
+            </tr>
           ))}
         </tbody>
       </table>
