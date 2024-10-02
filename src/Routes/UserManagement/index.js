@@ -1,15 +1,16 @@
 import { axiosClient } from "../../api/axiosClient";
 import { useEffect, useState } from "react";
+import { userListEndpoint } from "../../api/axiosClient";
 import UserDeletion from "./extras/user-deletion";
 import UserUpdation from "./extras/user-updation";
 import UserCreation from "./extras/user-creation";
-import { userListEndpoint } from "../../api/axiosClient";
+import './extras/user_creation.module.scss';
 
 const UserManagement = () => {
   const [userList, setUserList] = useState([]);
   const [error, setError] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
-  const [isCreatingUser, setIsCreatingUser] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); 
 
   const fetchUsers = async () => {
     try {
@@ -24,27 +25,33 @@ const UserManagement = () => {
     fetchUsers();
   }, []);
 
-  const handleUserCreated = (newUser) => {
-    setUserList(prevUsers => [...prevUsers, newUser]);
-    setIsCreatingUser(false);
+  const handleOpenModal = () => {
+    setIsModalOpen(true); 
   };
 
-  const handleUserUpdated = (updatedUser) => {
-    setUserList(prevUsers =>
-      prevUsers.map(user => (user.id === updatedUser.id ? updatedUser : user))
-    );
-  };
-
-  const handleUserDelete = (userId) => {
-    setUserList(prevUsers => prevUsers.filter(user => user.id !== userId));
-    setSelectedUser(null);
+  const handleCloseModal = () => {
+    setIsModalOpen(false); 
   };
 
   return (
     <div>
+      <h1>User Management</h1>
+      <button onClick={handleOpenModal}>Create User</button> 
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <UserCreation onUserCreated={() => {
+              fetchUsers();
+              handleCloseModal(); 
+            }} />
+            <span className="close-icon" onClick={handleCloseModal}>×</span>
+          </div>
+        </div>
+      )}
+
       <h2>User List</h2>
-      <button onClick={() => setIsCreatingUser(true)}>Create New User</button>
-      {error && <p className="error">{error}</p>}
       <table>
         <thead>
           <tr>
@@ -54,31 +61,24 @@ const UserManagement = () => {
           </tr>
         </thead>
         <tbody>
-          {userList.map(item => (
-            <tr key={item.id}>
-              <td>{item.name}</td>
-              <td>{item.can_login ? "Yes" : "No"}</td>
+          {userList.map((user, index) => (
+            <tr key={index} onClick={() => setSelectedUser(user)}>
+              <td>{user.name}</td>
+              <td>{user.can_login ? "Yes" : "No"}</td>
               <td>
-                <UserUpdation
-                  selectedUser={selectedUser}
-                  onUserUpdated={handleUserUpdated}
-                  dialogOpen={selectedUser && selectedUser.id === item.id}
-                />
-                <button onClick={() => setSelectedUser(item)}>View Details</button>
-                <UserDeletion
-                  selectedUser={item} 
-                  onUserDeleted={() => handleUserDelete(item.id)}
-                />
-                <button onClick={() => setSelectedUser(item)}>Update User</button>
+                <button onClick={() => setSelectedUser(user)}>Update</button>
+                <UserDeletion selectedUser={user} onUserDeleted={fetchUsers} />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      {isCreatingUser && (
-        <UserCreation
-          dialogOpen={isCreatingUser}
-          onUserCreated={handleUserCreated}
+
+      {selectedUser && (
+        <UserUpdation
+          selectedUser={selectedUser}
+          onUserUpdated={fetchUsers}
+          dialogOpen={true}
         />
       )}
     </div>

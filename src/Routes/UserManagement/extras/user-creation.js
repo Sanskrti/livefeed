@@ -1,70 +1,57 @@
 import { useState } from "react";
-import { axiosClient } from "../../../api/axiosClient";
-import { createUserEndpoint } from "../../../api/axiosClient";
-import './user_creation.module.scss';
+import { axiosClient, createUserEndpoint } from "../../../api/axiosClient";
 
-const UserCreation = ({ onUserCreated, dialogOpen }) => {
+const UserCreation = ({ onUserCreated }) => {
   const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
   const [canLogin, setCanLogin] = useState(false);
-  const [allowedActions, setAllowedActions] = useState([]); 
-  const [allowedPages, setAllowedPages] = useState([]); 
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState([]);  
-  const [selectedUser, setSelectedUser] = useState(null); 
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const handleCreateUser = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const handleUserCreation = async () => {
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
 
-    const newUser = {
+    const data = {
       name: userName,
+      password: password,
       can_login: canLogin,
-      allowed_actions: allowedActions, 
-      allowed_pages: allowedPages,
     };
 
     try {
-      const response = await axiosClient.post(createUserEndpoint, newUser);
-      onUserCreated(response.data);
-      setUsers([...users, response.data]);  
-      resetForm();
+      await axiosClient.post(createUserEndpoint, data);
+      setSuccessMessage("User created successfully!");
+      onUserCreated(); 
+      setUserName("");
+      setPassword("");
+      setCanLogin(false);
+      setError("");
     } catch (error) {
       setError("Error creating user: " + error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const resetForm = () => {
-    setUserName("");
-    setCanLogin(false);
-    setAllowedActions([]);
-    setAllowedPages([]);
-  };
-
-  const handleViewDetails = (user) => {
-    setSelectedUser(user);
-  };
-
-  const handleCloseDetails = () => {
-    setSelectedUser(null); 
-  };
-
-  if (!dialogOpen) return null;
-
   return (
-    <div className="user-creation-container">
-      {error && <p className="error">{error}</p>}
-      <h3>Create New User</h3>
-      <form onSubmit={handleCreateUser}>
-        <input
-          type="text"
-          placeholder="Enter user name"
-          value={userName}
-          onChange={(e) => setUserName(e.target.value)}
-          required
-        />
+    <div>
+      <h2>Create User</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+
+      <input
+        type="text"
+        placeholder="User Name"
+        value={userName}
+        onChange={(e) => setUserName(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <div>
         <label>
           <input
             type="checkbox"
@@ -73,64 +60,8 @@ const UserCreation = ({ onUserCreated, dialogOpen }) => {
           />
           Can Login
         </label>
-        <select
-          multiple
-          onChange={(e) => setAllowedActions([...e.target.selectedOptions].map(option => option.value))}
-        >
-          <option value="create">create</option>
-          <option value="read">read</option>
-          <option value="update">update</option>
-          <option value="delete">delete</option>
-        </select>
-        <select
-          multiple
-          onChange={(e) => setAllowedPages([...e.target.selectedOptions].map(option => option.value))}
-        >
-          <option value="dashboard">dashboard</option>
-          <option value="reports">reports</option>
-          <option value="settings">settings</option>
-          <option value="adminpanel">adminpanel</option>
-        </select>
-        <button type="submit" disabled={loading}>
-          {loading ? "Creating..." : "Create User"}
-        </button>
-      </form>
-
-      {users.length > 0 && (
-        <div className="user-list">
-          <h4>User List:</h4>
-          <ul>
-            {users.map((user, index) => (
-              <li key={index} className="user-item">
-                <span>{user.name} - </span>
-                <span>{user.can_login ? "Can Login" : "Cannot Login"}</span>
-                <span> | Allowed Actions: {user.allowed_actions.join(", ")}</span>
-                <span> | Allowed Pages: {user.allowed_pages.join(", ")}</span>
-                <button onClick={() => handleViewDetails(user)}>View Details</button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {selectedUser && (
-        <div className="user-details">
-          <h4>User Details</h4>
-          <form>
-            <label>Name:</label>
-            <input type="text" value={selectedUser.name} readOnly />
-            <label>
-              Can Login:
-              <input type="checkbox" checked={selectedUser.can_login} readOnly />
-            </label>
-            <label>Allowed Actions:</label>
-            <input type="text" value={selectedUser.allowed_actions.join(", ")} readOnly />
-            <label>Allowed Pages:</label>
-            <input type="text" value={selectedUser.allowed_pages.join(", ")} readOnly />
-            <button type="button" onClick={handleCloseDetails}>Close</button>
-          </form>
-        </div>
-      )}
+      </div>
+      <button onClick={handleUserCreation}>Submit</button> 
     </div>
   );
 };
