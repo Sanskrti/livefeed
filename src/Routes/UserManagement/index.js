@@ -10,7 +10,9 @@ const UserManagement = () => {
   const [userList, setUserList] = useState([]);
   const [error, setError] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const fetchUsers = async () => {
     try {
@@ -25,28 +27,75 @@ const UserManagement = () => {
     fetchUsers();
   }, []);
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true); 
+  const handleOpenCreateModal = () => {
+    setIsCreateModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false); 
+  const handleCloseCreateModal = () => {
+    setIsCreateModalOpen(false);
+  };
+
+  const handleOpenUpdateModal = (user) => {
+    setSelectedUser(user);
+    setIsUpdateModalOpen(true);
+  };
+
+  const handleCloseUpdateModal = () => {
+    setIsUpdateModalOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleOpenDeleteModal = (user) => {
+    setSelectedUser(user);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setSelectedUser(null);
   };
 
   return (
     <div>
       <h1>User Management</h1>
-      <button onClick={handleOpenModal}>Create User</button> 
+      <button onClick={handleOpenCreateModal}>Create User</button>
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      {isModalOpen && (
+      
+      {isCreateModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
             <UserCreation onUserCreated={() => {
               fetchUsers();
-              handleCloseModal(); 
+              handleCloseCreateModal();
             }} />
-            <span className="close-icon" onClick={handleCloseModal}>×</span>
+            <span className="close-icon" onClick={handleCloseCreateModal}>×</span>
+          </div>
+        </div>
+      )}
+
+     
+      {isUpdateModalOpen && selectedUser && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <UserUpdation selectedUser={selectedUser} onUserUpdated={() => {
+              fetchUsers();
+              handleCloseUpdateModal();
+            }} />
+            <span className="close-icon" onClick={handleCloseUpdateModal}>×</span>
+          </div>
+        </div>
+      )}
+
+    
+      {isDeleteModalOpen && selectedUser && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <UserDeletion selectedUser={selectedUser} onUserDeleted={() => {
+              fetchUsers();
+              handleCloseDeleteModal();
+            }} />
+            <span className="close-icon" onClick={handleCloseDeleteModal}>×</span>
           </div>
         </div>
       )}
@@ -62,25 +111,17 @@ const UserManagement = () => {
         </thead>
         <tbody>
           {userList.map((user, index) => (
-            <tr key={index} onClick={() => setSelectedUser(user)}>
+            <tr key={index}>
               <td>{user.name}</td>
               <td>{user.can_login ? "Yes" : "No"}</td>
               <td>
-                <button onClick={() => setSelectedUser(user)}>Update</button>
-                <UserDeletion selectedUser={user} onUserDeleted={fetchUsers} />
+                <button onClick={() => handleOpenUpdateModal(user)}>Update</button>
+                <button onClick={() => handleOpenDeleteModal(user)}>Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
-      {selectedUser && (
-        <UserUpdation
-          selectedUser={selectedUser}
-          onUserUpdated={fetchUsers}
-          dialogOpen={true}
-        />
-      )}
     </div>
   );
 };

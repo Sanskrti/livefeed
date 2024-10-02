@@ -13,11 +13,10 @@ $table-padding: 8px;
 $modal-max-width: 500px;
 
 .modal-overlay {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
+   
     display: flex;
     justify-content: center;
     align-items: center;
@@ -32,6 +31,9 @@ $modal-max-width: 500px;
     box-shadow: $box-shadow;
     padding: $padding;
 }
+.userCreationContainer{
+    display:relative;
+}
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -40,6 +42,9 @@ $modal-max-width: 500px;
     padding-bottom: 10px;
 
     .close-icon {
+        position:absolute;
+        top:5px;
+        right:5px;
         cursor: pointer;
         font-size: 24px;
         color: $text-color;

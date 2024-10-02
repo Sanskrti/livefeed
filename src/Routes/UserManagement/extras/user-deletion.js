@@ -16,8 +16,12 @@ const UserDeletion = ({ selectedUser, onUserDeleted }) => {
 
   return (
     <div>
-      <button onClick={handleUserDelete}>delete user</button>
+      <h2>Delete User</h2>
+      <p>Are you sure you want to delete {selectedUser.name}?</p>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <button onClick={handleUserDelete}>Confirm Delete</button>
     </div>
   );
 };
+
 export default UserDeletion;
