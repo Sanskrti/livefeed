@@ -2,8 +2,8 @@ import { useState } from "react";
 import { axiosClient, updateUserEndpoint } from "../../../api/axiosClient";
 
 const UserUpdation = ({ selectedUser, onUserUpdated }) => {
-  const [userName, setUserName] = useState(selectedUser.name || "");
-  const [canLogin, setCanLogin] = useState(selectedUser.can_login || false);
+  const [userName, setUserName] = useState(selectedUser?.name || "");
+  const [canLogin, setCanLogin] = useState(selectedUser?.can_login || false);
   const [error, setError] = useState("");
 
   const handleUserUpdate = async () => {
@@ -13,7 +13,7 @@ const UserUpdation = ({ selectedUser, onUserUpdated }) => {
     };
     try {
       await axiosClient.put(updateUserEndpoint(selectedUser.id), data);
-      onUserUpdated(); 
+      onUserUpdated();
     } catch (error) {
       setError("Error updating user: " + error.message);
     }
@@ -22,7 +22,7 @@ const UserUpdation = ({ selectedUser, onUserUpdated }) => {
   return (
     <div className="userUpdationContainer">
       <h2>Update User</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <input
         type="text"
         value={userName}

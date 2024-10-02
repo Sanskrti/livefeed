@@ -4,7 +4,16 @@ import { userListEndpoint } from "../../api/axiosClient";
 import UserDeletion from "./extras/user-deletion";
 import UserUpdation from "./extras/user-updation";
 import UserCreation from "./extras/user-creation";
-import './extras/user_creation.module.scss';
+import "./extras/user_creation.module.scss";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+} from "@mui/material";
+import { CloseOutlined } from "@mui/icons-material";
+import { initAsyncCompiler } from "sass";
 
 const UserManagement = () => {
   const [userList, setUserList] = useState([]);
@@ -59,46 +68,68 @@ const UserManagement = () => {
     <div>
       <h1>User Management</h1>
       <button onClick={handleOpenCreateModal}>Create User</button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
-      
-      {isCreateModalOpen && (
+      <Dialog open={isCreateModalOpen} onClose={handleCloseCreateModal}>
+        {isCreateModalOpen && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <UserCreation
+                onUserCreated={() => {
+                  fetchUsers();
+                  handleCloseCreateModal();
+                }}
+              />
+            </div>
+          </div>
+        )}
+      </Dialog>
+
+      <Dialog open={isUpdateModalOpen} onClose={handleCloseUpdateModal}>
         <div className="modal-overlay">
           <div className="modal-content">
-            <UserCreation onUserCreated={() => {
-              fetchUsers();
-              handleCloseCreateModal();
-            }} />
-            <span className="close-icon" onClick={handleCloseCreateModal}>×</span>
+            <UserUpdation
+              selectedUser={selectedUser}
+              onUserUpdated={() => {
+                fetchUsers();
+                handleCloseUpdateModal();
+              }}
+            />
           </div>
         </div>
-      )}
-
-     
-      {isUpdateModalOpen && selectedUser && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <UserUpdation selectedUser={selectedUser} onUserUpdated={() => {
-              fetchUsers();
-              handleCloseUpdateModal();
-            }} />
-            <span className="close-icon" onClick={handleCloseUpdateModal}>×</span>
-          </div>
-        </div>
-      )}
-
-    
-      {isDeleteModalOpen && selectedUser && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <UserDeletion selectedUser={selectedUser} onUserDeleted={() => {
+      </Dialog>
+      {/* {isDeleteModalOpen && selectedUser && ( */}
+      {/*   <div className="modal-overlay"> */}
+      {/*     <div className="modal-content"></div> */}
+      {/*   </div> */}
+      {/* )} */}
+      <Dialog open={isDeleteModalOpen} onClose={handleCloseDeleteModal}>
+        <DialogTitle
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <span>Confirmation</span>
+          <IconButton
+            size="small"
+            color="error"
+            onClick={handleCloseDeleteModal}
+          >
+            <CloseOutlined color="error" />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <UserDeletion
+            selectedUser={selectedUser}
+            onUserDeleted={() => {
               fetchUsers();
               handleCloseDeleteModal();
-            }} />
-            <span className="close-icon" onClick={handleCloseDeleteModal}>×</span>
-          </div>
-        </div>
-      )}
+            }}
+          />
+        </DialogContent>
+      </Dialog>
 
       <h2>User List</h2>
       <table>
@@ -115,8 +146,12 @@ const UserManagement = () => {
               <td>{user.name}</td>
               <td>{user.can_login ? "Yes" : "No"}</td>
               <td>
-                <button onClick={() => handleOpenUpdateModal(user)}>Update</button>
-                <button onClick={() => handleOpenDeleteModal(user)}>Delete</button>
+                <button onClick={() => handleOpenUpdateModal(user)}>
+                  Update
+                </button>
+                <button onClick={() => handleOpenDeleteModal(user)}>
+                  Delete
+                </button>
               </td>
             </tr>
           ))}

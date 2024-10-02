@@ -2,7 +2,6 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import LiveFeedPage from "../components/LiveFeedContainer/LiveFeedDisplay";
 import UserManagement from "./UserManagement";
-import UserData from "./UserResourceManagement/Extras/UserDetails";
 
 const Dashboard = () => <div>Dashboard</div>;
 const Configuration = () => <div className="blank-page">Configuration</div>;
