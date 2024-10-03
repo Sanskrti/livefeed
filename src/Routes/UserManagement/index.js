@@ -8,9 +8,10 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  CircularProgress,  
 } from "@mui/material";
 import { CloseOutlined } from "@mui/icons-material";
-import "./extras/user_creation.module.scss";
+import s from "./extras/user_creation.module.scss";
 
 const UserManagement = () => {
   const [userList, setUserList] = useState([]);
@@ -19,11 +20,13 @@ const UserManagement = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [allowedPages, setAllowedPages] = useState([]);
-  const [allowedActions, setAllowedActions] = useState([]);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false); // Fixed here
+  const [allowedPages, setAllowedPages] = useState([]); // Fixed here
+  const [allowedActions, setAllowedActions] = useState([]); // Fixed here
+  const [loading, setLoading] = useState(true); 
 
   const fetchUsers = async () => {
+    setLoading(true); 
     try {
       const response = await axiosClient.get("/api/users");
       console.log("API Response:", response.data);
@@ -31,6 +34,8 @@ const UserManagement = () => {
     } catch (error) {
       console.error("Error fetching users:", error);
       setError("Error fetching users: " + error.message);
+    } finally {
+      setLoading(false); 
     }
   };
 
@@ -78,12 +83,14 @@ const UserManagement = () => {
   };
 
   return (
-    <div>
-      <h1>User Management</h1>
-      <button className="create-btn" onClick={handleOpenCreateModal}>
-        Create User
-      </button>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className={s.userListContainer}>
+      <div>
+        <h1>User Management</h1>
+        <button className="create-btn" onClick={handleOpenCreateModal}>
+          Create User
+        </button>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+      </div>
 
       <Dialog open={isCreateModalOpen} onClose={handleCloseCreateModal}>
         <DialogTitle>
@@ -160,30 +167,38 @@ const UserManagement = () => {
           )}
         </DialogContent>
       </Dialog>
-
       <h2>User List</h2>
-      <table className="user-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Can Login</th>
-            <th>Actions</th>
+      <div className={s.user_table}>
+        
+
+  {loading ? ( 
+    <CircularProgress />
+  ) : (
+    <table className="user-table">
+      <thead>
+        <tr>
+          <th className={s.name_Column}>Name</th>
+          <th className={s.canLogin_Column}>Can Login</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {userList.map((user) => (
+          <tr key={user.id}>
+            <td>{user.name}</td>
+            <td>{user.can_login ? "Yes" : "No"}</td>
+            <td>
+              <button onClick={() => handleOpenUpdateModal(user)}>Update</button>
+              <button onClick={() => handleOpenDeleteModal(user)}>Delete</button>
+              <button onClick={() => handleOpenDetailsModal(user)}>View Details</button>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {userList.map((user) => (
-            <tr key={user.id}>
-              <td>{user.name}</td>
-              <td>{user.can_login ? "Yes" : "No"}</td>
-              <td>
-                <button onClick={() => handleOpenUpdateModal(user)}>Update</button>
-                <button onClick={() => handleOpenDeleteModal(user)}>Delete</button>
-                <button onClick={() => handleOpenDetailsModal(user)}>View Details</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        ))}
+      </tbody>
+    </table>
+  )}
+</div>
+
     </div>
   );
 };

@@ -13,7 +13,6 @@ const UserCreation = ({ onUserCreated }) => {
   const [selectedPages, setSelectedPages] = useState([]);
 
   useEffect(() => {
-    
     const fetchPermissions = async () => {
       try {
         const actions = await fetchAllowedActions();
@@ -24,7 +23,6 @@ const UserCreation = ({ onUserCreated }) => {
         setError("Error fetching permissions: " + err.message);
       }
     };
-    
     fetchPermissions();
   }, []);
 
@@ -45,15 +43,21 @@ const UserCreation = ({ onUserCreated }) => {
     try {
       await axiosClient.post(createUserEndpoint, data);
       setSuccessMessage("User created successfully!");
-      onUserCreated(); 
-       setUserName("");
+      onUserCreated();
+      
+     
+      setUserName("");
       setPassword("");
       setCanLogin(false);
       setSelectedActions([]);
       setSelectedPages([]);
-      setError("");
+      setError(""); 
     } catch (error) {
-      setError("Error creating user: " + error.message);
+      if (error.response && error.response.data && error.response.data.message) {
+        setError("Error creating user: " + error.response.data.message);
+      } else {
+        setError("Error creating user: " + error.message);
+      }
     }
   };
 
@@ -136,7 +140,7 @@ const UserCreation = ({ onUserCreated }) => {
         ))}
       </div>
 
-      <button onClick={handleUserCreation}>Submit</button> 
+      <button onClick={handleUserCreation}>Submit</button>
     </div>
   );
 };
