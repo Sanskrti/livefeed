@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { axiosClient, createUserEndpoint, fetchAllowedActions, fetchAllowedPages } from "../../../api/axiosClient";
+import s from "./user_creation.module.scss";
 
 const UserCreation = ({ onUserCreated }) => {
   const [userName, setUserName] = useState("");
@@ -26,6 +27,16 @@ const UserCreation = ({ onUserCreated }) => {
     fetchPermissions();
   }, []);
 
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage("");
+      }, 3000); 
+
+      return () => clearTimeout(timer); 
+    }
+  }, [successMessage]);
+
   const handleUserCreation = async () => {
     if (password.length < 6) {
       setError("Password must be at least 6 characters long.");
@@ -44,14 +55,12 @@ const UserCreation = ({ onUserCreated }) => {
       await axiosClient.post(createUserEndpoint, data);
       setSuccessMessage("User created successfully!");
       onUserCreated();
-      
-     
       setUserName("");
       setPassword("");
       setCanLogin(false);
       setSelectedActions([]);
       setSelectedPages([]);
-      setError(""); 
+      setError("");
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message) {
         setError("Error creating user: " + error.response.data.message);
@@ -79,7 +88,7 @@ const UserCreation = ({ onUserCreated }) => {
 
   return (
     <div>
-      <h2>Create User</h2>
+      <h2 >Create User</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
 
@@ -108,36 +117,40 @@ const UserCreation = ({ onUserCreated }) => {
         </label>
       </div>
 
-      <div>
+      <div style={{ display: "flex", gap: "5px", flexDirection: "column" }}>
         <h3>Allowed Actions:</h3>
-        {allowedActions.map((action) => (
-          <div key={action}>
-            <label>
-              <input
-                type="checkbox"
-                checked={selectedActions.includes(action)}
-                onChange={() => handleActionChange(action)}
-              />
-              {action}
-            </label>
-          </div>
-        ))}
+        <div style={{ display: "flex" }}>
+          {allowedActions.map((action) => (
+            <div key={action}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedActions.includes(action)}
+                  onChange={() => handleActionChange(action)}
+                />
+                {action}
+              </label>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div>
+      <div style={{ display: "flex", gap: "5px", flexDirection: "column" }}>
         <h3>Allowed Pages:</h3>
-        {allowedPages.map((page) => (
-          <div key={page}>
-            <label>
-              <input
-                type="checkbox"
-                checked={selectedPages.includes(page)}
-                onChange={() => handlePageChange(page)}
-              />
-              {page}
-            </label>
-          </div>
-        ))}
+        <div style={{ display: "flex" }}>
+          {allowedPages.map((page) => (
+            <div key={page}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedPages.includes(page)}
+                  onChange={() => handlePageChange(page)}
+                />
+                {page}
+              </label>
+            </div>
+          ))}
+        </div>
       </div>
 
       <button onClick={handleUserCreation}>Submit</button>

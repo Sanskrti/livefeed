@@ -16,8 +16,7 @@ body {
     background-color: $background-color;
     color: $text-color;
     font-family: Arial, sans-serif;
-    text-size-adjust:initial;
-    
+    text-size-adjust: initial;
 }
 
 h1, h2 {
@@ -25,26 +24,24 @@ h1, h2 {
     margin: 20px 0;
 }
 
-
-.userListContainer{
-    width:100%;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-
+.userListContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
-.create_btn {
-    display: block;
+
+.create_user {
     margin: 0px auto;
     align-items: center;
-    padding: 10px 20px;
-    background-color: $primary-color;
-    color: white;
+    justify-content: left;
+    background-color: #f4f4f4;
+    color: black;
     border: none;
     border-radius: $border-radius;
     cursor: pointer;
-    
+
     &:hover {
         background-color: darken($primary-color, 10%);
     }
@@ -54,16 +51,22 @@ h1, h2 {
     width: 80%;
     margin-left: 10px;
     border-collapse: collapse;
-    // border: 1px solid $border-color;
-    // padding-left: 50%;
-    
-    th, td {
-        padding: $table-padding;
-        text-align:center;
-        text-decoration: solid;
-        // border: 1px solid $border-color;
-        width: 100vx;
 
+    th {
+        padding: $table-padding;
+        text-align: center;
+        text-decoration: solid;
+        width: 100vw;
+        font-size: 15px; 
+    }
+
+    td {
+        padding: $table-padding;
+        text-align: center;
+        text-decoration: solid;
+        width: 100vw;
+        font-size: 16px; 
+        height: 30px; 
     }
 
     th {
@@ -71,35 +74,19 @@ h1, h2 {
         color: white;
     }
 
-    // tr:nth-child(even) {
-    //     background-color: lighten($background-color, 5%);
-    //     width:60vh;
-    // }
-
+    
     .name_Column {
-        width: 30px; 
+        width: 120px;  
     }
-    
+
     .canLogin_Column {
-        width: 60px; 
+        width: 120px;  
     }
-    
-}
-
-button {
-    padding: 5px 10px;
-    margin: 10px;
-    background-color: $secondary-color;
-    color: white;
-    border: none;
-    border-radius: $border-radius;
-    cursor: pointer;
-
-    &:hover {
-        background-color: darken($secondary-color, 10%);
+    .action_Column {
+        width: 60%;  
+        
     }
 }
-
 button.danger {
     background-color: $danger-color;
 
@@ -107,4 +94,61 @@ button.danger {
         background-color: darken($danger-color, 10%);
     }
 }
+
+.update_button {
+    padding: 5px 10px;
+    margin: 10px;
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: $border-radius;
+    cursor: pointer;
+
+    &:hover {
+        background-color: darken(green, 10%);
+    }
+}
+
+.delete_button {
+    padding: 5px 10px;
+    margin: 10px;
+    background-color: $danger-color;
+    color: white;
+    border: none;
+    border-radius: $border-radius;
+    cursor: pointer;
+
+    &:hover {
+        background-color: darken($danger-color, 10%);
+    }
+}
+.create_button {
+    padding: 5px 10px;
+    margin: 10px;
+    background-color:#fb9039;
+    color: white;
+    border: none;
+    border-radius: $border-radius;
+    margin-left:10%;
+    margin-right: 20%;
+    cursor: pointer;
+
+    &:hover {
+        background-color: darken(#fb9039, 10%);
+    }
+}
+.view_button {
+    padding: 5px 10px;
+    margin: 10px;
+    background-color:  #fb9039;;
+    color: white;
+    border: none;
+    border-radius: $border-radius;
+    cursor: pointer;
+
+    &:hover {
+        background-color: darken( #fb9039, 10%);
+    }
+}
+
 

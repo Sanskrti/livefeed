@@ -20,9 +20,9 @@ const UserManagement = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false); // Fixed here
-  const [allowedPages, setAllowedPages] = useState([]); // Fixed here
-  const [allowedActions, setAllowedActions] = useState([]); // Fixed here
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false); 
+  const [allowedPages, setAllowedPages] = useState([]); 
+  const [allowedActions, setAllowedActions] = useState([]); 
   const [loading, setLoading] = useState(true); 
 
   const fetchUsers = async () => {
@@ -86,7 +86,7 @@ const UserManagement = () => {
     <div className={s.userListContainer}>
       <div>
         <h1>User Management</h1>
-        <button className="create-btn" onClick={handleOpenCreateModal}>
+        <button onClick={handleOpenCreateModal} className={s.create_button}>
           Create User
         </button>
         {error && <p style={{ color: "red" }}>{error}</p>}
@@ -94,7 +94,7 @@ const UserManagement = () => {
 
       <Dialog open={isCreateModalOpen} onClose={handleCloseCreateModal}>
         <DialogTitle>
-          <span>Create User</span>
+          {/* <span>Create User</span> */}
           <IconButton size="small" color="error" onClick={handleCloseCreateModal}>
             <CloseOutlined color="error" />
           </IconButton>
@@ -113,7 +113,7 @@ const UserManagement = () => {
 
       <Dialog open={isUpdateModalOpen} onClose={handleCloseUpdateModal}>
         <DialogTitle>
-          <span>Update User</span>
+          {/* <span>Update User</span> */}
           <IconButton size="small" color="error" onClick={handleCloseUpdateModal}>
             <CloseOutlined color="error" />
           </IconButton>
@@ -167,38 +167,38 @@ const UserManagement = () => {
           )}
         </DialogContent>
       </Dialog>
+
       <h2>User List</h2>
       <div className={s.user_table}>
-        
-
-  {loading ? ( 
-    <CircularProgress />
-  ) : (
-    <table className="user-table">
-      <thead>
-        <tr>
-          <th className={s.name_Column}>Name</th>
-          <th className={s.canLogin_Column}>Can Login</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {userList.map((user) => (
-          <tr key={user.id}>
-            <td>{user.name}</td>
-            <td>{user.can_login ? "Yes" : "No"}</td>
-            <td>
-              <button onClick={() => handleOpenUpdateModal(user)}>Update</button>
-              <button onClick={() => handleOpenDeleteModal(user)}>Delete</button>
-              <button onClick={() => handleOpenDetailsModal(user)}>View Details</button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  )}
-</div>
-
+        {loading ? ( 
+          <CircularProgress sx={{ color: "#fb9039", height: 50, width: 50, alignContent:"center" }} />
+        ) : (
+          <table className={s.user_table}>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th className={s.name_Column}>Name</th>
+                <th className={s.canLogin_Column}>Can Login</th>
+                <th className={s.action_Column}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {userList.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.id}</td> 
+                  <td>{user.name}</td>
+                  <td>{user.can_login ? "Yes" : "No"}</td>
+                  <td>
+                    <button className={s.update_button} onClick={() => handleOpenUpdateModal(user)}>Update</button>
+                    <button className={s.delete_button} onClick={() => handleOpenDeleteModal(user)}>Delete</button>
+                    <button className={s.view_button} onClick={() => handleOpenDetailsModal(user)}>View Details</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 };
