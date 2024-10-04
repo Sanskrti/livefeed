@@ -87,25 +87,37 @@ const UserCreation = ({ onUserCreated }) => {
   };
 
   return (
-    <div>
-      <h2 >Create User</h2>
+    <div className={s.user_creation_form}>
+      <h2>Create User</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
 
-      <input
-        type="text"
-        placeholder="User Name"
-        value={userName}
-        onChange={(e) => setUserName(e.target.value)}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
+      <div className={s.form_group}>
+        <label htmlFor="username">Enter Username:</label>
+        <input
+          type="text"
+          id="username"
+          placeholder="User Name"
+          value={userName}
+          onChange={(e) => setUserName(e.target.value)}
+          required
+          className={s.input_field}
+        />
+      </div>
+
+      <div className={s.form_group}>
+        <label htmlFor="password">Enter Password:</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className={s.input_field}
+        />
+      </div>
+
       <div>
         <label>
           <input
@@ -117,9 +129,9 @@ const UserCreation = ({ onUserCreated }) => {
         </label>
       </div>
 
-      <div style={{ display: "flex", gap: "5px", flexDirection: "column" }}>
+      <div className={s.permissions_section}>
         <h3>Allowed Actions:</h3>
-        <div style={{ display: "flex" }}>
+        <div className={s.permissions_container}>
           {allowedActions.map((action) => (
             <div key={action}>
               <label>
@@ -135,9 +147,9 @@ const UserCreation = ({ onUserCreated }) => {
         </div>
       </div>
 
-      <div style={{ display: "flex", gap: "5px", flexDirection: "column" }}>
+      <div className={s.permissions_section}>
         <h3>Allowed Pages:</h3>
-        <div style={{ display: "flex" }}>
+        <div className={s.permissions_container}>
           {allowedPages.map((page) => (
             <div key={page}>
               <label>
@@ -153,7 +165,9 @@ const UserCreation = ({ onUserCreated }) => {
         </div>
       </div>
 
-      <button onClick={handleUserCreation}>Submit</button>
+      <button onClick={handleUserCreation} className={s.submit_button}>
+        Submit
+      </button>
     </div>
   );
 };

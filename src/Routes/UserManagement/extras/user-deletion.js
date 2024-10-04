@@ -1,6 +1,7 @@
 import { axiosClient } from "../../../api/axiosClient";
 import { useState } from "react";
 import { deleteUserEndpoint } from "../../../api/axiosClient";
+import s from "./user_creation.module.scss";
 
 const UserDeletion = ({ selectedUser, onUserDeleted }) => {
   const [error, setError] = useState("");
@@ -18,7 +19,7 @@ const UserDeletion = ({ selectedUser, onUserDeleted }) => {
     <div>
       <p>Are you sure you want to delete {selectedUser?.name}?</p>
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <button onClick={handleUserDelete}>Confirm Delete</button>
+      <button onClick={handleUserDelete} className={s.submit_button}>Confirm Delete</button>
     </div>
   );
 };

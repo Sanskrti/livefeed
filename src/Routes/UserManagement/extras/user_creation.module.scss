@@ -30,51 +30,30 @@ h1, h2 {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
-.create_user {
-    margin: 0px auto;
-    align-items: center;
-    justify-content: left;
-    background-color: #f4f4f4;
-    color: black;
-    border: none;
-    border-radius: $border-radius;
-    cursor: pointer;
-
-    &:hover {
-        background-color: darken($primary-color, 10%);
-    }
+    border-collapse: collapse;
+    border-radius: 8px;  
+    overflow: hidden;  
+    box-shadow: $box-shadow;
 }
 
 .user_table {
-    width: 80%;
+    width: 100%;
     margin-left: 10px;
-    border-collapse: collapse;
+    
 
-    th {
+     td {
         padding: $table-padding;
-        text-align: center;
+        text-align: left;
         text-decoration: solid;
-        width: 100vw;
-        font-size: 15px; 
-    }
-
-    td {
-        padding: $table-padding;
-        text-align: center;
-        text-decoration: solid;
-        width: 100vw;
-        font-size: 16px; 
-        height: 30px; 
+        font-size: 14px; 
     }
 
     th {
         background-color: $secondary-color;
         color: white;
+        font-size: 15px; 
     }
 
-    
     .name_Column {
         width: 120px;  
     }
@@ -82,11 +61,13 @@ h1, h2 {
     .canLogin_Column {
         width: 120px;  
     }
+
     .action_Column {
         width: 60%;  
-        
+        align-items:left;
     }
 }
+
 button.danger {
     background-color: $danger-color;
 
@@ -103,6 +84,7 @@ button.danger {
     border: none;
     border-radius: $border-radius;
     cursor: pointer;
+    align-items: left;
 
     &:hover {
         background-color: darken(green, 10%);
@@ -122,6 +104,7 @@ button.danger {
         background-color: darken($danger-color, 10%);
     }
 }
+
 .create_button {
     padding: 5px 10px;
     margin: 10px;
@@ -129,18 +112,20 @@ button.danger {
     color: white;
     border: none;
     border-radius: $border-radius;
-    margin-left:10%;
-    margin-right: 20%;
+    margin-left:20%;
+    margin-right: 109%;
+    width: 90px;
     cursor: pointer;
 
     &:hover {
         background-color: darken(#fb9039, 10%);
     }
 }
+
 .view_button {
     padding: 5px 10px;
     margin: 10px;
-    background-color:  #fb9039;;
+    background-color:  #fb9039;
     color: white;
     border: none;
     border-radius: $border-radius;
@@ -150,5 +135,31 @@ button.danger {
         background-color: darken( #fb9039, 10%);
     }
 }
+.submit_button {
+    padding: 5px 10px;
+    margin: 10px;
+    background-color: $primary-color; 
+    color: white;
+    border: none;
+    border-radius: $border-radius;
+    align-items: right;
+    cursor: pointer;
 
+    &:hover {
+        background-color: darken($primary-color, 10%); 
+    }
 
+    &:active {
+        background-color: lighten($primary-color, 5%); 
+    }
+}
+.dialog_title {
+    display: flex;
+    justify-content: space-between;
+    align-items:left;
+    padding: 10px 16px;
+    font-size: 1.10rem;
+    font-weight: bold;
+    background-color: #fb9039; 
+    color: white;
+}

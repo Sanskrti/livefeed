@@ -85,21 +85,24 @@ const UserManagement = () => {
   return (
     <div className={s.userListContainer}>
       <div>
-        <h1>User Management</h1>
-        <button onClick={handleOpenCreateModal} className={s.create_button}>
+        <h1>User Management</h1><br/>
+      </div>
+      
+      <button onClick={handleOpenCreateModal} className={s.create_button}>
           Create User
         </button>
         {error && <p style={{ color: "red" }}>{error}</p>}
-      </div>
 
       <Dialog open={isCreateModalOpen} onClose={handleCloseCreateModal}>
-        <DialogTitle>
-          {/* <span>Create User</span> */}
+        <DialogTitle className={`${s.dialog_title} submit_button`}>
+        <span> User</span>
           <IconButton size="small" color="error" onClick={handleCloseCreateModal}>
-            <CloseOutlined color="error" />
+            <CloseOutlined color="error"/>
           </IconButton>
         </DialogTitle>
         <DialogContent>
+          
+
           <UserCreation
             allowedPages={allowedPages}
             allowedActions={allowedActions}
@@ -112,8 +115,8 @@ const UserManagement = () => {
       </Dialog>
 
       <Dialog open={isUpdateModalOpen} onClose={handleCloseUpdateModal}>
-        <DialogTitle>
-          {/* <span>Update User</span> */}
+        <DialogTitle className={`${s.dialog_title} submit_button`}>
+          <span>Update User</span>
           <IconButton size="small" color="error" onClick={handleCloseUpdateModal}>
             <CloseOutlined color="error" />
           </IconButton>
@@ -132,8 +135,8 @@ const UserManagement = () => {
       </Dialog>
 
       <Dialog open={isDeleteModalOpen} onClose={handleCloseDeleteModal}>
-        <DialogTitle>
-          <span>Confirmation</span>
+        <DialogTitle className={s.dialog_title}>
+          <span>Want to Delete User</span>
           <IconButton size="small" color="error" onClick={handleCloseDeleteModal}>
             <CloseOutlined color="error" />
           </IconButton>
@@ -150,7 +153,7 @@ const UserManagement = () => {
       </Dialog>
 
       <Dialog open={isDetailsModalOpen} onClose={handleCloseDetailsModal}>
-        <DialogTitle>
+        <DialogTitle className={s.dialog_title}>
           <span>User Details</span>
           <IconButton size="small" color="error" onClick={handleCloseDetailsModal}>
             <CloseOutlined color="error" />
@@ -167,11 +170,9 @@ const UserManagement = () => {
           )}
         </DialogContent>
       </Dialog>
-
-      <h2>User List</h2>
-      <div className={s.user_table}>
+       <div className={s.user_table}>
         {loading ? ( 
-          <CircularProgress sx={{ color: "#fb9039", height: 50, width: 50, alignContent:"center" }} />
+          <CircularProgress sx={{ color: "#fb9039", height: 50, width: 50, alignContent:"center", marginLeft: 58,marginTop: 10 }} />
         ) : (
           <table className={s.user_table}>
             <thead>
@@ -199,8 +200,6 @@ const UserManagement = () => {
           </table>
         )}
       </div>
-    </div>
-  );
-};
-
+     </div>
+  )}
 export default UserManagement;
