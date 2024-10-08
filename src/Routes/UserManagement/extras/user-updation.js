@@ -11,21 +11,21 @@ const UserUpdation = ({ selectedUser, onUserUpdated, allowedActions, allowedPage
   const [selectedAllowedPages, setSelectedAllowedPages] = useState(
     selectedUser?.allowed_pages || []
   );
-  const [file, setFile] = useState(null); // State for file
+  const [file, setFile] = useState(null); 
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]); // Set the selected file
+    setFile(e.target.files[0]); 
   };
 
   const handleUserUpdate = async () => {
-    const formData = new FormData(); // Create FormData object
+    const formData = new FormData(); 
     formData.append("name", userName);
     formData.append("can_login", canLogin);
     formData.append("allowed_actions", selectedAllowedActions);
     formData.append("allowed_pages", selectedAllowedPages);
-    if (file) formData.append("file", file); // Append the file if it exists
+    if (file) formData.append("file", file); 
 
     try {
       await axiosClient.put(updateUserEndpoint(selectedUser.id), formData, {
@@ -86,7 +86,7 @@ const UserUpdation = ({ selectedUser, onUserUpdated, allowedActions, allowedPage
         </label>
       </div>
 
-      {/* File input for uploading files */}
+      
       <div className={s.form_group}>
         <label htmlFor="file">Upload File:</label>
         <input type="file" id="file" onChange={handleFileChange} />
