@@ -160,12 +160,12 @@ const UserManagement = () => {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          {selectedUser && (
+        {selectedUser && (
             <>
               <p><strong>Username:</strong> {selectedUser.name}</p>
               <p><strong>Can Login:</strong> {selectedUser.can_login ? "Yes" : "No"}</p>
-              <p><strong>Allowed Actions:</strong> {selectedUser?.allowed_actions.join(", ")}</p>
-              <p><strong>Allowed Pages:</strong> {selectedUser?.allowed_pages.join(", ")}</p>
+              <p><strong>Allowed Actions:</strong> {selectedUser?.allowed_actions?.length > 0 ? selectedUser.allowed_actions.join(", ") : "None"}</p>
+              <p><strong>Allowed Pages:</strong> {selectedUser?.allowed_pages?.length > 0 ? selectedUser.allowed_pages.join(", ") : "None"}</p>
             </>
           )}
         </DialogContent>
