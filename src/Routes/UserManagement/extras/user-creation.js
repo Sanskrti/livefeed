@@ -6,6 +6,8 @@ const UserCreation = ({ onUserCreated }) => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [canLogin, setCanLogin] = useState(false);
+  const [file, setFile] = useState(null);
+  const [fileSizeMessage, setFileSizeMessage] = useState(""); 
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [allowedActions, setAllowedActions] = useState([]);
@@ -31,9 +33,9 @@ const UserCreation = ({ onUserCreated }) => {
     if (successMessage) {
       const timer = setTimeout(() => {
         setSuccessMessage("");
-      }, 3000); 
+      }, 3000);
 
-      return () => clearTimeout(timer); 
+      return () => clearTimeout(timer);
     }
   }, [successMessage]);
 
@@ -43,12 +45,18 @@ const UserCreation = ({ onUserCreated }) => {
       return;
     }
 
+    if (file && file.size > 200 * 1024 * 1024) {
+      setError("File size must be less than 200 MB.");
+      return;
+    }
+
     const data = {
       name: userName,
       password: password,
       can_login: canLogin,
       allowed_actions: selectedActions,
       allowed_pages: selectedPages,
+      file: file
     };
 
     try {
@@ -60,12 +68,29 @@ const UserCreation = ({ onUserCreated }) => {
       setCanLogin(false);
       setSelectedActions([]);
       setSelectedPages([]);
+      setFile(null);
+      setFileSizeMessage(""); 
       setError("");
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message) {
         setError("Error creating user: " + error.response.data.message);
       } else {
         setError("Error creating user: " + error.message);
+      }
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      if (selectedFile.size > 200 * 1024 * 1024) {
+        setError("File size must be less than 200 MB.");
+        setFile(null);
+        setFileSizeMessage(""); 
+      } else {
+        setError("");
+        setFile(selectedFile);
+        setFileSizeMessage(`File size: ${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB`); 
       }
     }
   };
@@ -91,6 +116,7 @@ const UserCreation = ({ onUserCreated }) => {
       <h2>Create User</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+      {fileSizeMessage && <p style={{ color: 'blue' }}>{fileSizeMessage}</p>} 
 
       <div className={s.form_group}>
         <label htmlFor="username">Enter Username:</label>
@@ -163,6 +189,17 @@ const UserCreation = ({ onUserCreated }) => {
             </div>
           ))}
         </div>
+      </div>
+
+      <div className={s.form_group}>
+        <label htmlFor="file-upload">Upload Recommended ZIP File (max 200 MB):</label>
+        <input
+          type="file"
+          id="file-upload"
+          accept=".zip"
+          onChange={handleFileChange}
+          className={s.file_input}
+        />
       </div>
 
       <button onClick={handleUserCreation} className={s.submit_button}>

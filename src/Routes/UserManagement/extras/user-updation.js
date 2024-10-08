@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { axiosClient, updateUserEndpoint } from "../../../api/axiosClient";
-import s from "./user_creation.module.scss"; 
+import s from "./user_creation.module.scss";
 
 const UserUpdation = ({ selectedUser, onUserUpdated, allowedActions, allowedPages }) => {
   const [userName, setUserName] = useState(selectedUser?.name || "");
@@ -11,18 +11,28 @@ const UserUpdation = ({ selectedUser, onUserUpdated, allowedActions, allowedPage
   const [selectedAllowedPages, setSelectedAllowedPages] = useState(
     selectedUser?.allowed_pages || []
   );
+  const [file, setFile] = useState(null); // State for file
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]); // Set the selected file
+  };
+
   const handleUserUpdate = async () => {
-    const data = {
-      name: userName,
-      can_login: canLogin,
-      allowed_actions: selectedAllowedActions,
-      allowed_pages: selectedAllowedPages,
-    };
+    const formData = new FormData(); // Create FormData object
+    formData.append("name", userName);
+    formData.append("can_login", canLogin);
+    formData.append("allowed_actions", selectedAllowedActions);
+    formData.append("allowed_pages", selectedAllowedPages);
+    if (file) formData.append("file", file); // Append the file if it exists
+
     try {
-      await axiosClient.put(updateUserEndpoint(selectedUser.id), data);
+      await axiosClient.put(updateUserEndpoint(selectedUser.id), formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       setSuccessMessage("User updated successfully!");
       onUserUpdated();
     } catch (error) {
@@ -76,6 +86,12 @@ const UserUpdation = ({ selectedUser, onUserUpdated, allowedActions, allowedPage
         </label>
       </div>
 
+      {/* File input for uploading files */}
+      <div className={s.form_group}>
+        <label htmlFor="file">Upload File:</label>
+        <input type="file" id="file" onChange={handleFileChange} />
+      </div>
+
       <div className={s.permissions_section}>
         <h3>Allowed Actions:</h3>
         <div className={s.permissions_container}>
@@ -113,10 +129,9 @@ const UserUpdation = ({ selectedUser, onUserUpdated, allowedActions, allowedPage
       </div>
 
       <button onClick={handleUserUpdate} className={s.submit_button}>
-        Update
+        Submit
       </button>
     </div>
-
   );
 };
 
