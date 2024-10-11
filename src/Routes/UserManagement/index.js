@@ -103,28 +103,58 @@ const UserManagement = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     const img = imgRef.current;
-
-
+  
     clearCanvas();
-
-      img.onload = () => {
+  
+    img.onload = () => {
       canvas.width = img.width;
       canvas.height = img.height;
       ctx.drawImage(img, 0, 0);
-
+  
       
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
+  
+   
+      const rect1 = {
+        x: 0.1, 
+        y: 0.1,  
+        width: 0.2,  
+        height: 0.2  
+      };
+  
+      const rect2 = {
+        x: 0.4,  
+        y: 0.3,  
+        width: 0.3,  
+        height: 0.25 
+      };
+  
+   
       ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
-      ctx.fillRect(50, 50, 100, 100); 
+      ctx.fillRect(
+        rect1.x * canvasWidth, 
+        rect1.y * canvasHeight, 
+        rect1.width * canvasWidth, 
+        rect1.height * canvasHeight
+      );
+  
+    
       ctx.strokeStyle = "blue";
       ctx.lineWidth = 5;
-      ctx.strokeRect(200, 150, 150, 100); 
+      ctx.strokeRect(
+        rect2.x * canvasWidth, 
+        rect2.y * canvasHeight, 
+        rect2.width * canvasWidth, 
+        rect2.height * canvasHeight
+      );
     };
-
+  
     if (img.complete) {
       img.onload(); 
     }
   };
-
+  
   return (
     <div className={s.userListContainer}>
       <div>

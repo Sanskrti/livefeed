@@ -7,7 +7,7 @@ const UserCreation = ({ onUserCreated }) => {
   const [password, setPassword] = useState("");
   const [canLogin, setCanLogin] = useState(false);
   const [file, setFile] = useState(null);
-  const [fileSizeMessage, setFileSizeMessage] = useState(""); 
+  const [fileSizeMessage, setFileSizeMessage] = useState(""); // State for file size message
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [allowedActions, setAllowedActions] = useState([]);
@@ -69,7 +69,7 @@ const UserCreation = ({ onUserCreated }) => {
       setSelectedActions([]);
       setSelectedPages([]);
       setFile(null);
-      setFileSizeMessage(""); 
+      setFileSizeMessage(""); // Reset file size message after user creation
       setError("");
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message) {
@@ -86,12 +86,15 @@ const UserCreation = ({ onUserCreated }) => {
       if (selectedFile.size > 200 * 1024 * 1024) {
         setError("File size must be less than 200 MB.");
         setFile(null);
-        setFileSizeMessage(""); 
+        setFileSizeMessage(""); // Clear file size message
       } else {
-        setError("");
+        setError(""); // Clear any previous error
         setFile(selectedFile);
-        setFileSizeMessage(`File size: ${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB`); 
+        setFileSizeMessage(`File size: ${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB`); // Display file size in MB
       }
+    } else {
+      setFile(null);
+      setFileSizeMessage(""); // Clear file size message if no file is selected
     }
   };
 
@@ -116,7 +119,7 @@ const UserCreation = ({ onUserCreated }) => {
       <h2>Create User</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-      {fileSizeMessage && <p style={{ color: 'blue' }}>{fileSizeMessage}</p>} 
+      {fileSizeMessage && <p style={{ color: 'blue' }}>{fileSizeMessage}</p>} {/* Display file size message */}
 
       <div className={s.form_group}>
         <label htmlFor="username">Enter Username:</label>
