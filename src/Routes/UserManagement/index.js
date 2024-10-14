@@ -1,17 +1,12 @@
+import { useEffect, useState } from "react";
 import { axiosClient, fetchAllowedActions, fetchAllowedPages } from "../../api/axiosClient";
-import { useEffect, useState, useRef } from "react";
 import UserDeletion from "./extras/user-deletion";
 import UserUpdation from "./extras/user-updation";
 import UserCreation from "./extras/user-creation";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  CircularProgress,
-} from "@mui/material";
+import { Dialog, DialogContent, DialogTitle, IconButton, CircularProgress } from "@mui/material";
 import { CloseOutlined } from "@mui/icons-material";
 import s from "./extras/user_creation.module.scss";
+import BoundingBoxCanvas from "./extras/boundingbox";
 
 const UserManagement = () => {
   const [userList, setUserList] = useState([]);
@@ -24,9 +19,6 @@ const UserManagement = () => {
   const [allowedPages, setAllowedPages] = useState([]);
   const [allowedActions, setAllowedActions] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const canvasRef = useRef(null);
-  const imgRef = useRef(null);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -46,14 +38,10 @@ const UserManagement = () => {
     fetchUsers();
     fetchAllowedPages()
       .then(setAllowedPages)
-      .catch((error) =>
-        setError("Error fetching allowed pages: " + error.message)
-      );
+      .catch((error) => setError("Error fetching allowed pages: " + error.message));
     fetchAllowedActions()
       .then(setAllowedActions)
-      .catch((error) =>
-        setError("Error fetching allowed actions: " + error.message)
-      );
+      .catch((error) => setError("Error fetching allowed actions: " + error.message));
   }, []);
 
   const handleOpenCreateModal = () => setIsCreateModalOpen(true);
@@ -82,84 +70,13 @@ const UserManagement = () => {
   const handleOpenDetailsModal = (user) => {
     setSelectedUser(user);
     setIsDetailsModalOpen(true);
-    setTimeout(() => {
-      drawOnCanvas(); 
-    }, 100); 
   };
 
   const handleCloseDetailsModal = () => {
     setIsDetailsModalOpen(false);
     setSelectedUser(null);
-    clearCanvas(); 
   };
 
-  const clearCanvas = () => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-  };
-
-  const drawOnCanvas = () => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    const img = imgRef.current;
-  
-    clearCanvas();
-  
-    img.onload = () => {
-     
-      const desiredWidth = 400; 
-      const scaleFactor = desiredWidth / img.width;
-      const desiredHeight = img.height * scaleFactor;
-  
-
-      canvas.width = desiredWidth;
-      canvas.height = desiredHeight;
-  
-   
-      ctx.drawImage(img, 0, 0, desiredWidth, desiredHeight);
-  
-      const rect1 = {
-        x: 0.1, 
-        y: 0.1, 
-        width: 0.2, 
-        height: 0.4 
-      };
-  
-      const rect2 = {
-        x: 0.4, 
-        y: 0.3, 
-        width: 0.3, 
-        height: 0.25 
-      };
-  
-    
-      ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
-      ctx.fillRect(
-        rect1.x * desiredWidth,
-        rect1.y * desiredHeight,
-        rect1.width * desiredWidth,
-        rect1.height * desiredHeight
-      );
-  
-      ctx.strokeStyle = "blue";
-      ctx.lineWidth = 3;
-      ctx.strokeRect(
-        rect2.x * desiredWidth,
-        rect2.y * desiredHeight,
-        rect2.width * desiredWidth,
-        rect2.height * desiredHeight
-      );
-    };
-  
- 
-    if (img.complete) {
-      img.onload();
-    }
-  };
-  
-  
   return (
     <div className={s.userListContainer}>
       <div>
@@ -172,15 +89,10 @@ const UserManagement = () => {
       </button>
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-     
       <Dialog open={isCreateModalOpen} onClose={handleCloseCreateModal}>
         <DialogTitle className={`${s.dialog_title} submit_button`}>
-          <span> User</span>
-          <IconButton
-            size="small"
-            color="error"
-            onClick={handleCloseCreateModal}
-          >
+          <span>Create User</span>
+          <IconButton size="small" color="error" onClick={handleCloseCreateModal}>
             <CloseOutlined color="error" />
           </IconButton>
         </DialogTitle>
@@ -196,14 +108,11 @@ const UserManagement = () => {
         </DialogContent>
       </Dialog>
 
+    
       <Dialog open={isUpdateModalOpen} onClose={handleCloseUpdateModal}>
         <DialogTitle className={`${s.dialog_title} submit_button`}>
           <span>Update User</span>
-          <IconButton
-            size="small"
-            color="error"
-            onClick={handleCloseUpdateModal}
-          >
+          <IconButton size="small" color="error" onClick={handleCloseUpdateModal}>
             <CloseOutlined color="error" />
           </IconButton>
         </DialogTitle>
@@ -220,14 +129,11 @@ const UserManagement = () => {
         </DialogContent>
       </Dialog>
 
+     
       <Dialog open={isDeleteModalOpen} onClose={handleCloseDeleteModal}>
         <DialogTitle className={s.dialog_title}>
-          <span>Want to Delete User</span>
-          <IconButton
-            size="small"
-            color="error"
-            onClick={handleCloseDeleteModal}
-          >
+          <span>Delete User</span>
+          <IconButton size="small" color="error" onClick={handleCloseDeleteModal}>
             <CloseOutlined color="error" />
           </IconButton>
         </DialogTitle>
@@ -241,15 +147,12 @@ const UserManagement = () => {
           />
         </DialogContent>
       </Dialog>
-      
+
+  
       <Dialog open={isDetailsModalOpen} onClose={handleCloseDetailsModal}>
         <DialogTitle className={s.dialog_title}>
           <span>User Details</span>
-          <IconButton
-            size="small"
-            color="error"
-            onClick={handleCloseDetailsModal}
-          >
+          <IconButton size="small" color="error" onClick={handleCloseDetailsModal}>
             <CloseOutlined color="error" />
           </IconButton>
         </DialogTitle>
@@ -275,16 +178,8 @@ const UserManagement = () => {
                   : "None"}
               </p>
 
-              <img
-                ref={imgRef}
-                src="/cam1.jpg"
-                alt="User Background"
-                style={{ display: "none" }}
-              />
-              <canvas
-                ref={canvasRef}
-                style={{ border: "1px solid black", width: "100%", height: "auto" }}
-              ></canvas>
+           
+              <BoundingBoxCanvas imgSrc=".\cam1.jpg" /> 
             </>
           )}
         </DialogContent>
@@ -319,13 +214,22 @@ const UserManagement = () => {
                   <td>{user.name}</td>
                   <td>{user.can_login ? "Yes" : "No"}</td>
                   <td>
-                    <button className={s.update_button}onClick={() => handleOpenUpdateModal(user)}>
+                    <button
+                      className={s.update_button}
+                      onClick={() => handleOpenUpdateModal(user)}
+                    >
                       Update
                     </button>
-                    <button className={s.delete_button}onClick={() => handleOpenDeleteModal(user)}>
+                    <button
+                      className={s.delete_button}
+                      onClick={() => handleOpenDeleteModal(user)}
+                    >
                       Delete
                     </button>
-                    <button className={s.view_button}onClick={() => handleOpenDetailsModal(user)}>
+                    <button
+                      className={s.view_button}
+                      onClick={() => handleOpenDetailsModal(user)}
+                    >
                       View Details
                     </button>
                   </td>
@@ -340,4 +244,3 @@ const UserManagement = () => {
 };
 
 export default UserManagement;
-
