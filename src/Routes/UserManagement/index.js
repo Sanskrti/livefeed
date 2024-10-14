@@ -97,6 +97,7 @@ const UserManagement = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
   };
 
   const drawOnCanvas = () => {
@@ -107,53 +108,57 @@ const UserManagement = () => {
     clearCanvas();
   
     img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
+     
+      const desiredWidth = 400; 
+      const scaleFactor = desiredWidth / img.width;
+      const desiredHeight = img.height * scaleFactor;
   
-      
-      const canvasWidth = canvas.width;
-      const canvasHeight = canvas.height;
+
+      canvas.width = desiredWidth;
+      canvas.height = desiredHeight;
   
    
+      ctx.drawImage(img, 0, 0, desiredWidth, desiredHeight);
+  
       const rect1 = {
         x: 0.1, 
-        y: 0.1,  
-        width: 0.2,  
-        height: 0.2  
+        y: 0.1, 
+        width: 0.2, 
+        height: 0.4 
       };
   
       const rect2 = {
-        x: 0.4,  
-        y: 0.3,  
-        width: 0.3,  
+        x: 0.4, 
+        y: 0.3, 
+        width: 0.3, 
         height: 0.25 
       };
   
-   
+    
       ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
       ctx.fillRect(
-        rect1.x * canvasWidth, 
-        rect1.y * canvasHeight, 
-        rect1.width * canvasWidth, 
-        rect1.height * canvasHeight
+        rect1.x * desiredWidth,
+        rect1.y * desiredHeight,
+        rect1.width * desiredWidth,
+        rect1.height * desiredHeight
       );
   
-    
       ctx.strokeStyle = "blue";
-      ctx.lineWidth = 5;
+      ctx.lineWidth = 3;
       ctx.strokeRect(
-        rect2.x * canvasWidth, 
-        rect2.y * canvasHeight, 
-        rect2.width * canvasWidth, 
-        rect2.height * canvasHeight
+        rect2.x * desiredWidth,
+        rect2.y * desiredHeight,
+        rect2.width * desiredWidth,
+        rect2.height * desiredHeight
       );
     };
   
+ 
     if (img.complete) {
-      img.onload(); 
+      img.onload();
     }
   };
+  
   
   return (
     <div className={s.userListContainer}>
