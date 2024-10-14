@@ -3,10 +3,10 @@ import { useRef, useEffect } from "react";
 const BoundingBoxCanvas = ({
   imgSrc,
   coordinates = [
-    { x: 0.1, y: 0.1, width: 0.2, height: 0.4, label: "apple", color: "green" },
-    { x: 0.3, y: 0.3, width: 0.3, height: 0.25, label: "mango", color: "orange" },
-    { x: 0.2, y: 0.2, width: 0.2, height: 0.2, label: "lichi", color: "pink" },
-    { x: 0.4, y: 0.5, width: 0.4, height: 0.20, label: "chiku", color: "brown" },
+    { x: 0.1, y: 0.1, width: 0.2, height: 0.4,  label: "apple", color: "green"},
+    { x: 0.3, y: 0.3, width: 0.3, height: 0.25, label: "mango", color: "orange"},
+    { x: 0.2, y: 0.2, width: 0.2, height: 0.2,  label: "lichi", color: "pink"},
+    { x: 0.4, y: 0.5, width: 0.4, height: 0.20, label: "chiku", color: "brown"},
   ],
 }) => {
   const canvasRef = useRef(null);
@@ -59,13 +59,15 @@ const BoundingBoxCanvas = ({
         ctx.font = "14px Arial";
 
         ctx.fillText(
-          coordinates[i].label || `Label ${i + 1}`,
+          coordinates[i].label,
           coordinates[i].x * desiredWidth + 5,
           coordinates[i].y * desiredHeight + 20
         );
 
         ctx.strokeStyle = "blue";
         ctx.lineWidth = 2;
+
+
         ctx.strokeRect(
           coordinates[i].x * desiredWidth,
           coordinates[i].y * desiredHeight,
