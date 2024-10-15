@@ -46,6 +46,7 @@ const BoundingBoxCanvas = ({
       for (let i = 0; i < coordinates.length; i++) {
 
         ctx.fillStyle = coordinates[i].color; 
+        ctx.strokeStyle = coordinates[i].color;
         ctx.globalAlpha = 0.5; 
         ctx.fillRect(
           coordinates[i].x * desiredWidth,
@@ -63,11 +64,7 @@ const BoundingBoxCanvas = ({
           coordinates[i].x * desiredWidth + 5,
           coordinates[i].y * desiredHeight + 20
         );
-
-        ctx.strokeStyle = "blue";
         ctx.lineWidth = 2;
-
-
         ctx.strokeRect(
           coordinates[i].x * desiredWidth,
           coordinates[i].y * desiredHeight,

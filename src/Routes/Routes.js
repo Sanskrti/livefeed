@@ -8,7 +8,7 @@ const Dashboard = () => <div>Dashboard</div>;
 
 const Configuration = () => (
   <div className="blank-page">
-    <h1>Configuration</h1>
+    <h1>Event Page</h1>
     <EventCards /> 
   </div>
 );
