@@ -3,11 +3,12 @@ import { useRef, useEffect } from "react";
 const BoundingBoxCanvas = ({
   imgSrc,
   coordinates = [
-    { x: 0.1, y: 0.1, width: 0.2, height: 0.4,  label: "apple", color: "green"},
-    { x: 0.3, y: 0.3, width: 0.3, height: 0.25, label: "mango", color: "orange"},
-    { x: 0.2, y: 0.2, width: 0.2, height: 0.2,  label: "lichi", color: "pink"},
-    { x: 0.4, y: 0.5, width: 0.4, height: 0.20, label: "chiku", color: "brown"},
+    { x: 0.1, y: 0.1, width: 0.2, height: 0.4, label: "apple", color: "green" },
+    { x: 0.3, y: 0.3, width: 0.3, height: 0.25, label: "mango", color: "orange" },
+    { x: 0.2, y: 0.2, width: 0.2, height: 0.2, label: "lichi", color: "pink" },
+    { x: 0.4, y: 0.5, width: 0.4, height: 0.20, label: "chiku", color: "brown" },
   ],
+  showBoundingBoxes,
 }) => {
   const canvasRef = useRef(null);
   const imgRef = useRef(null);
@@ -16,7 +17,7 @@ const BoundingBoxCanvas = ({
     if (imgSrc) {
       drawOnCanvas();
     }
-  }, [imgSrc]);
+  }, [imgSrc, showBoundingBoxes]); 
 
   const clearCanvas = () => {
     const canvas = canvasRef.current;
@@ -43,34 +44,35 @@ const BoundingBoxCanvas = ({
 
       ctx.drawImage(img, 0, 0, desiredWidth, desiredHeight);
 
-      for (let i = 0; i < coordinates.length; i++) {
+      if (showBoundingBoxes) { 
+        for (let i = 0; i < coordinates.length; i++) {
+          ctx.fillStyle = coordinates[i].color; 
+          ctx.strokeStyle = coordinates[i].color;
+          ctx.globalAlpha = 0.5; 
+          ctx.fillRect(
+            coordinates[i].x * desiredWidth,
+            coordinates[i].y * desiredHeight,
+            coordinates[i].width * desiredWidth,
+            coordinates[i].height * desiredHeight
+          );
 
-        ctx.fillStyle = coordinates[i].color; 
-        ctx.strokeStyle = coordinates[i].color;
-        ctx.globalAlpha = 0.5; 
-        ctx.fillRect(
-          coordinates[i].x * desiredWidth,
-          coordinates[i].y * desiredHeight,
-          coordinates[i].width * desiredWidth,
-          coordinates[i].height * desiredHeight
-        );
+          ctx.globalAlpha = 1.0; 
+          ctx.fillStyle = "black"; 
+          ctx.font = "14px Arial";
 
-        ctx.globalAlpha = 1.0; 
-        ctx.fillStyle = "black"; 
-        ctx.font = "14px Arial";
-
-        ctx.fillText(
-          coordinates[i].label,
-          coordinates[i].x * desiredWidth + 5,
-          coordinates[i].y * desiredHeight + 20
-        );
-        ctx.lineWidth = 2;
-        ctx.strokeRect(
-          coordinates[i].x * desiredWidth,
-          coordinates[i].y * desiredHeight,
-          coordinates[i].width * desiredWidth,
-          coordinates[i].height * desiredHeight
-        );
+          ctx.fillText(
+            coordinates[i].label,
+            coordinates[i].x * desiredWidth + 5,
+            coordinates[i].y * desiredHeight + 20
+          );
+          ctx.lineWidth = 2;
+          ctx.strokeRect(
+            coordinates[i].x * desiredWidth,
+            coordinates[i].y * desiredHeight,
+            coordinates[i].width * desiredWidth,
+            coordinates[i].height * desiredHeight
+          );
+        }
       }
     };
 
