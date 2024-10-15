@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import BoundingBoxCanvas from './boundingbox';
-import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import CustomDialog from './CustomeDialog';  
 
 const EventCards = () => {
   const [showBoundingBoxes, setShowBoundingBoxes] = useState(false);
@@ -67,21 +66,9 @@ const EventCards = () => {
         ))}
       </div>
 
-      <Dialog onClose={closeDialog} open={open} fullWidth maxWidth="md">
-        <DialogTitle>
-          <IconButton
-            edge="end"
-            color="inherit"
-            onClick={closeDialog}
-            aria-label="close"
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent>
-          <BoundingBoxCanvas imgSrc={selectedImage} coordinates={selectedCoordinates} showBoundingBoxes={showBoundingBoxes} />
-        </DialogContent>
-      </Dialog>
+      <CustomDialog open={open} onClose={closeDialog}>
+        <BoundingBoxCanvas imgSrc={selectedImage} coordinates={selectedCoordinates} showBoundingBoxes={showBoundingBoxes} />
+      </CustomDialog>
     </div>
   );
 };
