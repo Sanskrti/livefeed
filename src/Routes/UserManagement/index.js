@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { axiosClient, fetchAllowedActions, fetchAllowedPages } from "../../api/axiosClient";
-import UserDeletion from "./extras/user-deletion";
-import UserUpdation from "./extras/user-updation";
-import UserCreation from "./extras/user-creation";
+import UserDeletion from "./extras/User-Deletion";
+import UserUpdation from "./extras/User-Updation";
+import UserCreation from "./extras/User-Creation";
 import { Dialog, DialogContent, DialogTitle, IconButton, CircularProgress } from "@mui/material";
 import { CloseOutlined } from "@mui/icons-material";
 import s from "./extras/user_creation.module.scss";
-import BoundingBoxCanvas from "./extras/boundingbox";
+import BoundingBoxCanvas from "./BoundingBox";
 
 const UserManagement = () => {
   const [userList, setUserList] = useState([]);
