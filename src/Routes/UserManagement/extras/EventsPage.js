@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import BoundingBoxCanvas from './BoundingBox'; // Custom component that displays the image with bounding boxes
+import BoundingBoxCanvas from './boundingbox'; // Custom component that displays the image with bounding boxes
 import CustomDialog from './CustomeDialog';  // Reusable dialog component for displaying images in a modal
 
 // Main EventCards component to display events and show bounding boxes on images
