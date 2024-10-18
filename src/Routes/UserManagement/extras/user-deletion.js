@@ -1,6 +1,5 @@
 import { axiosClient } from "../../../api/axiosClient";
 import { useState } from "react";
-import { deleteUserEndpoint } from "../../../api/axiosClient";
 import s from "./user_creation.module.scss";
 
 const UserDeletion = ({ selectedUser, onUserDeleted }) => {
@@ -8,7 +7,7 @@ const UserDeletion = ({ selectedUser, onUserDeleted }) => {
 
   const handleUserDelete = async () => {
     try {
-      await axiosClient.delete(deleteUserEndpoint(selectedUser.id));
+      await axiosClient.delete(`/api/users/${selectedUser.id}`);
       onUserDeleted();
     } catch (error) {
       setError("Error deleting user: " + error.message);

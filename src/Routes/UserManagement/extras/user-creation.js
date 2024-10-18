@@ -7,7 +7,7 @@ const UserCreation = ({ onUserCreated }) => {
   const [password, setPassword] = useState("");
   const [canLogin, setCanLogin] = useState(false);
   const [file, setFile] = useState(null);
-  const [fileSizeMessage, setFileSizeMessage] = useState(""); // State for file size message
+  const [fileSizeMessage, setFileSizeMessage] = useState(""); 
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [allowedActions, setAllowedActions] = useState([]);
@@ -119,7 +119,7 @@ const UserCreation = ({ onUserCreated }) => {
       <h2>Create User</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-      {fileSizeMessage && <p style={{ color: 'blue' }}>{fileSizeMessage}</p>} {/* Display file size message */}
+      {fileSizeMessage && <p style={{ color: 'blue' }}>{fileSizeMessage}</p>} 
 
       <div className={s.form_group}>
         <label htmlFor="username">Enter Username:</label>

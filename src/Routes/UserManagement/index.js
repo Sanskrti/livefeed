@@ -1,203 +1,119 @@
-import { useEffect, useState } from "react";
-import { axiosClient, fetchAllowedActions, fetchAllowedPages } from "../../api/axiosClient";
-import UserDeletion from "./extras/user-deletion";
-import UserUpdation from "./extras/user-updation";
-import UserCreation from "./extras/user-creation";
-import { Dialog, DialogContent, DialogTitle, IconButton, CircularProgress } from "@mui/material";
-import { CloseOutlined } from "@mui/icons-material";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchUsers,
+  fetchAllowedPages,
+  fetchAllowedActions,
+  selectUser,
+  clearSelectedUser,
+} from './features/userSlice';
+import UserDeletion from './extras/user-deletion';
+import UserUpdation from './extras/User-Updation';
+import UserCreation from './extras/user-creation';
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  CircularProgress,
+  Button,
+} from '@mui/material';
+import { CloseOutlined } from '@mui/icons-material';
 import s from "./extras/user_creation.module.scss";
-import BoundingBoxCanvas from "./extras/boundingbox";
 
 const UserManagement = () => {
-  const [userList, setUserList] = useState([]);
-  const [error, setError] = useState("");
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [allowedPages, setAllowedPages] = useState([]);
-  const [allowedActions, setAllowedActions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  
 
-  const fetchUsers = async () => {
-    setLoading(true);
-    try {
-      const response = await axiosClient.get("/api/users");
-      console.log("API Response:", response.data);
-      setUserList(response.data);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      setError("Error fetching users: " + error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    userList,
+    selectedUser,
+    allowedPages,
+    allowedActions,
+    loading,
+    error,
+  } = useSelector((state) => state.users);
 
+  const [openCreate, setOpenCreate] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [openDetails, setOpenDetails] = useState(false); 
+  const [userDetails, setUserDetails] = useState(null);
+
+  
   useEffect(() => {
-    fetchUsers();
-    fetchAllowedPages()
-      .then(setAllowedPages)
-      .catch((error) => setError("Error fetching allowed pages: " + error.message));
-    fetchAllowedActions()
-      .then(setAllowedActions)
-      .catch((error) => setError("Error fetching allowed actions: " + error.message));
-  }, []);
+    dispatch(fetchUsers());
+    dispatch(fetchAllowedPages());
+    dispatch(fetchAllowedActions());
+  }, [dispatch]);
 
-  const handleOpenCreateModal = () => setIsCreateModalOpen(true);
-  const handleCloseCreateModal = () => setIsCreateModalOpen(false);
+  
+  const handleOpenCreate = () => setOpenCreate(true);
+  const handleCloseCreate = () => setOpenCreate(false);
 
-  const handleOpenUpdateModal = (user) => {
-    setSelectedUser(user);
-    setIsUpdateModalOpen(true);
+  const handleOpenUpdate = (user) => {
+    dispatch(selectUser(user));
+    setOpenUpdate(true);
   };
 
-  const handleCloseUpdateModal = () => {
-    setIsUpdateModalOpen(false);
-    setSelectedUser(null);
+  const handleCloseUpdate = () => {
+    setOpenUpdate(false);
+    dispatch(clearSelectedUser());
   };
 
-  const handleOpenDeleteModal = (user) => {
-    setSelectedUser(user);
-    setIsDeleteModalOpen(true);
+  const handleOpenDelete = (user) => {
+    dispatch(selectUser(user));
+    setOpenDelete(true);
   };
 
-  const handleCloseDeleteModal = () => {
-    setIsDeleteModalOpen(false);
-    setSelectedUser(null);
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
+    dispatch(clearSelectedUser());
   };
 
-  const handleOpenDetailsModal = (user) => {
-    setSelectedUser(user);
-    setIsDetailsModalOpen(true);
+  const handleOpenDetails = (user) => {
+    setUserDetails({
+      ...user,
+      allowedActions: user.allowedActions || [],  
+      allowedPages: user.allowedPages || []      
+    });
+    setOpenDetails(true);
   };
 
-  const handleCloseDetailsModal = () => {
-    setIsDetailsModalOpen(false);
-    setSelectedUser(null);
+  const handleCloseDetails = () => {
+    setOpenDetails(false);
+    setUserDetails(null);
+  };
+
+ 
+  const handleUserCreated = () => {
+    handleCloseCreate();
+    dispatch(fetchUsers());
+  };
+
+  const handleUserUpdated = () => {
+    handleCloseUpdate();
+    dispatch(fetchUsers());
+  };
+
+  const handleUserDeleted = () => {
+    handleCloseDelete();
+    dispatch(fetchUsers());
   };
 
   return (
-    <div className={s.userListContainer}>
-      <div>
-        <h1>User Management</h1>
-        <br />
-      </div>
-
-      <button onClick={handleOpenCreateModal} className={s.create_button}>
+    <div className={s.user_management}>
+      <h1 className={s.title}>User Management</h1>
+      <Button variant="contained" className={s.create_button} onClick={handleOpenCreate}>
         Create User
-      </button>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      </Button>
 
-      <Dialog open={isCreateModalOpen} onClose={handleCloseCreateModal}>
-        <DialogTitle className={`${s.dialog_title} submit_button`}>
-          <span>Create User</span>
-          <IconButton size="small" color="error" onClick={handleCloseCreateModal}>
-            <CloseOutlined color="error" />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent>
-          <UserCreation
-            allowedPages={allowedPages}
-            allowedActions={allowedActions}
-            onUserCreated={() => {
-              fetchUsers();
-              handleCloseCreateModal();
-            }}
-          />
-        </DialogContent>
-      </Dialog>
-
-    
-      <Dialog open={isUpdateModalOpen} onClose={handleCloseUpdateModal}>
-        <DialogTitle className={`${s.dialog_title} submit_button`}>
-          <span>Update User</span>
-          <IconButton size="small" color="error" onClick={handleCloseUpdateModal}>
-            <CloseOutlined color="error" />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent>
-          <UserUpdation
-            selectedUser={selectedUser}
-            allowedPages={allowedPages}
-            allowedActions={allowedActions}
-            onUserUpdated={() => {
-              fetchUsers();
-              handleCloseUpdateModal();
-            }}
-          />
-        </DialogContent>
-      </Dialog>
-
-     
-      <Dialog open={isDeleteModalOpen} onClose={handleCloseDeleteModal}>
-        <DialogTitle className={s.dialog_title}>
-          <span>Delete User</span>
-          <IconButton size="small" color="error" onClick={handleCloseDeleteModal}>
-            <CloseOutlined color="error" />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent>
-          <UserDeletion
-            selectedUser={selectedUser}
-            onUserDeleted={() => {
-              fetchUsers();
-              handleCloseDeleteModal();
-            }}
-          />
-        </DialogContent>
-      </Dialog>
-
-  
-      <Dialog open={isDetailsModalOpen} onClose={handleCloseDetailsModal}>
-        <DialogTitle className={s.dialog_title}>
-          <span>User Details</span>
-          <IconButton size="small" color="error" onClick={handleCloseDetailsModal}>
-            <CloseOutlined color="error" />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent>
-          {selectedUser && (
-            <>
-              <p>
-                <strong>Username:</strong> {selectedUser.name}
-              </p>
-              <p>
-                <strong>Can Login:</strong> {selectedUser.can_login ? "Yes" : "No"}
-              </p>
-              <p>
-                <strong>Allowed Actions:</strong>{" "}
-                {selectedUser?.allowed_actions?.length > 0
-                  ? selectedUser.allowed_actions.join(", ")
-                  : "None"}
-              </p>
-              <p>
-                <strong>Allowed Pages:</strong>{" "}
-                {selectedUser?.allowed_pages?.length > 0
-                  ? selectedUser.allowed_pages.join(", ")
-                  : "None"}
-              </p>
-
-           
-              <BoundingBoxCanvas imgSrc=".\cam1.jpg" /> 
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      <div className={s.user_table}>
-        {loading ? (
-          <CircularProgress
-            sx={{
-              color: "#fb9039",
-              height: 50,
-              width: 50,
-              alignContent: "center",
-              marginLeft: 58,
-              marginTop: 10,
-            }}
-          />
-        ) : (
+      {loading ? (
+        <CircularProgress />
+      ) : error ? (
+        <p style={{ color: 'red' }}>{error}</p>
+      ) : (
+        <div className={s.userListContainer}>
           <table className={s.user_table}>
             <thead>
               <tr>
@@ -212,33 +128,94 @@ const UserManagement = () => {
                 <tr key={user.id}>
                   <td>{user.id}</td>
                   <td>{user.name}</td>
-                  <td>{user.can_login ? "Yes" : "No"}</td>
+                  <td>{user.can_login ? 'Yes' : 'No'}</td>
                   <td>
-                    <button
-                      className={s.update_button}
-                      onClick={() => handleOpenUpdateModal(user)}
-                    >
+                    <Button variant="outlined" className={s.update_button} onClick={() => handleOpenUpdate(user)}>
                       Update
-                    </button>
-                    <button
-                      className={s.delete_button}
-                      onClick={() => handleOpenDeleteModal(user)}
-                    >
+                    </Button>
+                    <Button variant="outlined" className={s.delete_button} onClick={() => handleOpenDelete(user)}>
                       Delete
-                    </button>
-                    <button
-                      className={s.view_button}
-                      onClick={() => handleOpenDetailsModal(user)}
-                    >
+                    </Button>
+                    <Button variant="outlined" className={s.view_button} onClick={() => handleOpenDetails(user)}>
                       View Details
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        )}
-      </div>
+        </div>
+      )}
+
+    
+      <Dialog open={openCreate} onClose={handleCloseCreate}>
+        <DialogTitle className={s.dialog_title}>
+          Create User
+          <IconButton edge="end" color="inherit" onClick={handleCloseCreate} aria-label="close">
+            <CloseOutlined />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent className={s.dialog_content}>
+          <UserCreation onUserCreated={handleUserCreated} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openUpdate} onClose={handleCloseUpdate}>
+        <DialogTitle className={s.dialog_title}>
+          Update User
+          <IconButton edge="end" color="inherit" onClick={handleCloseUpdate} aria-label="close">
+            <CloseOutlined />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent className={s.dialog_content}>
+          {selectedUser && (
+            <UserUpdation
+              selectedUser={selectedUser}
+              onUserUpdated={handleUserUpdated}
+              allowedActions={allowedActions}
+              allowedPages={allowedPages}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openDelete} onClose={handleCloseDelete}>
+        <DialogTitle className={s.dialog_title}>
+          Delete User
+          <IconButton edge="end" color="inherit" onClick={handleCloseDelete} aria-label="close">
+            <CloseOutlined />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent className={s.dialog_content}>
+          {selectedUser && (
+            <UserDeletion selectedUser={selectedUser} onUserDeleted={handleUserDeleted} />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openDetails} onClose={handleCloseDetails}>
+        <DialogTitle className={s.dialog_title}>
+          User Details
+          <IconButton edge="end" color="inherit" onClick={handleCloseDetails} aria-label="close">
+            <CloseOutlined />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent className={s.dialog_content}>
+          {userDetails && (
+            <div>
+              <h3>ID: {userDetails.id}</h3>
+              <h3>Name: {userDetails.name}</h3>
+              <h3>Can Login: {userDetails.can_login ? 'Yes' : 'No'}</h3>
+              <h3>
+                Allowed Actions: {userDetails.allowedActions.length > 0 ? userDetails.allowedActions.join(', ') : 'None'}
+              </h3>
+              <h3>
+                Allowed Pages: {userDetails.allowedPages.length > 0 ? userDetails.allowedPages.join(', ') : 'None'}
+              </h3>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
