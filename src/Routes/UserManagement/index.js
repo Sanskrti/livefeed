@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchUsers,
-  fetchAllowedPages,
-  fetchAllowedActions,
+  loadAllowedPages,   
+  loadAllowedActions, 
   selectUser,
   clearSelectedUser,
 } from './features/userSlice';
@@ -23,7 +23,6 @@ import s from "./extras/user_creation.module.scss";
 
 const UserManagement = () => {
   const dispatch = useDispatch();
-  
 
   const {
     userList,
@@ -37,17 +36,16 @@ const UserManagement = () => {
   const [openCreate, setOpenCreate] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [openDetails, setOpenDetails] = useState(false); 
+  const [openDetails, setOpenDetails] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
 
-  
+ 
   useEffect(() => {
     dispatch(fetchUsers());
-    dispatch(fetchAllowedPages());
-    dispatch(fetchAllowedActions());
+    dispatch(loadAllowedPages());   
+    dispatch(loadAllowedActions()); 
   }, [dispatch]);
 
-  
   const handleOpenCreate = () => setOpenCreate(true);
   const handleCloseCreate = () => setOpenCreate(false);
 
@@ -75,7 +73,7 @@ const UserManagement = () => {
     setUserDetails({
       ...user,
       allowedActions: user.allowedActions || [],  
-      allowedPages: user.allowedPages || []      
+      allowedPages: user.allowedPages || []
     });
     setOpenDetails(true);
   };
@@ -85,7 +83,6 @@ const UserManagement = () => {
     setUserDetails(null);
   };
 
- 
   const handleUserCreated = () => {
     handleCloseCreate();
     dispatch(fetchUsers());
@@ -147,7 +144,7 @@ const UserManagement = () => {
         </div>
       )}
 
-    
+     
       <Dialog open={openCreate} onClose={handleCloseCreate}>
         <DialogTitle className={s.dialog_title}>
           Create User
@@ -160,6 +157,7 @@ const UserManagement = () => {
         </DialogContent>
       </Dialog>
 
+     
       <Dialog open={openUpdate} onClose={handleCloseUpdate}>
         <DialogTitle className={s.dialog_title}>
           Update User
@@ -179,6 +177,7 @@ const UserManagement = () => {
         </DialogContent>
       </Dialog>
 
+      
       <Dialog open={openDelete} onClose={handleCloseDelete}>
         <DialogTitle className={s.dialog_title}>
           Delete User
@@ -193,6 +192,7 @@ const UserManagement = () => {
         </DialogContent>
       </Dialog>
 
+      
       <Dialog open={openDetails} onClose={handleCloseDetails}>
         <DialogTitle className={s.dialog_title}>
           User Details

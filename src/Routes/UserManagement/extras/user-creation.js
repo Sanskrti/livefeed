@@ -69,7 +69,7 @@ const UserCreation = ({ onUserCreated }) => {
       setSelectedActions([]);
       setSelectedPages([]);
       setFile(null);
-      setFileSizeMessage(""); // Reset file size message after user creation
+      setFileSizeMessage(""); 
       setError("");
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message) {
@@ -86,15 +86,15 @@ const UserCreation = ({ onUserCreated }) => {
       if (selectedFile.size > 200 * 1024 * 1024) {
         setError("File size must be less than 200 MB.");
         setFile(null);
-        setFileSizeMessage(""); // Clear file size message
+        setFileSizeMessage(""); 
       } else {
-        setError(""); // Clear any previous error
+        setError(""); 
         setFile(selectedFile);
-        setFileSizeMessage(`File size: ${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB`); // Display file size in MB
+        setFileSizeMessage(`File size: ${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB`); 
       }
     } else {
       setFile(null);
-      setFileSizeMessage(""); // Clear file size message if no file is selected
+      setFileSizeMessage(""); 
     }
   };
 
