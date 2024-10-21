@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchUsers,
-  loadAllowedPages,   
-  loadAllowedActions, 
+  loadAllowedPages,
+  loadAllowedActions,
   selectUser,
   clearSelectedUser,
 } from './features/userSlice';
@@ -39,11 +39,11 @@ const UserManagement = () => {
   const [openDetails, setOpenDetails] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
 
- 
+  
   useEffect(() => {
     dispatch(fetchUsers());
-    dispatch(loadAllowedPages());   
-    dispatch(loadAllowedActions()); 
+    dispatch(loadAllowedPages());
+    dispatch(loadAllowedActions());
   }, [dispatch]);
 
   const handleOpenCreate = () => setOpenCreate(true);
@@ -72,8 +72,8 @@ const UserManagement = () => {
   const handleOpenDetails = (user) => {
     setUserDetails({
       ...user,
-      allowedActions: user.allowedActions || [],  
-      allowedPages: user.allowedPages || []
+      allowedActions: user.allowedActions,
+      allowedPages: user.allowedPages,
     });
     setOpenDetails(true);
   };
@@ -83,15 +83,20 @@ const UserManagement = () => {
     setUserDetails(null);
   };
 
+ 
   const handleUserCreated = () => {
     handleCloseCreate();
     dispatch(fetchUsers());
+    dispatch(loadAllowedPages()); 
+    dispatch(loadAllowedActions()); 
   };
 
   const handleUserUpdated = () => {
     handleCloseUpdate();
-    dispatch(fetchUsers());
-  };
+    dispatch(fetchUsers()); // Ensure this fetches the updated user list
+    dispatch(loadAllowedPages()); 
+    dispatch(loadAllowedActions()); 
+};
 
   const handleUserDeleted = () => {
     handleCloseDelete();
@@ -157,7 +162,7 @@ const UserManagement = () => {
         </DialogContent>
       </Dialog>
 
-     
+    
       <Dialog open={openUpdate} onClose={handleCloseUpdate}>
         <DialogTitle className={s.dialog_title}>
           Update User
@@ -177,7 +182,7 @@ const UserManagement = () => {
         </DialogContent>
       </Dialog>
 
-      
+     
       <Dialog open={openDelete} onClose={handleCloseDelete}>
         <DialogTitle className={s.dialog_title}>
           Delete User
@@ -206,12 +211,9 @@ const UserManagement = () => {
               <h3>ID: {userDetails.id}</h3>
               <h3>Name: {userDetails.name}</h3>
               <h3>Can Login: {userDetails.can_login ? 'Yes' : 'No'}</h3>
-              <h3>
-                Allowed Actions: {userDetails.allowedActions.length > 0 ? userDetails.allowedActions.join(', ') : 'None'}
-              </h3>
-              <h3>
-                Allowed Pages: {userDetails.allowedPages.length > 0 ? userDetails.allowedPages.join(', ') : 'None'}
-              </h3>
+              <h3>Allowed Actions: {selectedUser?.allowed_actions?.length > 0 ? selectedUser.allowed_actions.join(", ") : "None"}</h3>
+              <h3>Allowed Pages: {selectedUser?.allowed_pages?.length > 0 ? selectedUser.allowed_pages.join(", ") : "None"}</h3>
+              <h3>Uploaded File: {userDetails.file ? userDetails.file.name : 'No file uploaded'}</h3>
             </div>
           )}
         </DialogContent>

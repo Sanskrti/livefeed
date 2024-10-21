@@ -25,7 +25,7 @@ const userSlice = createSlice({
       state.selectedUser = null;
     },
     setAllowedPages: (state, action) => {
-        
+
       state.allowedPages = action.payload;
     },
     setAllowedActions: (state, action) => {
@@ -38,6 +38,7 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
     setUserList: (state, action) => {
+        
       state.userList = action.payload;
     }
   },
