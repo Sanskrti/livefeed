@@ -20,18 +20,20 @@ const UserUpdation = ({ selectedUser, onUserUpdated, allowedActions, allowedPage
   };
 
   const handleUserUpdate = async () => {
-    console.warn("WTF")
-    const formData = new FormData(); 
-    formData.append("name", "random");
-    formData.append("can_login", canLogin);
-    formData.append("allowed_actions", selectedAllowedActions);
-    formData.append("allowed_pages", selectedAllowedPages);
-    if (file) formData.append("file", file); 
-console.warn("oyeee", formData.getAll());
+    const data = { 
+      id: selectedUser.id, 
+      name: userName,
+      can_login: canLogin,
+      password: selectedUser.password || "defaultPassword", 
+      pages: selectedAllowedPages,
+      allowed_actions: selectedAllowedActions,
+    };
+  
     try {
-      await axiosClient.put(updateUserEndpoint(selectedUser.id), formData, {
+      
+      await axiosClient.put(updateUserEndpoint(selectedUser.id), data, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
       });
       setSuccessMessage("User updated successfully!");
@@ -40,6 +42,7 @@ console.warn("oyeee", formData.getAll());
       setError("Error updating user: " + error.message);
     }
   };
+  
 
   const handleActionChange = (action) => {
     setSelectedAllowedActions((prevSelected) =>
