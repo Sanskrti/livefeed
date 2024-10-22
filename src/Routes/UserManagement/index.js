@@ -73,7 +73,7 @@ const UserManagement = () => {
     setUserDetails({
       ...user,
       allowedActions: user.allowed_actions, 
-      allowedPages: user.allowed_pages,     
+      allowedPages: user.pages,     
     });
     setOpenDetails(true);
 };
@@ -145,6 +145,8 @@ const UserManagement = () => {
                   </td>
                 </tr>
               ))}
+
+
             </tbody>
           </table>
         </div>
