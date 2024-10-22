@@ -39,6 +39,7 @@ const UserManagement = () => {
   const [openDetails, setOpenDetails] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
 
+  
   useEffect(() => {
     dispatch(fetchUsers());
     dispatch(loadAllowedPages());
@@ -68,35 +69,35 @@ const UserManagement = () => {
     dispatch(clearSelectedUser());
   };
 
- 
-  const handleOpenDetails = (userId) => {
-    const updatedUser = userList.find((user) => user.id === userId);
+  const handleOpenDetails = (user) => {
     setUserDetails({
-      ...updatedUser,
-      allowedActions: updatedUser.allowed_actions,
-      allowedPages: updatedUser.allowed_pages,
+      ...user,
+      allowedActions: user.allowed_actions, 
+      allowedPages: user.allowed_pages,     
     });
     setOpenDetails(true);
-  };
+};
+
 
   const handleCloseDetails = () => {
     setOpenDetails(false);
     setUserDetails(null);
   };
 
+ 
   const handleUserCreated = () => {
     handleCloseCreate();
     dispatch(fetchUsers());
-    dispatch(loadAllowedPages());
-    dispatch(loadAllowedActions());
+    dispatch(loadAllowedPages()); 
+    dispatch(loadAllowedActions()); 
   };
 
   const handleUserUpdated = () => {
     handleCloseUpdate();
-    dispatch(fetchUsers());
-    dispatch(loadAllowedPages());
-    dispatch(loadAllowedActions());
-  };
+    dispatch(fetchUsers()); 
+    dispatch(loadAllowedPages()); 
+    dispatch(loadAllowedActions()); 
+};
 
   const handleUserDeleted = () => {
     handleCloseDelete();
@@ -138,7 +139,7 @@ const UserManagement = () => {
                     <Button variant="outlined" className={s.delete_button} onClick={() => handleOpenDelete(user)}>
                       Delete
                     </Button>
-                    <Button variant="outlined" className={s.view_button} onClick={() => handleOpenDetails(user.id)}>
+                    <Button variant="outlined" className={s.view_button} onClick={() => handleOpenDetails(user)}>
                       View Details
                     </Button>
                   </td>
@@ -149,7 +150,7 @@ const UserManagement = () => {
         </div>
       )}
 
-    
+     
       <Dialog open={openCreate} onClose={handleCloseCreate}>
         <DialogTitle className={s.dialog_title}>
           Create User
@@ -162,7 +163,7 @@ const UserManagement = () => {
         </DialogContent>
       </Dialog>
 
-      
+    
       <Dialog open={openUpdate} onClose={handleCloseUpdate}>
         <DialogTitle className={s.dialog_title}>
           Update User
@@ -182,7 +183,7 @@ const UserManagement = () => {
         </DialogContent>
       </Dialog>
 
-      
+     
       <Dialog open={openDelete} onClose={handleCloseDelete}>
         <DialogTitle className={s.dialog_title}>
           Delete User
@@ -212,15 +213,15 @@ const UserManagement = () => {
               <h3>Name: {userDetails.name}</h3>
               <h3>Can Login: {userDetails.can_login ? 'Yes' : 'No'}</h3>
               <h3>
-                Allowed Actions: {userDetails.allowedActions?.length > 0
-                  ? userDetails.allowedActions.join(', ')
-                  : 'None'}
-              </h3>
-              <h3>
-                Allowed Pages: {userDetails.allowedPages?.length > 0
-                  ? userDetails.allowedPages.join(', ')
-                  : 'None'}
-              </h3>
+        Allowed Actions: {userDetails.allowedActions?.length > 0
+          ? userDetails.allowedActions.join(', ')
+          : 'None'}
+      </h3>
+      <h3>
+        Allowed Pages: {userDetails.allowedPages?.length > 0
+          ? userDetails.allowedPages.join(', ')
+          : 'None'}
+      </h3>
             </div>
           )}
         </DialogContent>
