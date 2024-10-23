@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  fetchUsers,
-  loadAllowedPages,
-  loadAllowedActions,
   selectUser,
   clearSelectedUser,
 } from './features/userSlice';
@@ -20,31 +17,38 @@ import {
 } from '@mui/material';
 import { CloseOutlined } from '@mui/icons-material';
 import s from "./extras/user_creation.module.scss";
+import { useFetchUsersQuery, useLoadAllowedPagesQuery, useLoadAllowedActionsQuery } from "../../../src/Slice";
+
 
 const UserManagement = () => {
   const dispatch = useDispatch();
+  
+  
+ 
+  const { data: userList, error: userError, isLoading: userLoading, refetch } = useFetchUsersQuery();
+  const { data: allowedPages, error: pagesError, isLoading: pagesLoading } = useLoadAllowedPagesQuery();
+  const { data: allowedActions, error: actionsError, isLoading: actionsLoading } = useLoadAllowedActionsQuery();
 
-  const {
-    userList,
-    selectedUser,
-    allowedPages,
-    allowedActions,
-    loading,
-    error,
-  } = useSelector((state) => state.users);
+  const selectedUser = useSelector((state) => state.users.selectedUser);
+
+  
+  useEffect(() => {
+    if (userList) {
+      console.log('User List:', userList);
+    }
+    if (allowedPages) {
+      console.log('Allowed Pages:', allowedPages);
+    }
+    if (allowedActions) {
+      console.log('Allowed Actions:', allowedActions);
+    }
+  }, [userList, allowedPages, allowedActions]);
 
   const [openCreate, setOpenCreate] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [openDetails, setOpenDetails] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
-
-  
-  useEffect(() => {
-    dispatch(fetchUsers());
-    dispatch(loadAllowedPages());
-    dispatch(loadAllowedActions());
-  }, [dispatch]);
 
   const handleOpenCreate = () => setOpenCreate(true);
   const handleCloseCreate = () => setOpenCreate(false);
@@ -70,14 +74,9 @@ const UserManagement = () => {
   };
 
   const handleOpenDetails = (user) => {
-    setUserDetails({
-      ...user,
-      allowedActions: user.allowed_actions, 
-      allowedPages: user.pages,     
-    });
+    setUserDetails(user);
     setOpenDetails(true);
-};
-
+  };
 
   const handleCloseDetails = () => {
     setOpenDetails(false);
@@ -86,22 +85,14 @@ const UserManagement = () => {
 
  
   const handleUserCreated = () => {
-    handleCloseCreate();
-    dispatch(fetchUsers());
-    dispatch(loadAllowedPages()); 
-    dispatch(loadAllowedActions()); 
+    handleCloseCreate(); 
+    refetch(); 
   };
 
+  
   const handleUserUpdated = () => {
-    handleCloseUpdate();
-    dispatch(fetchUsers()); 
-    dispatch(loadAllowedPages()); 
-    dispatch(loadAllowedActions()); 
-};
-
-  const handleUserDeleted = () => {
-    handleCloseDelete();
-    dispatch(fetchUsers());
+    handleCloseUpdate(); 
+    refetch(); 
   };
 
   return (
@@ -111,10 +102,10 @@ const UserManagement = () => {
         Create User
       </Button>
 
-      {loading ? (
+      {userLoading ? (
         <CircularProgress />
-      ) : error ? (
-        <p style={{ color: 'red' }}>{error}</p>
+      ) : userError ? (
+        <p style={{ color: 'red' }}>{userError}</p>
       ) : (
         <div className={s.userListContainer}>
           <table className={s.user_table}>
@@ -145,14 +136,11 @@ const UserManagement = () => {
                   </td>
                 </tr>
               ))}
-
-
             </tbody>
           </table>
         </div>
       )}
 
-     
       <Dialog open={openCreate} onClose={handleCloseCreate}>
         <DialogTitle className={s.dialog_title}>
           Create User
@@ -165,7 +153,6 @@ const UserManagement = () => {
         </DialogContent>
       </Dialog>
 
-    
       <Dialog open={openUpdate} onClose={handleCloseUpdate}>
         <DialogTitle className={s.dialog_title}>
           Update User
@@ -185,7 +172,6 @@ const UserManagement = () => {
         </DialogContent>
       </Dialog>
 
-     
       <Dialog open={openDelete} onClose={handleCloseDelete}>
         <DialogTitle className={s.dialog_title}>
           Delete User
@@ -195,12 +181,11 @@ const UserManagement = () => {
         </DialogTitle>
         <DialogContent className={s.dialog_content}>
           {selectedUser && (
-            <UserDeletion selectedUser={selectedUser} onUserDeleted={handleUserDeleted} />
+            <UserDeletion selectedUser={selectedUser} onUserDeleted={handleCloseDelete} />
           )}
         </DialogContent>
       </Dialog>
 
-      
       <Dialog open={openDetails} onClose={handleCloseDetails}>
         <DialogTitle className={s.dialog_title}>
           User Details
@@ -214,16 +199,8 @@ const UserManagement = () => {
               <h3>ID: {userDetails.id}</h3>
               <h3>Name: {userDetails.name}</h3>
               <h3>Can Login: {userDetails.can_login ? 'Yes' : 'No'}</h3>
-              <h3>
-        Allowed Actions: {userDetails.allowedActions?.length > 0
-          ? userDetails.allowedActions.join(', ')
-          : 'None'}
-      </h3>
-      <h3>
-        Allowed Pages: {userDetails.allowedPages?.length > 0
-          ? userDetails.allowedPages.join(', ')
-          : 'None'}
-      </h3>
+              <h3>Allowed Actions: {userDetails.allowed_actions?.length > 0 ? userDetails.allowed_actions.join(', ') : 'None'}</h3>
+              <h3>Allowed Pages: {userDetails.pages?.length > 0 ? userDetails.pages.join(', ') : 'None'}</h3>
             </div>
           )}
         </DialogContent>
