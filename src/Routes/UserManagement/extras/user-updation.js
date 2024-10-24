@@ -5,66 +5,45 @@ import s from "./user_creation.module.scss";
 const UserUpdation = ({ selectedUser, onUserUpdated, allowedActions, allowedPages }) => {
   const [userName, setUserName] = useState(selectedUser?.name || "");
   const [canLogin, setCanLogin] = useState(selectedUser?.can_login || false);
-  const [selectedAllowedActions, setSelectedAllowedActions] = useState(
-    selectedUser?.allowed_actions || []
-  );
-  const [selectedAllowedPages, setSelectedAllowedPages] = useState(
-    selectedUser?.allowed_pages || []
-  );
-  const [file, setFile] = useState(null); 
+  const [selectedAllowedActions, setSelectedAllowedActions] = useState(selectedUser?.allowed_actions || []);
+  const [selectedAllowedPages, setSelectedAllowedPages] = useState(selectedUser?.allowed_pages || []);
+  const [file, setFile] = useState(null);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]); 
+    setFile(e.target.files[0]);
   };
 
   const handleUserUpdate = async () => {
-    const data = { 
-      id: selectedUser.id, 
+    if (!selectedUser?.id) {
+      setError("Selected user is not valid");
+      return;
+    }
+
+    const data = {
+      id: selectedUser.id,
       name: userName,
       can_login: canLogin,
-      password: selectedUser.password || "defaultPassword", 
+      password: selectedUser.password || "defaultPassword",
       pages: selectedAllowedPages,
       allowed_actions: selectedAllowedActions,
     };
-  
+
     try {
-      
-      await axiosClient.put(updateUserEndpoint(selectedUser.id), data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      setSuccessMessage("User updated successfully!");
+      await axiosClient.put(`${updateUserEndpoint}/${selectedUser.id}`, data);
+      setSuccessMessage("User updated successfully");
       onUserUpdated();
     } catch (error) {
-      setError("Error updating user: " + error.message);
+      setError("Error updating user: " + (error.response?.data?.message || error.message));
     }
-  };
-  
-
-  const handleActionChange = (action) => {
-    setSelectedAllowedActions((prevSelected) =>
-      prevSelected.includes(action)
-        ? prevSelected.filter((item) => item !== action)
-        : [...prevSelected, action]
-    );
-  };
-
-  const handlePageChange = (page) => {
-    setSelectedAllowedPages((prevSelected) =>
-      prevSelected.includes(page)
-        ? prevSelected.filter((item) => item !== page)
-        : [...prevSelected, page]
-    );
   };
 
   return (
-    <div className={s.user_creation_form}>
+    <div>
       <h2>Update User</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
 
       <div className={s.form_group}>
         <label htmlFor="username">Enter Username:</label>
@@ -81,19 +60,9 @@ const UserUpdation = ({ selectedUser, onUserUpdated, allowedActions, allowedPage
 
       <div>
         <label>
-          <input
-            type="checkbox"
-            checked={canLogin}
-            onChange={(e) => setCanLogin(e.target.checked)}
-          />
+          <input type="checkbox" checked={canLogin} onChange={(e) => setCanLogin(e.target.checked)} />
           Can Login
         </label>
-      </div>
-
-      
-      <div className={s.form_group}>
-        <label htmlFor="file">Upload File:</label>
-        <input type="file" id="file" onChange={handleFileChange} />
       </div>
 
       <div className={s.permissions_section}>
@@ -105,7 +74,11 @@ const UserUpdation = ({ selectedUser, onUserUpdated, allowedActions, allowedPage
                 <input
                   type="checkbox"
                   checked={selectedAllowedActions.includes(action)}
-                  onChange={() => handleActionChange(action)}
+                  onChange={() => setSelectedAllowedActions((prev) =>
+                    prev.includes(action)
+                      ? prev.filter((a) => a !== action)
+                      : [...prev, action]
+                  )}
                 />
                 {action}
               </label>
@@ -123,7 +96,11 @@ const UserUpdation = ({ selectedUser, onUserUpdated, allowedActions, allowedPage
                 <input
                   type="checkbox"
                   checked={selectedAllowedPages.includes(page)}
-                  onChange={() => handlePageChange(page)}
+                  onChange={() => setSelectedAllowedPages((prev) =>
+                    prev.includes(page)
+                      ? prev.filter((p) => p !== page)
+                      : [...prev, page]
+                  )}
                 />
                 {page}
               </label>
@@ -133,7 +110,7 @@ const UserUpdation = ({ selectedUser, onUserUpdated, allowedActions, allowedPage
       </div>
 
       <button onClick={handleUserUpdate} className={s.submit_button}>
-        Submit
+        Update User
       </button>
     </div>
   );

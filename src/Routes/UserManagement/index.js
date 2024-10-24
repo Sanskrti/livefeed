@@ -1,9 +1,5 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  selectUser,
-  clearSelectedUser,
-} from './features/userSlice';
 import UserDeletion from './extras/user-deletion';
 import UserUpdation from './extras/User-Updation';
 import UserCreation from './extras/user-creation';
@@ -17,32 +13,28 @@ import {
 } from '@mui/material';
 import { CloseOutlined } from '@mui/icons-material';
 import s from "./extras/user_creation.module.scss";
-import { useFetchUsersQuery, useLoadAllowedPagesQuery, useLoadAllowedActionsQuery } from "../../../src/Slice";
-
+import {
+  useFetchUsersQuery,
+  useLoadAllowedPagesQuery,
+  useLoadAllowedActionsQuery,
+  useCreateUserMutation,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+} from "../../../src/Slice";
+import { selectUser, clearSelectedUser } from './features/userSlice';
 
 const UserManagement = () => {
   const dispatch = useDispatch();
-  
-  
- 
+
   const { data: userList, error: userError, isLoading: userLoading, refetch } = useFetchUsersQuery();
   const { data: allowedPages, error: pagesError, isLoading: pagesLoading } = useLoadAllowedPagesQuery();
   const { data: allowedActions, error: actionsError, isLoading: actionsLoading } = useLoadAllowedActionsQuery();
 
-  const selectedUser = useSelector((state) => state.users.selectedUser);
+  const [createUser, { isLoading: isCreating, error: createError }] = useCreateUserMutation();
+  const [updateUser, { isLoading: isUpdating, error: updateError }] = useUpdateUserMutation();
+  const [deleteUser, { isLoading: isDeleting, error: deleteError }] = useDeleteUserMutation();
 
-  
-  useEffect(() => {
-    if (userList) {
-      console.log('User List:', userList);
-    }
-    if (allowedPages) {
-      console.log('Allowed Pages:', allowedPages);
-    }
-    if (allowedActions) {
-      console.log('Allowed Actions:', allowedActions);
-    }
-  }, [userList, allowedPages, allowedActions]);
+  const selectedUser = useSelector((state) => state.users.selectedUser);
 
   const [openCreate, setOpenCreate] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
@@ -50,49 +42,83 @@ const UserManagement = () => {
   const [openDetails, setOpenDetails] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
 
+  useEffect(() => {
+    if (!userLoading && userList) {
+      console.log('Fetched Users:', userList);
+    }
+  }, [userLoading, userList]);
+
+  useEffect(() => {
+    if (!pagesLoading && allowedPages) {
+      console.log('Fetched Allowed Pages:', allowedPages);
+
+    }
+  }, [pagesLoading, allowedPages]);
+
+  useEffect(() => {
+    if (!actionsLoading && allowedActions) {
+      console.log('Fetched Allowed Actions:', allowedActions);
+    }
+  }, [actionsLoading, allowedActions]);
+
+
   const handleOpenCreate = () => setOpenCreate(true);
   const handleCloseCreate = () => setOpenCreate(false);
-
   const handleOpenUpdate = (user) => {
     dispatch(selectUser(user));
     setOpenUpdate(true);
   };
-
   const handleCloseUpdate = () => {
     setOpenUpdate(false);
     dispatch(clearSelectedUser());
   };
-
   const handleOpenDelete = (user) => {
     dispatch(selectUser(user));
     setOpenDelete(true);
   };
-
   const handleCloseDelete = () => {
     setOpenDelete(false);
     dispatch(clearSelectedUser());
   };
-
   const handleOpenDetails = (user) => {
     setUserDetails(user);
     setOpenDetails(true);
   };
-
   const handleCloseDetails = () => {
     setOpenDetails(false);
     setUserDetails(null);
   };
 
- 
-  const handleUserCreated = () => {
-    handleCloseCreate(); 
-    refetch(); 
+  const handleUserCreated = async (newUser) => {
+    try {
+      await createUser(newUser).unwrap();
+      handleCloseCreate();
+      refetch(); 
+    } catch (error) {
+      console.error('Failed to create user:', error);
+    }
   };
 
-  
-  const handleUserUpdated = () => {
-    handleCloseUpdate(); 
-    refetch(); 
+ 
+  const handleUserUpdated = async (updatedUser) => {
+    try {
+      await updateUser({ id: selectedUser.id, ...updatedUser }).unwrap();
+      handleCloseUpdate();
+      refetch(); 
+    } catch (error) {
+      console.error('Failed to update user:', error);
+    }
+  };
+
+
+  const handleUserDeleted = async () => {
+    try {
+      await deleteUser(selectedUser.id).unwrap();
+      handleCloseDelete();
+      refetch(); 
+    } catch (error) {
+      console.error('Failed to delete user:', error);
+    }
   };
 
   return (
@@ -181,7 +207,7 @@ const UserManagement = () => {
         </DialogTitle>
         <DialogContent className={s.dialog_content}>
           {selectedUser && (
-            <UserDeletion selectedUser={selectedUser} onUserDeleted={handleCloseDelete} />
+            <UserDeletion selectedUser={selectedUser} onUserDeleted={handleUserDeleted} />
           )}
         </DialogContent>
       </Dialog>
@@ -199,8 +225,8 @@ const UserManagement = () => {
               <h3>ID: {userDetails.id}</h3>
               <h3>Name: {userDetails.name}</h3>
               <h3>Can Login: {userDetails.can_login ? 'Yes' : 'No'}</h3>
-              <h3>Allowed Actions: {userDetails.allowed_actions?.length > 0 ? userDetails.allowed_actions.join(', ') : 'None'}</h3>
-              <h3>Allowed Pages: {userDetails.pages?.length > 0 ? userDetails.pages.join(', ') : 'None'}</h3>
+              <h3>Allowed Pages: {userDetails.allowedPages}</h3>
+              <h3>Allowed Actions: {userDetails.allowedActions}</h3> 
             </div>
           )}
         </DialogContent>
@@ -210,3 +236,4 @@ const UserManagement = () => {
 };
 
 export default UserManagement;
+
