@@ -1,31 +1,22 @@
-import { axiosClient } from "../../../api/axiosClient";
-import { useState } from "react";
-import s from "./user_creation.module.scss";
+import React from 'react';
+import { useDeleteUserMutation } from '../../../Slice';
 
 const UserDeletion = ({ selectedUser, onUserDeleted }) => {
-  const [error, setError] = useState("");
+  const [deleteUser] = useDeleteUserMutation();
 
-  const handleUserDelete = async () => {
-    if (!selectedUser || !selectedUser.id) {
-      setError("User data is not available");
-      return;
-    }
-
+  const handleDelete = async () => {
     try {
-      await axiosClient.delete(`/api/users/${selectedUser.id}`);
-      onUserDeleted();
+      await deleteUser(selectedUser.id).unwrap();
+      onUserDeleted(); 
     } catch (error) {
-      setError("Error deleting user: " + error?.message || "Unknown error");
+      console.error('Error deleting user:', error);
     }
   };
 
   return (
     <div>
-      <p>Are you sure you want to delete {selectedUser?.name || "this user"}?</p>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <button onClick={handleUserDelete} className={s.submit_button}>
-        Confirm Delete
-      </button>
+      <p>Are you sure you want to delete the user "{selectedUser.name}"?</p>
+      <button onClick={handleDelete}>Confirm Deletion</button>
     </div>
   );
 };

@@ -1,117 +1,110 @@
-import { useState } from "react";
-import { axiosClient, updateUserEndpoint } from "../../../api/axiosClient";
-import s from "./user_creation.module.scss";
+import React, { useEffect, useState } from 'react';
+import { useUpdateUserMutation } from '../../../Slice';
+import s from './user_creation.module.scss';
 
 const UserUpdation = ({ selectedUser, onUserUpdated, allowedActions, allowedPages }) => {
-  const [userName, setUserName] = useState(selectedUser?.name || "");
-  const [canLogin, setCanLogin] = useState(selectedUser?.can_login || false);
-  const [selectedAllowedActions, setSelectedAllowedActions] = useState(selectedUser?.allowed_actions || []);
-  const [selectedAllowedPages, setSelectedAllowedPages] = useState(selectedUser?.allowed_pages || []);
-  const [file, setFile] = useState(null);
-  const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [userName, setUserName] = useState(selectedUser.name);
+  const [canLogin, setCanLogin] = useState(selectedUser.can_login);
+  const [selectedAllowedActions, setSelectedAllowedActions] = useState(selectedUser.allowed_actions || []);
+  const [selectedAllowedPages, setSelectedAllowedPages] = useState(selectedUser.pages || []);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
+  const [updateUser] = useUpdateUserMutation();
+
+  useEffect(() => {
+    setUserName(selectedUser.name);
+    setCanLogin(selectedUser.can_login);
+    setSelectedAllowedActions(selectedUser.allowed_actions || []);
+    setSelectedAllowedPages(selectedUser.pages || []);
+  }, [selectedUser]);
 
   const handleUserUpdate = async () => {
-    if (!selectedUser?.id) {
-      setError("Selected user is not valid");
-      return;
-    }
-
-    const data = {
+    const updatedUser = {
       id: selectedUser.id,
       name: userName,
       can_login: canLogin,
-      password: selectedUser.password || "defaultPassword",
-      pages: selectedAllowedPages,
       allowed_actions: selectedAllowedActions,
+      pages: selectedAllowedPages,
     };
 
     try {
-      await axiosClient.put(`${updateUserEndpoint}/${selectedUser.id}`, data);
-      setSuccessMessage("User updated successfully");
-      onUserUpdated();
+      await updateUser(updatedUser).unwrap();
+      setSuccessMessage('User updated successfully');
+      onUserUpdated(); 
     } catch (error) {
-      setError("Error updating user: " + (error.response?.data?.message || error.message));
+      setError('Error updating user: ' + (error.data?.message || error.message));
     }
   };
 
   return (
     <div>
       <h2>Update User</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
 
       <div className={s.form_group}>
         <label htmlFor="username">Enter Username:</label>
         <input
           type="text"
           id="username"
-          placeholder="User Name"
           value={userName}
           onChange={(e) => setUserName(e.target.value)}
-          required
-          className={s.input_field}
         />
       </div>
 
-      <div>
+      <div className={s.form_group}>
         <label>
-          <input type="checkbox" checked={canLogin} onChange={(e) => setCanLogin(e.target.checked)} />
+          <input
+            type="checkbox"
+            checked={canLogin}
+            onChange={(e) => setCanLogin(e.target.checked)}
+          />
           Can Login
         </label>
       </div>
 
-      <div className={s.permissions_section}>
-        <h3>Allowed Actions:</h3>
-        <div className={s.permissions_container}>
-          {allowedActions.map((action) => (
-            <div key={action}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={selectedAllowedActions.includes(action)}
-                  onChange={() => setSelectedAllowedActions((prev) =>
-                    prev.includes(action)
-                      ? prev.filter((a) => a !== action)
-                      : [...prev, action]
-                  )}
-                />
-                {action}
-              </label>
-            </div>
-          ))}
-        </div>
+      <h3>Allowed Actions:</h3>
+      <div>
+        {allowedActions?.map((action) => (
+          <label key={action}>
+            <input
+              type="checkbox"
+              checked={selectedAllowedActions.includes(action)}
+              onChange={() => {
+                if (selectedAllowedActions.includes(action)) {
+                  setSelectedAllowedActions(selectedAllowedActions.filter((a) => a !== action));
+                } else {
+                  setSelectedAllowedActions([...selectedAllowedActions, action]);
+                }
+              }}
+            />
+            {action}
+          </label>
+        ))}
       </div>
 
-      <div className={s.permissions_section}>
-        <h3>Allowed Pages:</h3>
-        <div className={s.permissions_container}>
-          {allowedPages.map((page) => (
-            <div key={page}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={selectedAllowedPages.includes(page)}
-                  onChange={() => setSelectedAllowedPages((prev) =>
-                    prev.includes(page)
-                      ? prev.filter((p) => p !== page)
-                      : [...prev, page]
-                  )}
-                />
-                {page}
-              </label>
-            </div>
-          ))}
-        </div>
+      <h3>Allowed Pages:</h3>
+      <div>
+        {allowedPages?.map((page) => (
+          <label key={page}>
+            <input
+              type="checkbox"
+              checked={selectedAllowedPages.includes(page)}
+              onChange={() => {
+                if (selectedAllowedPages.includes(page)) {
+                  setSelectedAllowedPages(selectedAllowedPages.filter((p) => p !== page));
+                } else {
+                  setSelectedAllowedPages([...selectedAllowedPages, page]);
+                }
+              }}
+            />
+            {page}
+          </label>
+        ))}
       </div>
 
-      <button onClick={handleUserUpdate} className={s.submit_button}>
-        Update User
-      </button>
+      <button onClick={handleUserUpdate}>Update User</button>
     </div>
   );
 };
