@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, clearSelectedUser } from './Reducers/userSlice'; 
 import UserDeletion from "./extras/user-deletion"; 
 import UserUpdation from "./extras/User-Updation";
-import UserCreation from "./extras/user-creation"; 
+import UserCreation from "./extras/user-creation";
 import {
   Dialog,
   DialogContent,
@@ -22,70 +22,47 @@ import {
 } from "./Reducers/apiSlices/Slice"; 
 
 const UserManagement = () => {
-  const dispatch = useDispatch(); // Getting the dispatch function from Redux store.
+  const dispatch = useDispatch();
   
-  // Fetching users data and managing loading and error states
   const { data: userList, error: userError, isLoading: userLoading, refetch } = useFetchUsersQuery();
   const { data: allowedPages } = useLoadAllowedPagesQuery(); 
   const { data: allowedActions } = useLoadAllowedActionsQuery(); 
 
-  const selectedUser = useSelector((state) => state.users.selectedUser); // Getting the selected user from Redux store.
+  const selectedUser = useSelector((state) => state.users.selectedUser);
   
-  // State management for dialog visibility
   const [openCreate, setOpenCreate] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false); 
   const [openDelete, setOpenDelete] = useState(false); 
   const [openDetails, setOpenDetails] = useState(false); 
   const [userDetails, setUserDetails] = useState(null); 
 
-  // Debugging logs to monitor loading state
   useEffect(() => {
     console.log('User Loading:', userLoading); 
   }, [userLoading]);
 
-  // Handlers to open and close dialog boxes
-  const handleOpenCreate = () => {
-    console.log('Creating user...'); 
-    setOpenCreate(true); 
-  };
-
-  const handleCloseCreate = () => {
-    console.log('Closed Create User Dialog'); 
-    setOpenCreate(false);
-  };
-
+  const handleOpenCreate = () => setOpenCreate(true);
+  const handleCloseCreate = () => setOpenCreate(false);
   const handleOpenUpdate = (user) => {
-    console.log('Updating user:', user); 
     dispatch(selectUser(user)); 
     setOpenUpdate(true);
   };
-
   const handleCloseUpdate = () => {
-    console.log('Closed Update User Dialog'); 
     setOpenUpdate(false);
     dispatch(clearSelectedUser()); 
   };
-
   const handleOpenDelete = (user) => {
-    console.log('Deleting user:', user); 
     dispatch(selectUser(user)); 
     setOpenDelete(true); 
   };
-
   const handleCloseDelete = () => {
-    console.log('Closed Delete User Dialog'); 
     setOpenDelete(false); 
     dispatch(clearSelectedUser()); 
   };
-
   const handleOpenDetails = (user) => {
-    console.log('Viewing details for user:', user); 
     setUserDetails(user);
     setOpenDetails(true); 
   };
-  
   const handleCloseDetails = () => {
-    console.log('Closed User Details Dialog'); 
     setOpenDetails(false); 
     setUserDetails(null);
   };
@@ -98,10 +75,10 @@ const UserManagement = () => {
       </button>
 
       {userLoading ? (
-        <CircularProgress /> // Show loading spinner while fetching users.
+        <CircularProgress />
       ) : userError ? (
         <Snackbar open={true} autoHideDuration={6000}>
-          <Alert severity="error">{userError.message}</Alert> // Show error message if fetching fails.
+          <Alert severity="error">{userError.message}</Alert>
         </Snackbar>
       ) : (
         <div className={s.userListContainer}>
@@ -117,7 +94,7 @@ const UserManagement = () => {
             <tbody>
               {userList.length === 0 ? (
                 <tr>
-                  <td colSpan="4">No users found.</td> // Message when no users are available.
+                  <td colSpan="4">No users found.</td>
                 </tr>
               ) : (
                 userList.map((user) => (
@@ -126,13 +103,13 @@ const UserManagement = () => {
                     <td>{user.name}</td>
                     <td>{user.can_login ? 'Yes' : 'No'}</td>
                     <td>
-                      <button variant="outlined" className={s.update_button} onClick={() => handleOpenUpdate(user)}>
+                      <button className={s.update_button} onClick={() => handleOpenUpdate(user)}>
                         Update
                       </button>
-                      <button variant="outlined" className={s.delete_button} onClick={() => handleOpenDelete(user)}>
+                      <button className={s.delete_button} onClick={() => handleOpenDelete(user)}>
                         Delete
                       </button>
-                      <button variant="outlined" className={s.view_button} onClick={() => handleOpenDetails(user)}>
+                      <button className={s.view_button} onClick={() => handleOpenDetails(user)}>
                         View Details
                       </button>
                     </td>
@@ -144,11 +121,10 @@ const UserManagement = () => {
         </div>
       )}
 
-      {/* Dialogs for Creating, Updating, Deleting, and Viewing User Details */}
       <Dialog open={openCreate} onClose={handleCloseCreate}>
         <DialogTitle className={s.dialog_title}>
           Create User
-          <IconButton edge="end" color="inherit" onClick={handleCloseCreate} aria-label="close">
+          <IconButton edge="end" onClick={handleCloseCreate} aria-label="close">
             <CloseOutlined /> 
           </IconButton>
         </DialogTitle>
@@ -160,7 +136,7 @@ const UserManagement = () => {
       <Dialog open={openUpdate} onClose={handleCloseUpdate}>
         <DialogTitle className={s.dialog_title}>
           Update User
-          <IconButton edge="end" color="inherit" onClick={handleCloseUpdate} aria-label="close">
+          <IconButton edge="end" onClick={handleCloseUpdate} aria-label="close">
             <CloseOutlined /> 
           </IconButton>
         </DialogTitle>
@@ -179,7 +155,7 @@ const UserManagement = () => {
       <Dialog open={openDelete} onClose={handleCloseDelete}>
         <DialogTitle className={s.dialog_title}>
           Delete User
-          <IconButton edge="end" color="inherit" onClick={handleCloseDelete} aria-label="close">
+          <IconButton edge="end" onClick={handleCloseDelete} aria-label="close">
             <CloseOutlined /> 
           </IconButton>
         </DialogTitle>
@@ -193,7 +169,7 @@ const UserManagement = () => {
       <Dialog open={openDetails} onClose={handleCloseDetails}>
         <DialogTitle className={s.dialog_title}>
           User Details
-          <IconButton edge="end" color="inherit" onClick={handleCloseDetails} aria-label="close">
+          <IconButton edge="end" onClick={handleCloseDetails} aria-label="close">
             <CloseOutlined /> 
           </IconButton>
         </DialogTitle>
@@ -213,4 +189,4 @@ const UserManagement = () => {
   );
 };
 
-export default UserManagement; 
+export default UserManagement;

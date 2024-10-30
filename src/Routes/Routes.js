@@ -1,25 +1,40 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
-import LiveFeedPage from "../components/LiveFeedContainer/LiveFeedDisplay";
-import UserManagement from "./UserManagement";
-import EventCards from "./UserManagement/extras/EventsPage";
+import { Route, Routes, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import Login from "./UserManagement/MainPage/Login";
 
-const Dashboard = () => <div>Dashboard</div>;
+const AppRoutes = ({ Dashboard, LiveFeedPage, UserManagement }) => {
+  const { isAuthenticated, allowedPages } = useSelector(state => state.auth);
 
-const Configuration = () => (
-  <div className="blank-page">
-    <h1>Event Page</h1>
-    <EventCards /> 
-  </div>
-);
+  const isPageAllowed = (page) => allowedPages.includes(page);
 
-const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Dashboard />} />
-      <Route path="/live-feed" element={<LiveFeedPage />} />
-      <Route path="/admin-panel" element={<UserManagement />} />
-      <Route path="/configuration" element={<Configuration />} />
+      <Route path="/login" element={<Login />} />
+
+      {/* Protect Dashboard Route */}
+      {isAuthenticated && isPageAllowed('dashboard') ? (
+        <Route path="/dashboard" element={<Dashboard />} />
+      ) : (
+        <Route path="/dashboard" element={<Navigate to="/login" />} />
+      )}
+
+      {/* Protect Live Feed Route */}
+      {isAuthenticated && isPageAllowed('live-feed') ? (
+        <Route path="/live-feed" element={<LiveFeedPage />} />
+      ) : (
+        <Route path="/live-feed" element={<Navigate to="/login" />} />
+      )}
+
+      {/* Protect Admin Panel Route */}
+      {isAuthenticated && isPageAllowed('admin-panel') ? (
+        <Route path="/admin-panel" element={<UserManagement />} />
+      ) : (
+        <Route path="/admin-panel" element={<Navigate to="/login" />} />
+      )}
+
+      {/* Redirect all other routes to login */}
+      <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   );
 };

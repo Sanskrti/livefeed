@@ -1,36 +1,27 @@
 import React from "react";
-import { BrowserRouter as Router, Link } from "react-router-dom";
-import { Provider } from 'react-redux'; 
-import "./App.css";
-import AppRoutes from "./Routes/Routes";
+import { BrowserRouter as Router } from "react-router-dom";
+import { Provider } from "react-redux";
 import store from "./Routes/UserManagement/store/Store";
+import Sidebar from "./components/SideBarContainer/SideBarDisplay";
+import Routes from "./Routes/Routes";
+import LiveFeedPage from "./components/LiveFeedContainer";
+import UserManagement from "./Routes/UserManagement";
 
-const App = () => {
+function App() {
   return (
     <Provider store={store}>
       <Router>
-        <div className="App">
-          <div className="sidebar">
-            <ul>
-              <li><Link to="/">Dashboard</Link></li>
-              <li><Link to="/live-feed">Live Feed</Link></li>
-              <li><Link to="/admin-panel">UserManagement</Link></li>
-              <li><Link to="/configuration">Configuration</Link></li>
-            </ul>
-            <div className="settings">
-              <p>Settings</p>
-              <p>Logout</p>
-            </div>
-          </div>
-          <div className="main-content">
-            <div className="header">
-              <AppRoutes />
-            </div>
-          </div>
+        <div className="app">
+          <Sidebar />
+          <Routes 
+            Dashboard={Dashboard} 
+            LiveFeedPage={LiveFeedPage} 
+            UserManagement={UserManagement} 
+          />
         </div>
       </Router>
     </Provider>
   );
-};
+}
 
 export default App;
