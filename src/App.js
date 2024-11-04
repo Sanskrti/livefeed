@@ -1,19 +1,23 @@
-import React from "react";
-import { BrowserRouter as Router } from "react-router-dom";
-import { Provider } from "react-redux";
-import store from "./Routes/UserManagement/store/Store";
-import Sidebar from "./components/SideBarContainer/SideBarDisplay";
-import Routes from "./Routes/Routes";
-import LiveFeedPage from "./components/LiveFeedContainer";
-import UserManagement from "./Routes/UserManagement";
+import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import store from './Routes/UserManagement/store/Store';
+import AppRoutes from './Routes/Routes';
+// import Sidebar from './components/SideBarContainer/SideBarDisplay';
+
+
+import Dashboard from './components/Dashboard';
+import LiveFeedPage from "./components/LiveFeedContainer/LiveFeedDisplay";
+import UserManagement from './Routes/UserManagement';
 
 function App() {
   return (
     <Provider store={store}>
       <Router>
         <div className="app">
-          <Sidebar />
-          <Routes 
+        
+          {/* <Sidebar /> */}
+          <AppRoutes 
             Dashboard={Dashboard} 
             LiveFeedPage={LiveFeedPage} 
             UserManagement={UserManagement} 

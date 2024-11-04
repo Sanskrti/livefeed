@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from "../Reducers/userSlice";
+import { login } from '../Reducers/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isAuthenticated, error, allowedPages } = useSelector(state => state.auth);
+  const { isAuthenticated, allowedPages, error } = useSelector(state => state.auth);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -16,15 +16,17 @@ const Login = () => {
     dispatch(login({ username, password }));
   };
 
-  if (isAuthenticated) {
-    if (allowedPages.includes('dashboard')) {
-      navigate('/dashboard');
-    } else if (allowedPages.includes('live-feed')) {
-      navigate('/live-feed');
-    } else if (allowedPages.includes('admin-panel')) {
-      navigate('/admin-panel');
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (allowedPages.includes('dashboard')) {
+        navigate('/dashboard', { replace: true });
+      } else if (allowedPages.includes('live-feed')) {
+        navigate('/live-feed', { replace: true });
+      } else if (allowedPages.includes('admin-panel')) {
+        navigate('/admin-panel', { replace: true });
+      }
     }
-  }
+  }, [isAuthenticated, allowedPages, navigate]);
 
   return (
     <div>
