@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'; 
-import { useDispatch, useSelector } from 'react-redux'; 
-import { selectUser, clearSelectedUser } from './Reducers/userSlice'; 
-import UserDeletion from "./extras/user-deletion"; 
-import UserUpdation from "./extras/User-Updation";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser, clearSelectedUser } from "./Reducers/userSlice";
+import UserDeletion from "./extras/user-deletion";
+import UserUpdation from "./extras/user-updation";
 import UserCreation from "./extras/user-creation";
 import {
   Dialog,
@@ -12,58 +12,63 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
-} from '@mui/material'; 
-import { CloseOutlined } from '@mui/icons-material'; 
-import s from "./extras/user_creation.module.scss"; 
+} from "@mui/material";
+import { CloseOutlined } from "@mui/icons-material";
+import s from "./extras/user_creation.module.scss";
 import {
   useFetchUsersQuery,
   useLoadAllowedPagesQuery,
   useLoadAllowedActionsQuery,
-} from "./Reducers/apiSlices/Slice"; 
+} from "./Reducers/apiSlices/Slice";
 
 const UserManagement = () => {
   const dispatch = useDispatch();
-  
-  const { data: userList, error: userError, isLoading: userLoading, refetch } = useFetchUsersQuery();
-  const { data: allowedPages } = useLoadAllowedPagesQuery(); 
-  const { data: allowedActions } = useLoadAllowedActionsQuery(); 
+
+  const {
+    data: userList,
+    error: userError,
+    isLoading: userLoading,
+    refetch,
+  } = useFetchUsersQuery();
+  const { data: allowedPages } = useLoadAllowedPagesQuery();
+  const { data: allowedActions } = useLoadAllowedActionsQuery();
 
   const selectedUser = useSelector((state) => state.users.selectedUser);
-  
+
   const [openCreate, setOpenCreate] = useState(false);
-  const [openUpdate, setOpenUpdate] = useState(false); 
-  const [openDelete, setOpenDelete] = useState(false); 
-  const [openDetails, setOpenDetails] = useState(false); 
-  const [userDetails, setUserDetails] = useState(null); 
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [openDetails, setOpenDetails] = useState(false);
+  const [userDetails, setUserDetails] = useState(null);
 
   useEffect(() => {
-    console.log('User Loading:', userLoading); 
+    console.log("User Loading:", userLoading);
   }, [userLoading]);
 
   const handleOpenCreate = () => setOpenCreate(true);
   const handleCloseCreate = () => setOpenCreate(false);
   const handleOpenUpdate = (user) => {
-    dispatch(selectUser(user)); 
+    dispatch(selectUser(user));
     setOpenUpdate(true);
   };
   const handleCloseUpdate = () => {
     setOpenUpdate(false);
-    dispatch(clearSelectedUser()); 
+    dispatch(clearSelectedUser());
   };
   const handleOpenDelete = (user) => {
-    dispatch(selectUser(user)); 
-    setOpenDelete(true); 
+    dispatch(selectUser(user));
+    setOpenDelete(true);
   };
   const handleCloseDelete = () => {
-    setOpenDelete(false); 
-    dispatch(clearSelectedUser()); 
+    setOpenDelete(false);
+    dispatch(clearSelectedUser());
   };
   const handleOpenDetails = (user) => {
     setUserDetails(user);
-    setOpenDetails(true); 
+    setOpenDetails(true);
   };
   const handleCloseDetails = () => {
-    setOpenDetails(false); 
+    setOpenDetails(false);
     setUserDetails(null);
   };
 
@@ -101,15 +106,24 @@ const UserManagement = () => {
                   <tr key={user.id}>
                     <td>{user.id}</td>
                     <td>{user.name}</td>
-                    <td>{user.can_login ? 'Yes' : 'No'}</td>
+                    <td>{user.can_login ? "Yes" : "No"}</td>
                     <td>
-                      <button className={s.update_button} onClick={() => handleOpenUpdate(user)}>
+                      <button
+                        className={s.update_button}
+                        onClick={() => handleOpenUpdate(user)}
+                      >
                         Update
                       </button>
-                      <button className={s.delete_button} onClick={() => handleOpenDelete(user)}>
+                      <button
+                        className={s.delete_button}
+                        onClick={() => handleOpenDelete(user)}
+                      >
                         Delete
                       </button>
-                      <button className={s.view_button} onClick={() => handleOpenDetails(user)}>
+                      <button
+                        className={s.view_button}
+                        onClick={() => handleOpenDetails(user)}
+                      >
                         View Details
                       </button>
                     </td>
@@ -125,11 +139,15 @@ const UserManagement = () => {
         <DialogTitle className={s.dialog_title}>
           Create User
           <IconButton edge="end" onClick={handleCloseCreate} aria-label="close">
-            <CloseOutlined /> 
+            <CloseOutlined />
           </IconButton>
         </DialogTitle>
         <DialogContent className={s.dialog_content}>
-          <UserCreation onUserCreated={refetch} allowedActions={allowedActions} allowedPages={allowedPages} />
+          <UserCreation
+            onUserCreated={refetch}
+            allowedActions={allowedActions}
+            allowedPages={allowedPages}
+          />
         </DialogContent>
       </Dialog>
 
@@ -137,7 +155,7 @@ const UserManagement = () => {
         <DialogTitle className={s.dialog_title}>
           Update User
           <IconButton edge="end" onClick={handleCloseUpdate} aria-label="close">
-            <CloseOutlined /> 
+            <CloseOutlined />
           </IconButton>
         </DialogTitle>
         <DialogContent className={s.dialog_content}>
@@ -156,7 +174,7 @@ const UserManagement = () => {
         <DialogTitle className={s.dialog_title}>
           Delete User
           <IconButton edge="end" onClick={handleCloseDelete} aria-label="close">
-            <CloseOutlined /> 
+            <CloseOutlined />
           </IconButton>
         </DialogTitle>
         <DialogContent className={s.dialog_content}>
@@ -169,18 +187,39 @@ const UserManagement = () => {
       <Dialog open={openDetails} onClose={handleCloseDetails}>
         <DialogTitle className={s.dialog_title}>
           User Details
-          <IconButton edge="end" onClick={handleCloseDetails} aria-label="close">
-            <CloseOutlined /> 
+          <IconButton
+            edge="end"
+            onClick={handleCloseDetails}
+            aria-label="close"
+          >
+            <CloseOutlined />
           </IconButton>
         </DialogTitle>
         <DialogContent className={s.dialog_content}>
           {userDetails && (
             <div>
-              <h3><strong>ID:</strong> {userDetails.id}</h3>
-              <h3><strong>Name:</strong> {userDetails.name}</h3>
-              <h3><strong>Can Login:</strong> {userDetails.can_login ? 'Yes' : 'No'}</h3>
-              <h3>Allowed Actions: {userDetails.allowed_actions?.length > 0 ? userDetails.allowed_actions.join(', ') : 'None'}</h3>
-              <h3>Allowed Pages: {userDetails.pages?.length > 0 ? userDetails.pages.join(', ') : 'None'}</h3>
+              <h3>
+                <strong>ID:</strong> {userDetails.id}
+              </h3>
+              <h3>
+                <strong>Name:</strong> {userDetails.name}
+              </h3>
+              <h3>
+                <strong>Can Login:</strong>{" "}
+                {userDetails.can_login ? "Yes" : "No"}
+              </h3>
+              <h3>
+                Allowed Actions:{" "}
+                {userDetails.allowed_actions?.length > 0
+                  ? userDetails.allowed_actions.join(", ")
+                  : "None"}
+              </h3>
+              <h3>
+                Allowed Pages:{" "}
+                {userDetails.pages?.length > 0
+                  ? userDetails.pages.join(", ")
+                  : "None"}
+              </h3>
             </div>
           )}
         </DialogContent>

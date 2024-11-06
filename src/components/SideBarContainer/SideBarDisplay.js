@@ -1,41 +1,23 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './SideBarStyling.scss';
+import React from "react";
+import { Link } from "react-router-dom";
+import "./SideBarStyling.scss";
+import { useDispatch } from "react-redux";
+import { setUserAuthenticated } from "../../Routes/UserManagement/Reducers/userSlice";
 
 function Sidebar() {
+  const dispatch = useDispatch();
+  const pages = ["dashboard", "mango"];
   return (
     <div className="sidebar">
       <ul>
         <li>
-          <Link to="/">
-            <span>Dashboard</span>
-          </Link>
-        </li>
-        <li>
-          <Link to="/live-feed">
-            <span>Live Feed</span>
-          </Link>
-        </li>
-        <li>
-          
-          <Link to="/admin-panel">
-            <span>Admin Panel</span>
-          </Link>
-        </li>
-        <li>
-          <Link to="/configuration">
-            <span>Configuration</span>
-          </Link>
+          {pages.map((item, index) => (
+            <Link to={item}>
+              <span>{item}</span>
+            </Link>
+          ))}
         </li>
       </ul>
-      <div className="settings">
-        <p>
-          <span>Settings</span>
-        </p>
-        <p>
-          <span>Logout</span>
-        </p>
-      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isAuthenticated: false,
@@ -8,16 +8,26 @@ const initialState = {
 };
 
 const userSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     login: (state, action) => {
       const { username, password } = action.payload;
       const users = [
-        { username: 'sans', password: 'sans123', allowedPages: ['admin-panel', 'dashboard', 'live-feed'] },
-        { username: 'user', password: 'user123', allowedPages: ['dashboard', 'live-feed'] },
+        {
+          username: "sans",
+          password: "sans123",
+          allowedPages: ["admin-panel", "dashboard", "live-feed"],
+        },
+        {
+          username: "user",
+          password: "user123",
+          allowedPages: ["dashboard", "live-feed"],
+        },
       ];
-      const foundUser = users.find(user => user.username === username && user.password === password);
+      const foundUser = users.find(
+        (user) => user.username === username && user.password === password,
+      );
       if (foundUser) {
         state.isAuthenticated = true;
         state.user = foundUser.username;
@@ -27,7 +37,7 @@ const userSlice = createSlice({
         state.isAuthenticated = false;
         state.user = null;
         state.allowedPages = [];
-        state.error = 'Invalid username or password';
+        state.error = "Invalid username or password";
       }
     },
     logout: (state) => {
@@ -35,6 +45,9 @@ const userSlice = createSlice({
       state.user = null;
       state.allowedPages = [];
       state.error = null;
+    },
+    setUserAuthenticated: (state, action) => {
+      state.isAuthenticated = action.payload;
     },
     selectUser: (state, action) => {
       state.user = action.payload;
@@ -45,5 +58,11 @@ const userSlice = createSlice({
   },
 });
 
-export const { login, logout, selectUser, clearSelectedUser } = userSlice.actions;
+export const {
+  login,
+  logout,
+  selectUser,
+  clearSelectedUser,
+  setUserAuthenticated,
+} = userSlice.actions;
 export default userSlice.reducer;
